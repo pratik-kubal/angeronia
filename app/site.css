@@ -1,0 +1,190 @@
+/*
+ * app/site.css — site-level composition only.
+ *
+ * Containers, section rhythm and the handful of layout rules SLDS utilities do
+ * not cover. Every value here is a `--slds-g-*` hook with a fallback (design
+ * rule 3). No `.slds-*` selector is ever overridden; site rules use the `site-`
+ * prefix so the two vocabularies stay separable (design rule 3).
+ */
+
+/*
+ * Cosmos sets the base font size to 13px, which is right for a dense app shell
+ * and too small for a marketing page. Consuming `--slds-g-font-scale-2` (1rem)
+ * on the page root is a consumption of the scale, not a reassignment of it
+ * (plan §2.4, "Cosmos base font 13px too small for marketing").
+ */
+.site-root {
+  font-size: var(--slds-g-font-scale-2, 1rem);
+  line-height: var(--slds-g-font-lineheight-4, 1.5);
+  min-block-size: 100dvh;
+  display: flex;
+  flex-direction: column;
+}
+
+/* Page gutter. SLDS containers cap the width; this keeps them off the edge. */
+.site-container {
+  padding-inline: var(--slds-g-spacing-5, 1.5rem);
+}
+
+@media (min-width: 48em) {
+  .site-container {
+    padding-inline: var(--slds-g-spacing-8, 2.5rem);
+  }
+}
+
+/* Section rhythm: one vertical step between major page sections. */
+.site-section {
+  padding-block: var(--slds-g-spacing-11, 4rem);
+}
+
+@media (min-width: 48em) {
+  .site-section {
+    padding-block: var(--slds-g-spacing-12, 5rem);
+  }
+}
+
+/* A section that carries its own ground, so the rhythm reads as a band. */
+.site-section_shade {
+  background-color: var(--slds-g-color-surface-container-2, #f3f3f3);
+}
+
+/* Prose measure. Sizing hooks for width, per design rule 6. */
+.site-measure {
+  max-width: var(--slds-g-sizing-content-3, 60ch);
+}
+
+.site-measure_heading {
+  max-width: var(--slds-g-sizing-heading-2, 25ch);
+}
+
+/*
+ * The skip link. SLDS ships `slds-assistive-text_focus`, which reveals the
+ * link on focus but positions it for an app shell; this places it over the
+ * page and gives it the theme's own surface and focus ring.
+ * Follows Accessibility → Global Focus.
+ */
+.site-skip-link:focus {
+  position: fixed;
+  inset-block-start: var(--slds-g-spacing-4, 1rem);
+  inset-inline-start: var(--slds-g-spacing-4, 1rem);
+  z-index: 9000;
+  padding: var(--slds-g-spacing-3, 0.75rem) var(--slds-g-spacing-5, 1.5rem);
+  border-radius: var(--slds-g-radius-border-2, 0.5rem);
+  background-color: var(--slds-g-color-surface-container-1, #fff);
+  color: var(--slds-g-color-on-surface-3, #081a1c);
+  box-shadow: var(--slds-g-shadow-3, 0px 2px 4px 0px #00000027);
+  text-decoration: none;
+}
+
+/*
+ * Display heading — the marketing top end of the type scale.
+ *
+ * SLDS's text utilities stop at `slds-text-heading_large` because an app shell
+ * never needs more. Typography defines `font-scale-8` and weight 3 above it;
+ * this consumes them. Follows Visual Language → Typography (display style).
+ */
+.site-heading_display {
+  font-size: var(--slds-g-font-scale-8, 3rem);
+  font-weight: var(--slds-g-font-weight-3, 300);
+  line-height: var(--slds-g-font-lineheight-1, 1);
+  color: var(--slds-g-color-on-surface-3, #081a1c);
+}
+
+/*
+ * Progress bar fill.
+ *
+ * The length is a datum, so the component passes it as
+ * `--site-progress-bar-value` and the width lives here (DECISIONS.md ADR-005).
+ * `.slds-progress-bar__value` keeps its own fill, radius and transition; this
+ * only supplies the length it has no way to know.
+ */
+.site-progress-bar__value {
+  inline-size: var(--site-progress-bar-value, 0%);
+}
+
+/*
+ * Static Path stage.
+ *
+ * `.slds-path__link` assumes each stage is actionable and sets `cursor:
+ * pointer`. Our Path summarises a process nobody is editing, so the stage is a
+ * `<span>`. Follows Component Blueprints — blueprints are style-only, the
+ * behaviour is ours — by adding a class rather than overriding `.slds-path__*`.
+ */
+.site-path__step {
+  cursor: default;
+}
+
+/* External-link glyph: sits with the label, never on its own line. */
+.site-link_external {
+  white-space: nowrap;
+}
+
+.site-link__icon {
+  margin-inline-start: var(--slds-g-spacing-1, 0.25rem);
+  vertical-align: text-bottom;
+}
+
+/* One metric block: label row, bar, note. */
+.site-metric {
+  display: block;
+}
+
+/*
+ * Brand lockup.
+ *
+ * The disc and cursor take their colours from the accent pair, so the mark
+ * re-brands with the theme and never carries a literal (design rule 4).
+ */
+.site-brand__disc {
+  fill: var(--slds-g-color-accent-container-1, #007d79);
+}
+
+.site-brand__cursor {
+  fill: var(--slds-g-color-on-accent-1, #fff);
+}
+
+.site-brand__word {
+  display: block;
+  font-size: var(--slds-g-font-scale-3, 1.25rem);
+  font-weight: var(--slds-g-font-weight-6, 600);
+  line-height: var(--slds-g-font-lineheight-2, 1.25);
+  color: var(--slds-g-color-on-surface-3, #081a1c);
+}
+
+.site-brand__sub {
+  display: block;
+}
+
+/* Site header: a quiet band that stays put while the page scrolls under it. */
+.site-header {
+  position: sticky;
+  inset-block-start: 0;
+  z-index: 100;
+  background-color: var(--slds-g-color-surface-container-1, #fff);
+  border-block-end: var(--slds-g-sizing-border-1, 1px) solid
+    var(--slds-g-color-border-1, #e5e5e5);
+}
+
+.site-header__bar {
+  padding-block: var(--slds-g-spacing-3, 0.75rem);
+  gap: var(--slds-g-spacing-4, 1rem);
+}
+
+.site-header__brand {
+  color: inherit;
+  text-decoration: none;
+}
+
+.site-header__nav {
+  display: none;
+}
+
+@media (min-width: 64em) {
+  .site-header__nav {
+    display: block;
+  }
+}
+
+.site-header__actions {
+  gap: var(--slds-g-spacing-3, 0.75rem);
+}

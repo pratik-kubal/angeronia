@@ -1,13 +1,25 @@
 // Single source of truth for angeronia.com — the Angeronia Labs consultancy
-// landing page. Copy is deliberately terse: long prose is replaced by visuals
-// (the scroll-drawn continuity line, the meter graph, the coverage strip).
+// landing page. Every string the site renders lives here (design rule 13);
+// components take content as props and never inline copy of their own.
 
-export type Theme = "light" | "dark" | "bw";
+import type { ColorScheme } from "@/lib/slds/scheme";
 
-export const THEME_OPTIONS: { value: Theme; label: string }[] = [
-  { value: "light", label: "Light" },
-  { value: "dark", label: "Dark" },
-  { value: "bw", label: "Noir" },
+/** Chrome and control labels — the strings that are not page content. */
+export const copy = {
+  skipLink: "Skip to main content",
+  colorScheme: {
+    label: "Colour scheme",
+    light: "Light",
+    dark: "Dark",
+    system: "Match system",
+  },
+  externalLink: "opens in a new tab",
+} as const;
+
+export const COLOR_SCHEME_OPTIONS: { value: ColorScheme; label: string }[] = [
+  { value: "light", label: copy.colorScheme.light },
+  { value: "dark", label: copy.colorScheme.dark },
+  { value: "system", label: copy.colorScheme.system },
 ];
 
 export const BRAND = {
@@ -26,6 +38,18 @@ export const LINKS = {
   calendar: "mailto:pratik.kakashi@gmail.com?subject=Project%20inquiry%20%E2%80%94%20Angeronia%20Labs",
 } as const;
 
+// ── Site header ──────────────────────────────────────────────────────────────
+export const nav = {
+  label: "Primary",
+  items: [
+    { label: "Services", href: "#services" },
+    { label: "How we work", href: "#process" },
+    { label: "Proof", href: "#proof" },
+    { label: "About", href: "#about" },
+  ],
+  cta: { label: "Start a project", href: LINKS.calendar },
+} as const;
+
 // ── Hero ──────────────────────────────────────────────────────────────────────
 export const hero = {
   kicker: "Angeronia Labs · Philadelphia",
@@ -33,21 +57,14 @@ export const hero = {
   subhead: "Product engineering studio",
   body: "Senior-led. We take the fuzzy, half-specified problem off your plate — and hand back shipped, tested software you own.",
   ctaPrimary: { label: "Start a project", href: LINKS.calendar },
-  ctaSecondary: { label: "See what we build", href: "#work" },
-  scrollHint: "Scroll to unfold",
-  figureAlt: "Animated hand-drawn Möbius band — the Angeronia Labs mark.",
-  mobius: { R: 2.6, w: 0.8, t: 0.48, speed: 26, tilt: 0 },
+  ctaSecondary: { label: "See what we build", href: "#services" },
 } as const;
 
-// ── Philosophy (scroll-drawn continuity line) ────────────────────────────────
-// The line draws itself in one unbroken stroke as you scroll — no lifted pen,
-// no seam — while three terse beats light up in turn.
+// ── Philosophy ───────────────────────────────────────────────────────────────
 export const philosophy = {
   screenLabel: "Philosophy",
   kicker: "The through-line",
   heading: "One line. No hand-off cliff.",
-  lineAlt: "A single continuous line drawing itself in step with the scroll.",
-  caption: "One unbroken stroke",
   beats: [
     { tag: "Strategy is engineering", text: "The people who scope it write it. No seam to drop." },
     { tag: "One decision, two views", text: "Business goals and code are the same call — not two teams." },
@@ -55,7 +72,7 @@ export const philosophy = {
   ],
 } as const;
 
-// ── Services (stacked rows) ───────────────────────────────────────────────────
+// ── Services ─────────────────────────────────────────────────────────────────
 export interface Service {
   title: string;
   blurb: string;
@@ -87,7 +104,7 @@ export const services: Service[] = [
   },
 ];
 
-// ── Process (scroll-scrubbed timeline, no ordinals) ──────────────────────────
+// ── Process ──────────────────────────────────────────────────────────────────
 export interface ProcessStep {
   title: string;
   body: string;
@@ -117,30 +134,31 @@ export const product = {
     "Reference solutions & hidden outputs never leave the server",
   ],
   tags: ["Next.js", "Claude Agent SDK", "Drizzle / Neon", "Stripe", "E2B", "Turborepo"],
-  cta: { label: "Visit Code Socratic ↗", href: LINKS.codeSocratic },
+  cta: { label: "Visit Code Socratic", href: LINKS.codeSocratic },
   note: "The proof: the same team that consults for you shipped a production, multi-tenant AI SaaS.",
 } as const;
 
-// ── Proof / metrics (scroll-scrubbed meter graph) ─────────────────────────────
+// ── Proof / metrics ──────────────────────────────────────────────────────────
 export interface Metric {
   label: string;
-  from: number;
-  to: number;
+  /** The figure itself. Rendered statically — no count-up (O9). */
+  value: number;
   decimals: number;
   suffix: string;
+  /** Qualifier after the figure, e.g. "faster". Empty when the suffix says it. */
   word: string;
-  barFrac: number; // 0..1 — how full the meter fills
-  beforeFrac?: number; // optional ghost baseline (e.g. "was 50%")
+  /** 0..100 — how full the progress bar reads. */
+  percent: number;
   note: string;
 }
 
 export const metricsLabel = "Proof";
 export const metricsHeading = "Numbers from shipped work.";
 export const metrics: Metric[] = [
-  { label: "API latency", from: 0, to: 90, decimals: 0, suffix: "%", word: "faster", barFrac: 0.9, note: "graph-DB → Aurora · ~100K req/day · zero downtime" },
-  { label: "Doc throughput", from: 1, to: 2.4, decimals: 1, suffix: "×", word: "", barFrac: 0.8, note: "pipeline re-architecture · half the cost" },
-  { label: "Test coverage", from: 0, to: 70, decimals: 0, suffix: "%", word: "org-wide", barFrac: 0.7, note: "dependency-injection patterns, made default" },
-  { label: "Deploy success", from: 50, to: 100, decimals: 0, suffix: "%", word: "green", barFrac: 1.0, beforeFrac: 0.5, note: "rebuilt a broken 50% pipeline" },
+  { label: "API latency", value: 90, decimals: 0, suffix: "%", word: "faster", percent: 90, note: "graph-DB → Aurora · ~100K req/day · zero downtime" },
+  { label: "Doc throughput", value: 2.4, decimals: 1, suffix: "×", word: "", percent: 80, note: "pipeline re-architecture · half the cost" },
+  { label: "Test coverage", value: 70, decimals: 0, suffix: "%", word: "org-wide", percent: 70, note: "dependency-injection patterns, made default" },
+  { label: "Deploy success", value: 100, decimals: 0, suffix: "%", word: "green", percent: 100, note: "rebuilt a broken 50% pipeline" },
 ];
 export const metricsFootnote =
   "From five years on Aiva Docs — a mortgage-tech document-AI platform (1,100+ doc types, 1,200+ data elements).";
@@ -178,14 +196,14 @@ export const footer = {
     },
     {
       title: "Products",
-      links: [{ label: "Code Socratic ↗", href: LINKS.codeSocratic, external: true }],
+      links: [{ label: "Code Socratic", href: LINKS.codeSocratic, external: true }],
     },
     {
       title: "Elsewhere",
       links: [
-        { label: "Email ↗", href: LINKS.calendar, external: true },
-        { label: "LinkedIn ↗", href: LINKS.linkedin, external: true },
-        { label: "GitHub ↗", href: LINKS.github, external: true },
+        { label: "Email", href: LINKS.calendar, external: true },
+        { label: "LinkedIn", href: LINKS.linkedin, external: true },
+        { label: "GitHub", href: LINKS.github, external: true },
       ],
     },
   ],

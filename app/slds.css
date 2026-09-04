@@ -1,0 +1,32 @@
+/*
+ * app/slds.css — the single CSS entry point for the site.
+ *
+ * Order matters, but not as much as it looks: the SLDS 2 bundle opens with
+ * `@layer deprecated, defaults, shared, theme, component;`, which fixes the
+ * cascade order for everything that follows. Cosmos declares its tokens into
+ * `defaults`; the Angeronia theme layer declares into `theme`, which is later
+ * in that order, so the brand wins on layer precedence rather than on luck.
+ *
+ * Which vendor build is used — bundled or modular — is a flag on that script,
+ * not a change here. See DECISIONS.md ADR-004 for the measurement and the
+ * decision.
+ */
+
+/*
+ * SLDS 2, Cosmos theme — assembled by `scripts/build-vendor-css.mjs` into
+ * `vendor/`, which is generated and git-ignored. The step is not optional: the
+ * published dist points at eight Salesforce image assets it does not ship, and
+ * a bundler resolves `url()` statically, so importing it directly fails the
+ * build. The script replaces those references with `none` — they are Einstein
+ * and default-avatar artwork, which D10 puts out of scope anyway — and fails
+ * if the dist ever grows a reference it does not recognise.
+ *
+ * Never edit the generated file, and never PurgeCSS it.
+ */
+@import "../vendor/slds2.css";
+
+/* The brand: Carbon Teal + IBM Plex, as a theme layer. */
+@import "./theme.angeronia.css";
+
+/* Site composition only — containers and section rhythm, hooks throughout. */
+@import "./site.css";
