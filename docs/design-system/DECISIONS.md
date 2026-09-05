@@ -127,6 +127,13 @@ script replaces each with `none`. It asserts the exact removal list, so a
 design-system bump that adds a ninth reference fails the build rather than
 smuggling artwork into the bundle. The vendor files on disk are never edited.
 
+Because the file is generated and git-ignored, **every entry point that reads
+it needs a `pre` script**: `predev`, `prebuild`, `pretypecheck`, `prestorybook`,
+`prebuild-storybook`, `pretest:storybook` and `precheck:vendor-css`. CI caught
+the one that was missing — `test:storybook` — as 50 test files failing to
+import their setup on a clean checkout, which is exactly the failure a
+developer with a warm `vendor/` never sees.
+
 **Bundled vs modular (the Phase 1.7 spike), measured 2026-09-04 with
 `node scripts/build-vendor-css.mjs --measure`:**
 

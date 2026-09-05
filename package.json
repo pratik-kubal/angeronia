@@ -23,7 +23,9 @@
     "prestorybook": "npm run build:css",
     "prebuild-storybook": "npm run build:css",
     "test:storybook": "vitest run --project=storybook",
-    "check:vendor-css": "node scripts/compare-vendor-css.mjs"
+    "check:vendor-css": "node scripts/compare-vendor-css.mjs",
+    "pretest:storybook": "npm run build:css",
+    "precheck:vendor-css": "npm run build:css"
   },
   "dependencies": {
     "@carbon/icons-react": "^11.87.0",

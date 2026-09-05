@@ -61,6 +61,12 @@ jobs:
 
       - run: npm ci
 
+      # The stories load the production `app/slds.css`, which imports the
+      # generated vendor stylesheet. Without this the setup file cannot resolve
+      # its CSS and every story file fails to import.
+      - name: Build vendor CSS
+        run: npm run build:css
+
       - name: Install Chromium
         run: npx playwright install --with-deps chromium
 
