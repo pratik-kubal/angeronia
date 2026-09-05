@@ -300,3 +300,58 @@
 .site-product__loop {
   max-inline-size: var(--slds-g-sizing-content-3, 60ch);
 }
+
+/*
+ * Tooltip and Popover positioning.
+ *
+ * SLDS's popover CSS draws the panel and its nubbin but takes no position —
+ * in a Salesforce app that is the framework's job. These rules anchor the
+ * panel to its trigger, which is the smallest thing that makes the blueprint
+ * usable outside that framework. Follows Component Blueprints — blueprints are
+ * style-only, the behaviour is ours.
+ */
+.site-tooltip,
+.site-popover {
+  position: relative;
+  display: inline-block;
+}
+
+/* The panel itself carries its own class, so no `.slds-*` selector is
+   overridden (design rule 3). */
+.site-popover__panel {
+  position: absolute;
+  z-index: 8000;
+}
+
+.site-tooltip_top,
+.site-popover_top {
+  inset-block-end: calc(100% + var(--slds-g-spacing-3, 0.75rem));
+  inset-inline-start: 50%;
+  transform: translateX(-50%);
+}
+
+.site-tooltip_bottom,
+.site-popover_bottom {
+  inset-block-start: calc(100% + var(--slds-g-spacing-3, 0.75rem));
+  inset-inline-start: 50%;
+  transform: translateX(-50%);
+}
+
+.site-tooltip_left,
+.site-popover_left {
+  inset-inline-end: calc(100% + var(--slds-g-spacing-3, 0.75rem));
+  inset-block-start: 50%;
+  transform: translateY(-50%);
+}
+
+.site-tooltip_right,
+.site-popover_right {
+  inset-inline-start: calc(100% + var(--slds-g-spacing-3, 0.75rem));
+  inset-block-start: 50%;
+  transform: translateY(-50%);
+}
+
+/* Empty state: roomier than a plain box, because it is the only thing there. */
+.site-empty-state {
+  padding: var(--slds-g-spacing-9, 3rem);
+}

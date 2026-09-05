@@ -268,3 +268,60 @@ Two real defects surfaced only in the audit:
 
 Mobile scores after the fixes, against the production build: **performance 98,
 accessibility 100, best practices 100, SEO 100, CLS 0**, LCP 2.3 s, TBT 10 ms.
+
+### ADR-011 — The modular manifest lists the library, not the page
+
+Adding the Tier-2 components (Phase 5.5) grew `vendor/slds2.css` from 38 KB to
+60 KB gzip, and the page's total CSS from ~32 KB to ~47 KB, because the
+manifest is shared by the site and Storybook and now covers components no page
+renders yet. Lighthouse mobile performance went 98 → 97.
+
+That is the intended trade. The manifest describes what the *library* offers,
+and a component only enters the library once it is storied, a11y-clean and
+ready to use — so any page can then use any wrapper without a CSS change or a
+second build mode. Splitting it into "what the home page renders" and "what
+Storybook renders" would mean Storybook no longer loading the production
+`app/slds.css`, which plan §6.1 makes a rule precisely so a story cannot look
+right against a stylesheet the site does not ship.
+
+Revisit if the site grows several pages with genuinely disjoint component sets;
+the mechanism for that is per-route CSS, not a second manifest.
+
+---
+
+## 4. Plan closure
+
+`docs/plans/slds2-redesign-plan.md` is **implemented**. Phases 0–6 of §8 all
+landed; the deviations are ADR-001 … ADR-011 above.
+
+| Plan acceptance criterion | Outcome |
+|---|---|
+| Baseline commit + `pre-slds2` tag | Done, pushed |
+| `CLAUDE.md`, `DESIGN-RULES.md`, `DECISIONS.md` | Done |
+| Skills visible | Three `design-systems-*` skills under `.claude/skills/` |
+| Strict build green, no `ignoreBuildErrors` | Done |
+| Brand button Teal 60 + white text, both schemes | `#007d79` on `#fff`, 4.99:1 |
+| Links Teal 70 light / Teal 40 dark | `#005d5d` / `#08bdba`, verified in the browser |
+| IBM Plex, self-hosted, no `fonts.googleapis.com` | Served from `/_next/static/media` |
+| `slds-linter` clean | Zero violations, every rule at `error` |
+| `check:theme` clean | 30 hooks, 11 blue literals, 58 pairings at AA |
+| No Salesforce artwork in the bundle | Eight dangling references stripped and asserted |
+| Every Tier-1 component: docs, default, variants, dark | Done |
+| `test:storybook` zero a11y violations | 185 tests, 50 files, green |
+| Story ≡ `localhost:3000` | `Pages/Home` and `app/page.tsx` compose the same list |
+| No `ang-*`, citron, roughjs, Space Grotesk, Geist, "Salesforce" in the HTML | Verified against the rendered page |
+| CSS ≤ 150 KB gzip | ~47 KB total |
+| Lighthouse mobile: perf ≥ 90, a11y 100, best practices ≥ 95 | 97 / 100 / 100, SEO 100, CLS 0 |
+| CI: typecheck, lint, theme, stories | `.github/workflows/ci.yml` |
+| README rewritten, PR template | Done |
+| Tier-2 components | Accordion, Alert, Breadcrumbs, ButtonMenu, Checkbox, CheckboxToggle, EmptyState, ExpandableSection, Form Element, Input, Modal, PageHeader, Pill, Popover, RadioGroup, Select, Spinner, Tabs, Textarea, Toast, Tooltip |
+
+**Still open:** O7 (licensing acceptance) — the SLDS 2 Terms of Use are non-OSI
+and carry an indemnification clause. That is the user's call before this ships
+to production; nothing in the implementation blocks on it. The obligations are
+stated in the README.
+
+Not in scope for this work, and unchanged: O3 (a hero illustration), O5
+(Next.js 16, deliberately deferred to its own PR), O6 (deploying Storybook as a
+separate Vercel project), O8 (a density toggle — SLDS 2 exposes no supported
+switch, so the site is comfy-only).
