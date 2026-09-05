@@ -201,7 +201,7 @@ export const footer = {
     {
       title: "Elsewhere",
       links: [
-        { label: "Email", href: LINKS.calendar, external: true },
+        { label: "Email", href: LINKS.calendar },
         { label: "LinkedIn", href: LINKS.linkedin, external: true },
         { label: "GitHub", href: LINKS.github, external: true },
       ],

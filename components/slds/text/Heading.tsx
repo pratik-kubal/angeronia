@@ -51,7 +51,16 @@ export function Kicker({ className, children }: { className?: ClassValue; childr
   );
 }
 
-/** Body copy at the marketing scale, held to a readable measure. */
+/**
+ * Body copy at the marketing scale, held to a readable measure.
+ *
+ * Deliberately *not* `slds-text-body_regular`. That utility pins the size to
+ * `font-scale-base` — 13px, which is right for a dense application shell and
+ * too small for a page someone reads at arm's length. The page root consumes
+ * `font-scale-2` (1rem) instead, which plan §2.4 calls for explicitly, and
+ * body copy inherits it. `small` still uses the utility, because a footnote
+ * *should* be the design system's small.
+ */
 export function Body({
   size = "regular",
   measure = true,
@@ -64,13 +73,7 @@ export function Body({
   children: React.ReactNode;
 }) {
   return (
-    <p
-      className={cx(
-        size === "small" ? "slds-text-body_small" : "slds-text-body_regular",
-        measure && "site-measure",
-        className,
-      )}
-    >
+    <p className={cx(size === "small" && "slds-text-body_small", measure && "site-measure", className)}>
       {children}
     </p>
   );

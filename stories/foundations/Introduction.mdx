@@ -1,0 +1,68 @@
+import { Meta } from "@storybook/addon-docs/blocks";
+
+<Meta title="Foundations/Introduction" />
+
+# Angeronia Design System
+
+The UI for [angeronia.com](https://angeronia.com), built on **SLDS 2 (Cosmos)**
+with an Angeronia theme layer: IBM Carbon Teal as the brand accent, IBM Plex as
+the typeface, IBM Carbon for icons.
+
+This Storybook is the source of truth. A component exists here before it
+appears on a page, and the page itself is a story — so `Pages/Home` and
+`app/page.tsx` compose the same list of sections and cannot drift.
+
+## The contract
+
+The full rules are in [`docs/design-system/DESIGN-RULES.md`](https://github.com/pratik-kubal/angeronia/blob/main/docs/design-system/DESIGN-RULES.md).
+The ones that shape almost every decision:
+
+1. **One design system.** SLDS 2 plus the Angeronia theme layer. No other CSS
+   framework, utility library or icon set.
+2. **The selection ladder.** An existing wrapper in `components/slds/*` → an
+   SLDS 2 blueprint (add the wrapper and its stories, then use it) → SLDS
+   utility classes → custom CSS that consumes `--slds-g-*` hooks with
+   fallbacks. Custom CSS is the last resort and names the guideline it follows.
+3. **Never hard-code, never re-assign.** No literal colours, radii, shadows,
+   font sizes, spacing or durations. `app/theme.angeronia.css` is the only file
+   allowed to *assign* a `--slds-*` hook; everywhere else they are referenced.
+   `.slds-*` selectors are never overridden — a `site-*` class goes beside them.
+4. **Colour by role, in pairs.** Text on a container uses that container's
+   `on-*` hook. Links are `accent-2`, headings `on-surface-3`. Feedback colours
+   are only ever used for feedback. Brand teal reaches the page only through
+   `accent-*` and `brand-base-*`.
+
+## Adding a component
+
+1. Check `components/slds/` — it may already exist.
+2. Find the SLDS 2 blueprint. The `design-systems-slds-apply` skill in
+   `.claude/skills/` indexes every hook, blueprint, utility and Carbon icon
+   name, so you can confirm an artifact exists before writing markup for it.
+3. Write `components/slds/<name>/<Name>.tsx`. Markup from the blueprint;
+   behaviour, ARIA and keyboard handling are yours — blueprints are style-only.
+4. Write `<Name>.stories.tsx`: Default, every variant and size, states, long
+   content, dark. The dark story is not optional; half the contrast surprises
+   only appear there.
+5. Run the gates: `npm run lint:slds`, `npm run check:theme`,
+   `npm run test:storybook`, `npm run typecheck`.
+
+A component is **done** when the story exists, a11y is clean, the linter is
+clean, `check:theme` is clean, it has been reviewed in both schemes, and it is
+used on a page.
+
+## Boards
+
+- **Brand** — the teal ramp against Cosmos's blue, the accent pairings, and the
+  live contrast matrix `check:theme` asserts in CI.
+- **Color** — the semantic roles and their `on-*` pairs.
+- **Typography** — families, scale, weights, type styles, measure. Reports
+  whether the real IBM Plex faces loaded, so a board never lies about its own
+  metrics.
+- **Spacing, Shape & Motion** — the 4-pt scale, radius, shadow, duration.
+- **Icons** — every glyph the site uses and what it means here.
+
+## What is deliberately absent
+
+No Salesforce icons, illustrations, product artwork or application chrome, and
+no Salesforce wording in the product (D10). `slds-*` class names and `--slds-*`
+custom properties stay: they are the API of the CSS.

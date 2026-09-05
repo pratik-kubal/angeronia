@@ -1,26 +1,35 @@
-import { Button } from "@/components/slds/button";
-import { hero } from "@/data/angeronia";
+import { SiteHeader } from "@/components/site/site-header";
+import { Hero } from "@/components/site/hero";
+import { Philosophy } from "@/components/site/philosophy";
+import { Services } from "@/components/site/services";
+import { Process } from "@/components/site/process";
+import { ProductSpotlight } from "@/components/site/product-spotlight";
+import { Proof } from "@/components/site/proof";
+import { About } from "@/components/site/about";
+import { Contact } from "@/components/site/contact";
+import { SiteFooter } from "@/components/site/site-footer";
 
 /**
- * Placeholder home page (plan §8 Phase 1.9).
+ * The home page: a composition of storied sections and nothing else.
  *
- * Phase 3 replaces this with the real composition of `components/site/*`. It
- * exists so the strict build has something to compile and so the Phase 1
- * acceptance checks — teal brand button, IBM Plex, light/dark with no flash —
- * have a surface to run against.
+ * `Pages/Home` in Storybook renders exactly this list, so the two cannot drift
+ * (design rule 11).
  */
 export default function Home() {
   return (
-    <main id="main" className="site-section site-container">
-      <div className="slds-container_medium slds-container_center">
-        <h1 className="slds-text-heading_large site-measure_heading">{hero.h1}</h1>
-        <p className="slds-m-top_medium slds-text-body_regular site-measure">{hero.body}</p>
-        <p className="slds-m-top_large">
-          <Button variant="brand" href={hero.ctaPrimary.href}>
-            {hero.ctaPrimary.label}
-          </Button>
-        </p>
-      </div>
-    </main>
+    <>
+      <SiteHeader />
+      <main id="main">
+        <Hero />
+        <Philosophy />
+        <Services />
+        <Process />
+        <ProductSpotlight />
+        <Proof />
+        <About />
+        <Contact />
+      </main>
+      <SiteFooter />
+    </>
   );
 }

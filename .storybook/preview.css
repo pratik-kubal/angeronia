@@ -1,0 +1,16 @@
+/*
+ * Storybook-only font wiring.
+ *
+ * Stories do not render `app/layout.tsx`, so nothing sets the
+ * `--font-plex-*` variables that `next/font` provides in production and that
+ * theme block C consumes. Defining them here from the self-hosted
+ * `@fontsource` faces means a story renders in the same IBM Plex the site
+ * does — never silently in the system fallback (plan §6.1).
+ *
+ * This file is Storybook chrome, not site CSS: it is outside the `lint:slds`
+ * glob and assigns no design-system hook.
+ */
+:root {
+  --font-plex-sans: "IBM Plex Sans";
+  --font-plex-mono: "IBM Plex Mono";
+}

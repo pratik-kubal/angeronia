@@ -1,6 +1,7 @@
 import type * as React from "react";
 import { Launch } from "@carbon/icons-react";
 import { cx, type ClassValue } from "@/lib/slds/cx";
+import { Icon } from "@/components/slds/icon";
 import { copy } from "@/data/angeronia";
 
 /**
@@ -33,13 +34,17 @@ export function Link({ href, external, className, children, ...rest }: LinkProps
       {children}
       {external ? (
         <>
-          <Launch
-            className="slds-icon slds-icon_xx-small slds-current-color site-link__icon"
-            size={16}
-            aria-hidden="true"
-            focusable="false"
+          {/* `slds-current-color` is a *descendant* selector in SLDS, so the
+              glyph has to sit inside a container that carries it — which is
+              exactly what `Icon` renders. Putting the class on the svg itself
+              leaves the icon at its default white fill. */}
+          <Icon
+            icon={Launch}
+            size="xx-small"
+            tone="current"
+            containerClassName="site-link__icon"
+            assistiveText={` (${copy.externalLink})`}
           />
-          <span className="slds-assistive-text">{` (${copy.externalLink})`}</span>
         </>
       ) : null}
     </a>

@@ -49,7 +49,7 @@ export function ProgressBar({
     <div className={cx("site-metric", className)}>
       <div className="slds-grid slds-grid_align-spread slds-m-bottom_xx-small">
         <span className="slds-text-title">{label}</span>
-        <span className="slds-text-title_bold">{valueText}</span>
+        <span className="slds-text-title_bold slds-text-font_monospace">{valueText}</span>
       </div>
       <div
         className={cx("slds-progress-bar", SIZE_CLASS[size])}

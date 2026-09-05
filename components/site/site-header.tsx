@@ -2,7 +2,7 @@ import { Button } from "@/components/slds/button";
 import { BrandMark } from "@/components/site/brand-mark";
 import { ColorSchemeSwitcher } from "@/components/site/color-scheme-switcher";
 import { Container } from "@/components/slds/layout";
-import { nav } from "@/data/angeronia";
+import { BRAND, nav } from "@/data/angeronia";
 
 /**
  * The site header.
@@ -20,7 +20,7 @@ export function SiteHeader() {
     <header className="site-header">
       <Container size="x-large">
         <div className="slds-grid slds-grid_align-spread slds-grid_vertical-align-center site-header__bar">
-          <a href="#top" className="site-header__brand">
+          <a href="/" className="site-header__brand" aria-label={`${BRAND.name} — home`}>
             <BrandMark />
           </a>
 

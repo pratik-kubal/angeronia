@@ -17,7 +17,12 @@
     "build:css": "node scripts/build-vendor-css.mjs",
     "predev": "npm run build:css",
     "prebuild": "npm run build:css",
-    "pretypecheck": "npm run build:css"
+    "pretypecheck": "npm run build:css",
+    "storybook": "storybook dev -p 6006 --no-open",
+    "build-storybook": "storybook build",
+    "prestorybook": "npm run build:css",
+    "prebuild-storybook": "npm run build:css",
+    "test:storybook": "vitest run --project=storybook"
   },
   "dependencies": {
     "@carbon/icons-react": "^11.87.0",
@@ -31,12 +36,23 @@
   },
   "devDependencies": {
     "@carbon/colors": "^11.57.0",
+    "@fontsource/ibm-plex-mono": "^5.3.0",
     "@fontsource/ibm-plex-sans": "^5.3.0",
     "@salesforce-ux/slds-linter": "^1.2.1",
+    "@storybook/addon-a11y": "^10.6.0",
+    "@storybook/addon-docs": "^10.6.0",
+    "@storybook/addon-links": "^10.6.0",
+    "@storybook/addon-vitest": "^10.6.0",
+    "@storybook/nextjs-vite": "^10.6.0",
     "@types/node": "^22",
     "@types/react": "^19",
     "@types/react-dom": "^19",
+    "@vitest/browser": "^3.2.7",
+    "@vitest/coverage-v8": "^3.2.7",
     "opentype.js": "^2.0.0",
-    "typescript": "^5"
+    "playwright": "^1.63.0",
+    "storybook": "^10.6.0",
+    "typescript": "^5",
+    "vitest": "^3.2.7"
   }
 }

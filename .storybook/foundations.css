@@ -1,0 +1,86 @@
+/*
+ * Chrome for the Foundations boards.
+ *
+ * These rules describe the design system rather than being part of it: they
+ * style swatch grids and sample tiles that never appear on the site. They live
+ * under `.storybook/` for that reason — outside the `lint:slds` glob, which
+ * covers the CSS the product actually ships.
+ */
+
+.sb-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(15rem, 1fr));
+  gap: var(--slds-g-spacing-4, 1rem);
+}
+
+.sb-swatch {
+  display: flex;
+  align-items: center;
+  gap: var(--slds-g-spacing-3, 0.75rem);
+}
+
+.sb-swatch__chip {
+  inline-size: var(--slds-g-sizing-9, 2rem);
+  block-size: var(--slds-g-sizing-9, 2rem);
+  flex: none;
+  border-radius: var(--slds-g-radius-border-2, 0.5rem);
+  border: 1px solid var(--slds-g-color-border-1);
+}
+
+.sb-swatch__meta {
+  display: flex;
+  flex-direction: column;
+  min-inline-size: 0;
+}
+
+.sb-pairing__sample {
+  padding: var(--slds-g-spacing-4, 1rem);
+  border-radius: var(--slds-g-radius-border-2, 0.5rem);
+  margin-block-end: var(--slds-g-spacing-2, 0.5rem);
+}
+
+.sb-ramp {
+  display: grid;
+  grid-template-columns: 4rem 1fr 1fr;
+  align-items: center;
+  gap: var(--slds-g-spacing-2, 0.5rem);
+}
+
+.sb-ramp__bar {
+  block-size: var(--slds-g-sizing-9, 2rem);
+  border-radius: var(--slds-g-radius-border-1, 0.25rem);
+}
+
+.sb-tile {
+  padding: var(--slds-g-spacing-4, 1rem);
+  border-radius: var(--slds-g-radius-border-2, 0.5rem);
+  background: var(--slds-g-color-surface-container-1);
+  border: 1px solid var(--slds-g-color-border-1);
+}
+
+.sb-box {
+  background: var(--slds-g-color-accent-container-1);
+  block-size: var(--slds-g-sizing-7, 1.5rem);
+  border-radius: var(--slds-g-radius-border-1, 0.25rem);
+}
+
+.sb-surface {
+  padding: var(--slds-g-spacing-6, 2rem);
+}
+
+.sb-table {
+  inline-size: 100%;
+  border-collapse: collapse;
+}
+
+.sb-table th,
+.sb-table td {
+  text-align: start;
+  padding: var(--slds-g-spacing-2, 0.5rem);
+  border-block-end: 1px solid var(--slds-g-color-border-1);
+  vertical-align: top;
+}
+
+.sb-scroll {
+  overflow-x: auto;
+}

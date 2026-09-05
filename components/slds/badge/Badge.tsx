@@ -35,9 +35,17 @@ export interface BadgeProps {
 export function Badge({ variant = "default", icon: Glyph, className, children }: BadgeProps) {
   return (
     <span className={cx("slds-badge", VARIANT_CLASS[variant], className)}>
+      {/* `.slds-badge__icon` sets `color`, not `fill`, so the glyph needs
+          `slds-current-color` on its container to inherit it — otherwise
+          `.slds-icon` falls back to its default white fill. */}
       {Glyph ? (
-        <span className="slds-badge__icon slds-badge__icon_left">
-          <Glyph className="slds-icon slds-icon_xx-small" size={16} aria-hidden="true" focusable="false" />
+        <span className="slds-badge__icon slds-badge__icon_left slds-current-color">
+          <Glyph
+            className="slds-icon slds-icon_xx-small"
+            size={16}
+            aria-hidden="true"
+            focusable="false"
+          />
         </span>
       ) : null}
       {children}

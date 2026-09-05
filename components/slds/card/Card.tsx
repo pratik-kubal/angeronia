@@ -24,6 +24,8 @@ export interface CardProps {
   footer?: React.ReactNode;
   /** Pad the body. Off when the body supplies its own layout. */
   bodyInner?: boolean;
+  /** Fill the height of the column, so cards in a row line their footers up. */
+  fill?: boolean;
   className?: ClassValue;
   children?: React.ReactNode;
 }
@@ -35,13 +37,14 @@ export function Card({
   actions,
   footer,
   bodyInner = true,
+  fill,
   className,
   children,
 }: CardProps) {
   const Heading = `h${headingLevel}` as const;
 
   return (
-    <article className={cx("slds-card", className)}>
+    <article className={cx("slds-card", fill && "site-card_fill", className)}>
       <div className="slds-card__header slds-grid">
         <header className="slds-media slds-media_center slds-has-flexi-truncate">
           {icon ? (
@@ -56,7 +59,11 @@ export function Card({
         {actions ? <div className="slds-no-flex">{actions}</div> : null}
       </div>
       {children ? (
-        <div className={cx("slds-card__body", bodyInner && "slds-card__body_inner")}>{children}</div>
+        <div
+          className={cx("slds-card__body", "site-card__body", bodyInner && "slds-card__body_inner")}
+        >
+          {children}
+        </div>
       ) : null}
       {footer ? <footer className="slds-card__footer">{footer}</footer> : null}
     </article>

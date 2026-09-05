@@ -21,6 +21,8 @@ export interface GridProps {
   verticalAlign?: "start" | "center" | "end";
   /** Stack vertically instead of horizontally. */
   vertical?: boolean;
+  /** Make every column as tall as the tallest, so footers line up. */
+  stretch?: boolean;
   gutters?: Gutter | true;
   className?: ClassValue;
   children: React.ReactNode;
@@ -31,6 +33,7 @@ export function Grid({
   align,
   verticalAlign,
   vertical,
+  stretch,
   gutters,
   className,
   children,
@@ -41,6 +44,7 @@ export function Grid({
         "slds-grid",
         wrap && "slds-wrap",
         vertical && "slds-grid_vertical",
+        stretch && "slds-grid_vertical-stretch",
         align && `slds-grid_align-${align}`,
         verticalAlign && `slds-grid_vertical-align-${verticalAlign}`,
         gutters === true ? "slds-gutters" : gutters && `slds-gutters_${gutters}`,
@@ -75,6 +79,30 @@ export function Col({ size, medium, large, className, children }: ColProps) {
         className,
       )}
     >
+      {children}
+    </div>
+  );
+}
+
+/**
+ * A row of naturally-sized items that wraps: tags, badges, a pair of buttons.
+ *
+ * Not a `Grid` of `Col`s — `slds-col` grows to fill the row, which is right
+ * for a layout grid and wrong for a tag list, where it spreads four badges
+ * across 1200px. SLDS has no gap-based cluster, so this is rung 4 of the
+ * ladder: one rule in `app/site.css`, built from spacing hooks.
+ */
+export function Cluster({
+  gap = "small",
+  className,
+  children,
+}: {
+  gap?: "small" | "medium";
+  className?: ClassValue;
+  children: React.ReactNode;
+}) {
+  return (
+    <div className={cx("site-cluster", gap === "medium" && "site-cluster_medium", className)}>
       {children}
     </div>
   );

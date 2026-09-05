@@ -43,9 +43,14 @@
   }
 }
 
-/* A section that carries its own ground, so the rhythm reads as a band. */
+/*
+ * A section that carries its own ground, so alternating sections read as
+ * bands. `surface-container-3` rather than `-2`: the page itself already sits
+ * on `surface-2`, so `-2` would be invisible, and white cards need a ground
+ * darker than they are to keep their edge.
+ */
 .site-section_shade {
-  background-color: var(--slds-g-color-surface-container-2, #f3f3f3);
+  background-color: var(--slds-g-color-surface-container-3, #e5e5e5);
 }
 
 /* Prose measure. Sizing hooks for width, per design rule 6. */
@@ -58,22 +63,28 @@
 }
 
 /*
- * The skip link. SLDS ships `slds-assistive-text_focus`, which reveals the
- * link on focus but positions it for an app shell; this places it over the
- * page and gives it the theme's own surface and focus ring.
- * Follows Accessibility → Global Focus.
+ * The skip link.
+ *
+ * `slds-assistive-text` / `_focus` do the hiding and revealing, and set most
+ * of their properties `!important` — so these rules only place the link
+ * (position stays SLDS's `absolute`) and the visible treatment sits on an
+ * inner span, rather than escalating to `!important` to win a fight with the
+ * design system. Follows Accessibility → Global Focus.
  */
 .site-skip-link:focus {
-  position: fixed;
   inset-block-start: var(--slds-g-spacing-4, 1rem);
   inset-inline-start: var(--slds-g-spacing-4, 1rem);
   z-index: 9000;
+  text-decoration: none;
+}
+
+.site-skip-link:focus .site-skip-link__label {
+  display: inline-block;
   padding: var(--slds-g-spacing-3, 0.75rem) var(--slds-g-spacing-5, 1.5rem);
   border-radius: var(--slds-g-radius-border-2, 0.5rem);
   background-color: var(--slds-g-color-surface-container-1, #fff);
   color: var(--slds-g-color-on-surface-3, #081a1c);
   box-shadow: var(--slds-g-shadow-3, 0px 2px 4px 0px #00000027);
-  text-decoration: none;
 }
 
 /*
@@ -122,6 +133,11 @@
 .site-link__icon {
   margin-inline-start: var(--slds-g-spacing-1, 0.25rem);
   vertical-align: text-bottom;
+}
+
+/* The launch glyph rides with the label rather than owning a line of its own. */
+.site-link_external .site-link__icon {
+  display: inline-flex;
 }
 
 /* One metric block: label row, bar, note. */
@@ -187,4 +203,100 @@
 
 .site-header__actions {
   gap: var(--slds-g-spacing-3, 0.75rem);
+}
+
+/* Hero: a little more air above the fold than the standard section rhythm. */
+.site-hero {
+  padding-block-start: var(--slds-g-spacing-12, 5rem);
+}
+
+.site-hero__lede {
+  font-size: var(--slds-g-font-scale-3, 1.25rem);
+  color: var(--slds-g-color-on-surface-2, #2e2e2e);
+}
+
+/* Contact: the closing panel reads as one block, so it gets the roomier pad. */
+.site-contact {
+  padding: var(--slds-g-spacing-9, 3rem);
+}
+
+/* Footer sits at the end of the column, whatever the page height. */
+.site-footer {
+  margin-block-start: auto;
+  padding-block: var(--slds-g-spacing-11, 4rem);
+  background-color: var(--slds-g-color-surface-container-2, #f3f3f3);
+  border-block-start: var(--slds-g-sizing-border-1, 1px) solid
+    var(--slds-g-color-border-1, #e5e5e5);
+}
+
+.site-footer__legal {
+  gap: var(--slds-g-spacing-2, 0.5rem);
+  padding-block-start: var(--slds-g-spacing-5, 1.5rem);
+  border-block-start: var(--slds-g-sizing-border-1, 1px) solid
+    var(--slds-g-color-border-1, #e5e5e5);
+}
+
+/*
+ * Cluster — a row of naturally-sized items that wraps.
+ *
+ * SLDS's grid columns grow to fill the row, which spreads four badges across
+ * the full container. There is no gap-based cluster utility, so this is rung 4
+ * of the ladder: spacing hooks, one rule, no `.slds-*` selector touched.
+ */
+.site-cluster {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--slds-g-spacing-2, 0.5rem);
+}
+
+.site-cluster_medium {
+  gap: var(--slds-g-spacing-4, 1rem);
+}
+
+/*
+ * Cards that fill their column, so a row of them lines its footers up.
+ * `slds-grid_vertical-stretch` stretches the columns; the card needs to fill
+ * the column it is now taller than.
+ */
+.site-card_fill {
+  block-size: 100%;
+  display: flex;
+  flex-direction: column;
+}
+
+.site-card_fill .site-card__body {
+  flex: 1 0 auto;
+}
+
+/*
+ * Progress Indicator stage labels.
+ *
+ * Positioned out of flow so the row keeps the height of its markers — SLDS
+ * centres the track absolutely on `.slds-progress`, so anything that grows the
+ * row would push the track off the markers.
+ */
+.site-progress_labelled {
+  margin-block-end: var(--slds-g-spacing-8, 2.5rem);
+}
+
+.site-progress__step {
+  position: relative;
+}
+
+.site-progress__label {
+  position: absolute;
+  inset-block-start: calc(100% + var(--slds-g-spacing-2, 0.5rem));
+  inset-inline-start: 50%;
+  transform: translateX(-50%);
+  white-space: nowrap;
+  color: var(--slds-g-color-on-surface-1, #5c5c5c);
+}
+
+/*
+ * The product loop sits at the width of the copy beside it rather than the
+ * full card, so its three markers are not stranded across 1100px.
+ */
+.site-product__loop {
+  max-inline-size: var(--slds-g-sizing-content-3, 60ch);
 }
