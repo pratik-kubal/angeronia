@@ -183,3 +183,88 @@ to do. `npm run check:theme` enforces a far stricter contract in its place:
 every assigned hook must already exist in Cosmos, block A must match its
 generator byte for byte, block B may not contain a hex, and every resulting
 pairing must clear WCAG AA in both schemes.
+
+### ADR-007 — Path renders neutral when no stage is current
+
+**Plan:** §4 and §7 — "Path (static, all complete/current) + 4-col Tile grid".
+
+**Done:** `Path` takes `current` as optional. The Process section omits it, so
+every stage renders `slds-is-incomplete`.
+
+**Why:** the plan's suggestion does not survive contact with the CSS. SLDS's
+Path flips a completed stage's *name* out of view and rotates a checkmark in
+its place —
+
+```css
+.slds-is-complete .slds-path__stage { transform: translate(-50%, -50%) rotateX(0deg); }
+```
+
+— which is right for a sales path where only the current stage matters, and
+wrong for four moves whose names are the content: three of the four labels
+disappear. Completed stages are also painted
+`--slds-g-color-success-container-1`, and design rule 4 reserves the feedback
+families for feedback.
+
+Rendering the four stages neutral keeps every name visible, keeps the success
+green out of a non-feedback context, and still says what the section says:
+four stages on one track. `current` stays available for a genuine progress
+state, and the `AtEachStage` story exercises it.
+
+### ADR-008 — The modular vendor build ships, verified by computed style
+
+**Supersedes the "bundled ships for now" note in ADR-004.**
+
+`scripts/compare-vendor-css.mjs` loads the running page under each build and
+compares the resolved value of 25 CSS properties across 28 elements in both
+colour schemes — **1400 computed values, all identical**. That is the only
+thing that could have differed: the modular build reproduces the bundle's
+cascade-layer assignment by hand, which a diff of the CSS cannot check.
+
+With parity demonstrated, modular ships: **38 KB gzip against the bundle's
+108 KB**, a 65 % reduction on the largest asset the page loads. Measured after
+the switch, the page's total CSS is ~32 KB gzip.
+
+The one failure mode modular has and bundled does not is a wrapper whose
+stylesheet is missing from the manifest — the symptom would be an unstyled
+component rather than an error. `assertManifestCoversWrappers` in
+`build-vendor-css.mjs` fails the build if `components/slds/` grows a folder
+with no entry in `WRAPPER_TO_DIST`, so adding a component forces the manifest
+question to be answered.
+
+Re-run the comparison after any `@salesforce-ux/design-system-2` bump:
+
+```bash
+npm run dev            # in one terminal
+npm run check:vendor-css
+```
+
+### ADR-009 — The page's real contrast pairings are audited by axe, not by check:theme
+
+**Plan:** §8 Phase 5.3 — "Contrast audit of every pairing actually used
+(extends `check:theme` with the page's real combinations)".
+
+**Done:** `npm run test:storybook` runs axe over every story — including
+`Pages/Home` in both colour schemes — with `a11y: { test: "error" }`, so a
+contrast violation fails the run.
+
+**Why:** axe measures the *rendered* pairing, including inherited colour,
+opacity and overlapping backgrounds. A second implementation inside
+`check:theme` would have to re-derive all of that from the DOM and would be
+strictly weaker at it. `check:theme` keeps the job it is uniquely good at —
+the theme's own hook-to-hook pairings, checked without a browser, on every
+commit — and the page's real combinations are checked where they actually
+exist.
+
+### ADR-010 — Lighthouse findings fixed rather than waived
+
+Two real defects surfaced only in the audit:
+
+* **Label in Name (WCAG 2.5.3).** The header's brand link carried
+  `aria-label="Angeronia Labs — home"` over a lockup that renders "Angeronia
+  Labs / Philadelphia" as text, so its accessible name did not contain its
+  visible name. The label is gone; the visible words are the name.
+* **No `robots.txt` or sitemap.** Added `app/robots.ts` and `app/sitemap.ts`,
+  both built from `SITE_URL` in `data/angeronia.ts`.
+
+Mobile scores after the fixes, against the production build: **performance 98,
+accessibility 100, best practices 100, SEO 100, CLS 0**, LCP 2.3 s, TBT 10 ms.

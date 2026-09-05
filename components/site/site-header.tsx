@@ -2,7 +2,7 @@ import { Button } from "@/components/slds/button";
 import { BrandMark } from "@/components/site/brand-mark";
 import { ColorSchemeSwitcher } from "@/components/site/color-scheme-switcher";
 import { Container } from "@/components/slds/layout";
-import { BRAND, nav } from "@/data/angeronia";
+import { nav } from "@/data/angeronia";
 
 /**
  * The site header.
@@ -20,7 +20,10 @@ export function SiteHeader() {
     <header className="site-header">
       <Container size="x-large">
         <div className="slds-grid slds-grid_align-spread slds-grid_vertical-align-center site-header__bar">
-          <a href="/" className="site-header__brand" aria-label={`${BRAND.name} — home`}>
+          {/* No `aria-label`: the lockup renders the studio name as text, so an
+              added label would replace the visible words with different ones —
+              WCAG 2.5.3 Label in Name. */}
+          <a href="/" className="site-header__brand">
             <BrandMark />
           </a>
 

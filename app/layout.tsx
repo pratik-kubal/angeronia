@@ -3,10 +3,10 @@ import type { Metadata } from "next";
 import { IBM_Plex_Sans, IBM_Plex_Mono } from "next/font/google";
 import { ThemeProvider } from "@/components/site/theme-provider";
 import { SkipLink } from "@/components/site/skip-link";
-import { BRAND, LINKS } from "@/data/angeronia";
+import { BRAND, LINKS, SITE_URL } from "@/data/angeronia";
 import "./slds.css";
 
-const siteUrl = "https://angeronia.com";
+const siteUrl = SITE_URL;
 
 // IBM Plex, self-hosted by next/font — no request reaches Google at runtime,
 // and the generated size-adjusted fallback keeps the swap from shifting layout.

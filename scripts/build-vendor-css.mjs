@@ -21,7 +21,7 @@
 //   node scripts/build-vendor-css.mjs --mode=modular assemble (modular spike)
 //   node scripts/build-vendor-css.mjs --measure      print both sizes, write nothing
 
-import { readFileSync, writeFileSync, mkdirSync } from "node:fs";
+import { readFileSync, writeFileSync, mkdirSync, readdirSync } from "node:fs";
 import { gzipSync } from "node:zlib";
 import { fileURLToPath } from "node:url";
 import { dirname, resolve } from "node:path";
@@ -30,6 +30,13 @@ const here = dirname(fileURLToPath(import.meta.url));
 const root = resolve(here, "..");
 const DIST = resolve(root, "node_modules/@salesforce-ux/design-system-2/dist");
 const OUT = resolve(root, "vendor/slds2.css");
+
+/**
+ * What the site ships. `modular` — 37 KB gzip against the bundle's 108 KB,
+ * with all 1400 computed values verified identical across both colour schemes
+ * by `scripts/compare-vendor-css.mjs`. See DECISIONS.md ADR-004.
+ */
+const DEFAULT_MODE = "modular";
 
 /**
  * The Salesforce artwork the dist points at but does not ship. Exact list —
@@ -47,6 +54,33 @@ const SALESFORCE_ARTWORK = [
   "profile_avatar_160.png",
   "profile_avatar_200.png",
 ];
+
+/**
+ * Which dist stylesheet backs each wrapper in `components/slds/`.
+ *
+ * `null` means "no component CSS of its own" — the wrapper is built from
+ * utilities, which are always included. `assertManifestCoversWrappers` fails
+ * if a wrapper folder appears with no entry here, which is the one way the
+ * modular build could silently ship a component with no styling.
+ */
+const WRAPPER_TO_DIST = {
+  avatar: "avatar/avatar.css",
+  badge: "badge/badge.css",
+  button: "button/button.css",
+  "button-group": "buttonGroup/buttonGroup.css",
+  "button-icon": "buttonIcon/buttonIcon.css",
+  card: "card/card.css",
+  icon: "icon/icon.css",
+  layout: null, // grid, box and container utilities
+  link: null, // base stylesheet styles a bare <a>
+  list: null, // vertical / horizontal / dotted list utilities
+  "media-object": null, // mediaObject utility
+  path: "path/path.css",
+  "progress-bar": "progressBar/progressBar.css",
+  "progress-indicator": "progressIndicator/progressIndicator.css",
+  text: null, // text utilities
+  tile: "tile/tile.css",
+};
 
 /**
  * The modular manifest: what the site and Storybook actually render. Adding a
@@ -81,6 +115,7 @@ const MODULAR = {
     "utilities/floats.css",
     "utilities/print.css",
     // Components
+    "avatar/avatar.css",
     "badge/badge.css",
     "button/button.css",
     "buttonGroup/buttonGroup.css",
@@ -95,6 +130,46 @@ const MODULAR = {
     "tile/tile.css",
   ],
 };
+
+/**
+ * Fail if `components/slds/` has a wrapper the manifest does not account for.
+ *
+ * The bundled build cannot have this problem — it contains everything. The
+ * modular one can, and the symptom would be an unstyled component rather than
+ * an error, so it is worth an explicit check.
+ */
+function assertManifestCoversWrappers() {
+  let wrappers;
+  try {
+    wrappers = readdirSync(resolve(root, "components/slds"), { withFileTypes: true })
+      .filter((e) => e.isDirectory())
+      .map((e) => e.name);
+  } catch {
+    return; // no wrappers yet
+  }
+
+  const missing = wrappers.filter((name) => !(name in WRAPPER_TO_DIST));
+  if (missing.length) {
+    console.error(
+      `components/slds/${missing.join(", ")} has no entry in WRAPPER_TO_DIST ` +
+        "(scripts/build-vendor-css.mjs).\nAdd the dist stylesheet it needs to " +
+        "MODULAR.component, or `null` if it is built from utilities.",
+    );
+    process.exit(1);
+  }
+
+  const needed = wrappers
+    .map((name) => WRAPPER_TO_DIST[name])
+    .filter((file) => file !== null && file !== undefined);
+  const absent = needed.filter((file) => !MODULAR.component.includes(file));
+  if (absent.length) {
+    console.error(
+      `the modular manifest is missing: ${absent.join(", ")}.\n` +
+        "Add them to MODULAR.component in scripts/build-vendor-css.mjs.",
+    );
+    process.exit(1);
+  }
+}
 
 /** Fail unless every dangling artwork reference is one we expect. */
 function assertArtworkRefs(css, label) {
@@ -144,6 +219,8 @@ function buildBundled() {
 }
 
 function buildModular() {
+  assertManifestCoversWrappers();
+
   const parts = [
     "@layer deprecated, defaults, shared, theme, component;",
     "",
@@ -163,7 +240,7 @@ function buildModular() {
 }
 
 const args = process.argv.slice(2);
-const mode = (args.find((a) => a.startsWith("--mode="))?.split("=")[1] ?? "bundled");
+const mode = args.find((a) => a.startsWith("--mode="))?.split("=")[1] ?? DEFAULT_MODE;
 
 const size = (s) => `${(Buffer.byteLength(s) / 1024).toFixed(0)} KB raw / ${(gzipSync(s).length / 1024).toFixed(0)} KB gzip`;
 

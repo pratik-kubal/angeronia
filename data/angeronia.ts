@@ -22,6 +22,9 @@ export const COLOR_SCHEME_OPTIONS: { value: ColorScheme; label: string }[] = [
   { value: "system", label: copy.colorScheme.system },
 ];
 
+/** The canonical origin. Used by metadata, robots.txt and the sitemap. */
+export const SITE_URL = "https://angeronia.com";
+
 export const BRAND = {
   name: "Angeronia Labs",
   legal: "Angeronia Labs LLC",
