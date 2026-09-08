@@ -474,11 +474,27 @@
 // bodies. The rail owns the gap between the two.
 .site-process__rail {
   margin-block-end: $spacing-09;
+
   // Four Carbon progress steps have a minimum width each and come to about
-  // 520px, so on a phone the rail scrolls inside itself rather than pushing the
-  // page sideways. Nothing is lost by not scrolling it: each stage's name is
-  // also in the step block beneath it, as the assistive text after "Step N".
-  overflow-x: auto;
+  // 512px, which fits from `md` up and does not below it. So on a phone the
+  // rail scrolls inside itself rather than pushing the page sideways; nothing
+  // is lost by not scrolling it, because each stage's name is also in the step
+  // block beneath, as the assistive text after "Step N".
+  //
+  // Two things this rule has to be careful about, both learned the hard way:
+  //
+  //   * It is scoped to the widths that need it. An overflow container at every
+  //     width is a scrollbar waiting to appear on a rail with nothing to
+  //     scroll.
+  //   * `overflow-y` is pinned. Setting only `overflow-x: auto` forces the
+  //     other axis off `visible` to `auto`, and Carbon's `.cds--progress-text`
+  //     stands 2px proud of its step — it reserves room for a `secondaryLabel`
+  //     this rail does not pass. That is 2px of nothing, and it was enough to
+  //     raise a vertical scrollbar across the whole rail.
+  @include breakpoint-down(md) {
+    overflow-x: auto;
+    overflow-y: hidden;
+  }
 }
 
 // A step is its number and its body, the rail above having already named it.
