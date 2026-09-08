@@ -1,0 +1,37 @@
+// ============================================================================
+// Carbon configuration — the ONE place @carbon/react is configured.
+//
+// Sass configures a module the first time it is loaded, so every stylesheet
+// that touches Carbon must `@use './config'` BEFORE it `@use`s any
+// `@carbon/react/scss/*` module. `globals.scss` does this for the whole app,
+// and `_themes.scss` repeats it so it is safe to load on its own.
+// ============================================================================
+@use 'sass:string';
+
+@forward '@carbon/react/scss/config' with (
+  // IBM Plex is self-hosted by next/font (app/layout.tsx) and exposed as
+  // --font-plex-sans / --font-plex-mono. Carbon must not emit its own
+  // @font-face rules or the faces would be fetched twice (D11).
+  $css--font-face: false,
+  // CSS Grid only (`Grid` / `Column`); the legacy flexbox grid is never emitted.
+  $use-flexbox-grid: false
+);
+
+// Point every Carbon type token at the next/font variables. The full map is
+// restated because configuring `$font-families` replaces it wholesale, and the
+// tail of each stack is the same system fallback Carbon ships.
+@forward '@carbon/react/scss/type' with (
+  $font-families: (
+    'mono': string.unquote("var(--font-plex-mono), 'IBM Plex Mono', ui-monospace, SFMono-Regular, Menlo, monospace"),
+    'sans': string.unquote("var(--font-plex-sans), 'IBM Plex Sans', system-ui, -apple-system, BlinkMacSystemFont, sans-serif"),
+    'sans-condensed': string.unquote("'IBM Plex Sans Condensed', system-ui, -apple-system, BlinkMacSystemFont, sans-serif"),
+    'sans-arabic': string.unquote("'IBM Plex Sans Arabic', system-ui, -apple-system, BlinkMacSystemFont, sans-serif"),
+    'sans-devanagari': string.unquote("'IBM Plex Sans Devanagari', system-ui, -apple-system, BlinkMacSystemFont, sans-serif"),
+    'sans-hebrew': string.unquote("'IBM Plex Sans Hebrew', system-ui, -apple-system, BlinkMacSystemFont, sans-serif"),
+    'sans-jp': string.unquote("'IBM Plex Sans JP', system-ui, -apple-system, BlinkMacSystemFont, sans-serif"),
+    'sans-kr': string.unquote("'IBM Plex Sans KR', system-ui, -apple-system, BlinkMacSystemFont, sans-serif"),
+    'sans-thai-looped': string.unquote("'IBM Plex Sans Thai Looped', system-ui, -apple-system, BlinkMacSystemFont, sans-serif"),
+    'sans-thai': string.unquote("'IBM Plex Sans Thai', system-ui, -apple-system, BlinkMacSystemFont, sans-serif"),
+    'serif': string.unquote("'IBM Plex Serif', system-ui, -apple-system, BlinkMacSystemFont, serif"),
+  )
+);

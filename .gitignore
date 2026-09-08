@@ -31,9 +31,6 @@ yarn-error.log*
 *.tsbuildinfo
 next-env.d.ts
 
-# generated vendor CSS (scripts/build-vendor-css.mjs)
-/vendor/
-
 # Storybook build output
 /storybook-static/
 

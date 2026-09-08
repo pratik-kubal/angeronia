@@ -1,10 +1,13 @@
 /**
- * Colour-scheme plumbing for SLDS 2.
+ * Colour-scheme plumbing for Carbon.
  *
- * SLDS 2 has no dark palette: every colour token is a `light-dark()` pair, so
- * the whole system switches on the CSS `color-scheme` property. The
- * `slds-color-scheme_*` classes (from the design system's `darkMode` utility)
- * are the only thing that needs to change, and they live on `<html>`.
+ * Carbon ships one token set per theme, and `styles/_themes.scss` emits two of
+ * them — White under `:root`, Gray 100 under `:root[data-theme="dark"]`. So the
+ * only thing that has to change to switch schemes is that one attribute, which
+ * `next-themes` writes on `<html>`.
+ *
+ * Replaces `lib/slds/scheme.ts`, where the switch was a `slds-color-scheme_*`
+ * class driving CSS `color-scheme` through `light-dark()` pairs (ADR-015).
  */
 
 export const COLOR_SCHEMES = ["light", "dark", "system"] as const;
@@ -26,12 +29,8 @@ export const SELECTABLE_COLOR_SCHEMES = ["light", "dark"] as const;
 
 export type SelectableColorScheme = (typeof SELECTABLE_COLOR_SCHEMES)[number];
 
-/** The class `next-themes` writes on `<html>` for each scheme. */
-export const COLOR_SCHEME_CLASS: Record<ColorScheme, string> = {
-  light: "slds-color-scheme_light",
-  dark: "slds-color-scheme_dark",
-  system: "slds-color-scheme_system",
-};
+/** The attribute `next-themes` writes on `<html>`, and that the theme reads. */
+export const COLOR_SCHEME_ATTRIBUTE = "data-theme";
 
 export const DEFAULT_COLOR_SCHEME: ColorScheme = "system";
 

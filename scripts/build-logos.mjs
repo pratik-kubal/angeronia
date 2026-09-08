@@ -2,18 +2,18 @@
 // Regenerates the OG/social lockups `public/angeronia-logo-light.png` and
 // `-dark.png` (500 × 500) from the brand mark, on the teal ramp (plan §2.8.6).
 //
-// Every colour is resolved out of `app/theme.angeronia.css` + the Cosmos
-// tokens rather than typed in, so the rasters cannot drift from the site:
+// Every colour is compiled out of `styles/globals.scss` rather than typed in,
+// so the rasters cannot drift from the site:
 //
-//   ground     --slds-g-color-surface-1
-//   disc       --slds-g-color-accent-container-1   (Teal 60, both schemes)
-//   cursor     --slds-g-color-on-accent-1          (white)
-//   wordmark   --slds-g-color-on-surface-3
-//   sub-line   --slds-g-color-on-surface-1
+//   ground     --cds-background
+//   disc       --cds-background-brand    (Teal 60, both themes)
+//   cursor     --cds-text-on-color       (white)
+//   wordmark   --cds-text-primary
+//   sub-line   --cds-text-secondary
 //
 // The wordmark is IBM Plex Sans (D11), converted to outlines with opentype.js
 // so the render needs no system font. The mark and wordmark are set clear of
-// each other: heading ink over Teal 60 is only 3.6:1 in the light scheme, so
+// each other: body ink over Teal 60 does not clear AA in the light theme, so
 // the disc is never used as a background for type.
 //
 // Needs `rsvg-convert` (librsvg) or ImageMagick on PATH.
@@ -22,15 +22,11 @@
 
 import { writeFileSync, readFileSync, mkdtempSync } from "node:fs";
 import { execFileSync } from "node:child_process";
-import { fileURLToPath } from "node:url";
-import { dirname, resolve, join } from "node:path";
+import { resolve, join } from "node:path";
 import { tmpdir } from "node:os";
 import opentype from "opentype.js";
-import { parseFile, merge, resolveHook } from "./slds-tokens.mjs";
+import { themeTokens, ROOT as root } from "./carbon-tokens.mjs";
 
-const here = dirname(fileURLToPath(import.meta.url));
-const root = resolve(here, "..");
-const TOKENS = resolve(root, "node_modules/@salesforce-ux/design-tokens/dist/themes/cosmos");
 const FONT = resolve(root, "node_modules/@fontsource/ibm-plex-sans/files/ibm-plex-sans-latin-600-normal.woff");
 
 const SIZE = 500;
@@ -43,12 +39,7 @@ const MARK = {
   cursor: "M11.2 7.6 L23.4 14.1 L16.9 15.4 L20.2 22.1 L17.1 23.5 L13.8 16.8 L9.4 21.2 Z",
 };
 
-const tokens = merge(
-  parseFile(`${TOKENS}/cosmos.reference.tokens.css`),
-  parseFile(`${TOKENS}/cosmos.global.tokens.css`),
-  parseFile(`${TOKENS}/cosmos.shared.tokens.css`),
-  parseFile(resolve(root, "app/theme.angeronia.css")),
-);
+const tokens = themeTokens();
 
 const fontBuffer = readFileSync(FONT);
 const font = opentype.parse(
@@ -80,12 +71,16 @@ function trackedPath(text, size, tracking, cx, y) {
 }
 
 function lockup(scheme) {
-  const c = (hook) => resolveHook(`--slds-g-color-${hook}`, tokens, scheme);
-  const ground = c("surface-1");
-  const disc = c("accent-container-1");
-  const cursor = c("on-accent-1");
-  const ink = c("on-surface-3");
-  const quiet = c("on-surface-1");
+  const c = (token) => {
+    const value = tokens[scheme].get(`--cds-${token}`);
+    if (!value) throw new Error(`No such token in the ${scheme} theme: --cds-${token}`);
+    return value;
+  };
+  const ground = c("background");
+  const disc = c("background-brand");
+  const cursor = c("text-on-color");
+  const ink = c("text-primary");
+  const quiet = c("text-secondary");
 
   const cx = SIZE / 2;
   const markSize = 136;
