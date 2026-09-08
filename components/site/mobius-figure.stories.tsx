@@ -1,5 +1,63 @@
 import type { Meta, StoryObj } from "@storybook/nextjs-vite";
+import { expect, waitFor } from "storybook/test";
 import { MobiusFigure } from "./mobius-figure";
+
+/**
+ * Assert the band is painted in the theme that is actually in force.
+ *
+ * The figure reads its two colours out of CSS with `getComputedStyle` and draws
+ * them onto a canvas, which puts them beyond the reach of every other gate here:
+ * axe does not look at pixels, and a story with the wrong colours still renders
+ * perfectly well. This caught a real one — the component used to watch
+ * `resolvedTheme` from `useTheme()`, whose effect runs *before* the parent
+ * writes `data-theme`, so the band sat one toggle behind for the whole session
+ * and this Dark story painted the light teal.
+ *
+ * The brightest painted pixel is the fully-lit face, which is the fill colour
+ * undiluted. rough.js's sketch strokes move it by a unit or two, hence the
+ * tolerance rather than equality.
+ */
+async function expectPaintedInTheme(canvasElement: HTMLElement) {
+  const figure = canvasElement.querySelector<HTMLElement>(".site-hero__figure");
+  const canvas = canvasElement.querySelector<HTMLCanvasElement>(".site-hero__canvas");
+  await expect(figure).not.toBeNull();
+  await expect(canvas).not.toBeNull();
+
+  const brightest = () => {
+    const ctx = canvas!.getContext("2d")!;
+    const data = ctx.getImageData(0, 0, canvas!.width, canvas!.height).data;
+    let best: [number, number, number] | null = null;
+    let bestSum = -1;
+    for (let i = 0; i < data.length; i += 4) {
+      if (data[i + 3] < 200) continue;
+      const sum = data[i] + data[i + 1] + data[i + 2];
+      if (sum > bestSum) {
+        bestSum = sum;
+        best = [data[i], data[i + 1], data[i + 2]];
+      }
+    }
+    return best;
+  };
+
+  // rough.js is a lazy import behind an IntersectionObserver, so the first
+  // frame does not exist yet when the story mounts.
+  await waitFor(() => expect(brightest()).not.toBeNull(), { timeout: 8000 });
+
+  const expected = getComputedStyle(figure!)
+    .color.match(/[\d.]+/g)!
+    .slice(0, 3)
+    .map(Number);
+
+  await waitFor(
+    () => {
+      const painted = brightest()!;
+      for (let c = 0; c < 3; c += 1) {
+        expect(Math.abs(painted[c] - expected[c])).toBeLessThanOrEqual(30);
+      }
+    },
+    { timeout: 8000 },
+  );
+}
 
 const meta = {
   title: "Sections/MobiusFigure",
@@ -38,9 +96,14 @@ const meta = {
 export default meta;
 type Story = StoryObj<typeof meta>;
 
-export const Default: Story = {};
+export const Default: Story = {
+  play: async ({ canvasElement }) => expectPaintedInTheme(canvasElement),
+};
 
-export const Dark: Story = { globals: { colorScheme: "dark" } };
+export const Dark: Story = {
+  globals: { colorScheme: "dark" },
+  play: async ({ canvasElement }) => expectPaintedInTheme(canvasElement),
+};
 
 /**
  * What anyone with `prefers-reduced-motion: reduce` gets: one frame, drawn

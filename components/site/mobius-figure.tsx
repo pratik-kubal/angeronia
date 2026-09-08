@@ -1,7 +1,6 @@
 "use client";
 
 import * as React from "react";
-import { useTheme } from "next-themes";
 import { hero } from "@/data/angeronia";
 
 /**
@@ -44,7 +43,6 @@ function readRgb(el: Element): [number, number, number] {
 export function MobiusFigure() {
   const wrapRef = React.useRef<HTMLDivElement>(null);
   const canvasRef = React.useRef<HTMLCanvasElement>(null);
-  const { resolvedTheme } = useTheme();
 
   // Bumped on every scheme change. The draw loop re-reads the two probe
   // elements on the next frame rather than calling getComputedStyle 60×/s.
@@ -53,10 +51,38 @@ export function MobiusFigure() {
   // will ever repaint, so a scheme change has to ask for it by hand or the band
   // keeps the previous scheme's teal.
   const redrawRef = React.useRef<(() => void) | null>(null);
+
+  /*
+   * Watch `data-theme` on <html>, not `resolvedTheme` from `useTheme()`.
+   *
+   * The colours live in CSS, so the only thing that matters is when the CSS
+   * changes — and that is when the attribute lands, because `_themes.scss`
+   * keys both token sets off it. A `MutationObserver` fires after the fact, so
+   * the `getComputedStyle` in `syncColors` is guaranteed to see the new theme.
+   *
+   * Depending on `resolvedTheme` is the obvious thing and it is wrong. This
+   * component is a child of `ThemeProvider`; React runs child effects before
+   * parent ones, and next-themes writes the attribute in the *parent's* effect.
+   * So a `[resolvedTheme]` effect fires while <html> still carries the previous
+   * theme, reads the previous colours, and — because `syncColors` marks itself
+   * clean — never looks again. The band ends up exactly one toggle behind for
+   * the rest of the session.
+   *
+   * The observer also picks up a theme set by something that is not
+   * next-themes, which the Storybook decorator does: it writes the attribute
+   * directly, so `useTheme()` there never changes at all.
+   */
   React.useEffect(() => {
-    dirtyRef.current += 1;
-    redrawRef.current?.();
-  }, [resolvedTheme]);
+    const observer = new MutationObserver(() => {
+      dirtyRef.current += 1;
+      redrawRef.current?.();
+    });
+    observer.observe(document.documentElement, {
+      attributes: true,
+      attributeFilter: ["data-theme"],
+    });
+    return () => observer.disconnect();
+  }, []);
 
   React.useEffect(() => {
     const el = wrapRef.current;
