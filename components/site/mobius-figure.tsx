@@ -2,6 +2,7 @@
 
 import * as React from "react";
 import { hero } from "@/data/angeronia";
+import { COLOR_SCHEME_ATTRIBUTE } from "@/lib/theme";
 
 /**
  * The hero Möbius: a hand-drawn (rough.js) 3D band on a `<canvas>`, turning on
@@ -33,8 +34,12 @@ const MAX_SPIN = 320;
  * Resolving it means reading a real property instead, which is why the fill and
  * the shade are carried as `color` on two elements — those come back as `rgb()`
  * because every value in the teal ramp is a hex.
+ *
+ * Exported so `mobius-figure.stories.tsx` can assert against the same reading
+ * of "the colour" the component draws with, rather than keeping a second copy
+ * of this regex that would drift the first time a token grows a new syntax.
  */
-function readRgb(el: Element): [number, number, number] {
+export function readRgb(el: Element): [number, number, number] {
   const parts = getComputedStyle(el).color.match(/[\d.]+/g);
   if (!parts || parts.length < 3) return [0, 0, 0];
   return [Number(parts[0]), Number(parts[1]), Number(parts[2])];
@@ -53,7 +58,8 @@ export function MobiusFigure() {
   const redrawRef = React.useRef<(() => void) | null>(null);
 
   /*
-   * Watch `data-theme` on <html>, not `resolvedTheme` from `useTheme()`.
+   * Watch the colour-scheme attribute on <html>, not `resolvedTheme` from
+   * `useTheme()`.
    *
    * The colours live in CSS, so the only thing that matters is when the CSS
    * changes — and that is when the attribute lands, because `_themes.scss`
@@ -79,7 +85,7 @@ export function MobiusFigure() {
     });
     observer.observe(document.documentElement, {
       attributes: true,
-      attributeFilter: ["data-theme"],
+      attributeFilter: [COLOR_SCHEME_ATTRIBUTE],
     });
     return () => observer.disconnect();
   }, []);
@@ -345,6 +351,13 @@ export function MobiusFigure() {
       roughReq = true;
       import("roughjs")
         .then((m) => {
+          // `ensureRough` checked `alive` before starting, but the import can
+          // resolve long after the effect was torn down — a navigation away
+          // from the page mid-flight. Without this, cleanup's
+          // `redrawRef.current = null` is undone a moment later by a closure
+          // over a detached canvas, and under reduced motion the `draw()`
+          // below paints straight into it.
+          if (!alive) return;
           const rough = (m as { default?: unknown }).default ?? m;
           rc = (rough as { canvas: (c: HTMLCanvasElement) => RoughCanvas }).canvas(cv);
           redrawRef.current = draw;
