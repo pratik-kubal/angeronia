@@ -1,8 +1,8 @@
 "use client";
 
 import * as React from "react";
-import { useTheme } from "next-themes";
 import { hero } from "@/data/angeronia";
+import { COLOR_SCHEME_ATTRIBUTE } from "@/lib/theme";
 
 /**
  * The hero Möbius: a hand-drawn (rough.js) 3D band on a `<canvas>`, turning on
@@ -10,9 +10,10 @@ import { hero } from "@/data/angeronia";
  *
  * Ported from `../portfolio`'s `mobius-figure.tsx`. Three things change to keep
  * it inside this site's contract (ADR-012): the colours are read back from the
- * theme's hooks instead of being hard-coded citron, every rule lives in
- * `app/site.css` rather than a `style` attribute, and the figure is storied.
- * The rotation itself is the deviation, waived for this one figure by ADR-013.
+ * theme's tokens instead of being hard-coded citron, every rule lives in
+ * `styles/_site.scss` rather than a `style` attribute, and the figure is
+ * storied. The rotation itself is the deviation, waived for this one figure by
+ * ADR-013.
  *
  * Exposed as a labelled image — `role="img"` on the wrapper, `aria-hidden` on
  * the canvas — so it reads as one decorative figure rather than a bare canvas.
@@ -28,13 +29,17 @@ const MAX_SPIN = 320;
 /**
  * Pull `r,g,b` out of a computed colour.
  *
- * The theme's hooks are `light-dark()` pairs, and a custom property's computed
- * value is its token stream — `light-dark(#005d5d, #9ef0f0)` — not the branch
- * that applies. Resolving it means reading a real property instead, which is
- * why the fill and the shade are carried as `color` on two elements. Those
- * resolve to `rgb()` because every hook in the ramp is a hex.
+ * A custom property's computed value is its token stream, not a colour: reading
+ * `--site-figure-lit` back gives whatever text is on the right of the colon.
+ * Resolving it means reading a real property instead, which is why the fill and
+ * the shade are carried as `color` on two elements — those come back as `rgb()`
+ * because every value in the teal ramp is a hex.
+ *
+ * Exported so `mobius-figure.stories.tsx` can assert against the same reading
+ * of "the colour" the component draws with, rather than keeping a second copy
+ * of this regex that would drift the first time a token grows a new syntax.
  */
-function readRgb(el: Element): [number, number, number] {
+export function readRgb(el: Element): [number, number, number] {
   const parts = getComputedStyle(el).color.match(/[\d.]+/g);
   if (!parts || parts.length < 3) return [0, 0, 0];
   return [Number(parts[0]), Number(parts[1]), Number(parts[2])];
@@ -43,7 +48,6 @@ function readRgb(el: Element): [number, number, number] {
 export function MobiusFigure() {
   const wrapRef = React.useRef<HTMLDivElement>(null);
   const canvasRef = React.useRef<HTMLCanvasElement>(null);
-  const { resolvedTheme } = useTheme();
 
   // Bumped on every scheme change. The draw loop re-reads the two probe
   // elements on the next frame rather than calling getComputedStyle 60×/s.
@@ -52,10 +56,39 @@ export function MobiusFigure() {
   // will ever repaint, so a scheme change has to ask for it by hand or the band
   // keeps the previous scheme's teal.
   const redrawRef = React.useRef<(() => void) | null>(null);
+
+  /*
+   * Watch the colour-scheme attribute on <html>, not `resolvedTheme` from
+   * `useTheme()`.
+   *
+   * The colours live in CSS, so the only thing that matters is when the CSS
+   * changes — and that is when the attribute lands, because `_themes.scss`
+   * keys both token sets off it. A `MutationObserver` fires after the fact, so
+   * the `getComputedStyle` in `syncColors` is guaranteed to see the new theme.
+   *
+   * Depending on `resolvedTheme` is the obvious thing and it is wrong. This
+   * component is a child of `ThemeProvider`; React runs child effects before
+   * parent ones, and next-themes writes the attribute in the *parent's* effect.
+   * So a `[resolvedTheme]` effect fires while <html> still carries the previous
+   * theme, reads the previous colours, and — because `syncColors` marks itself
+   * clean — never looks again. The band ends up exactly one toggle behind for
+   * the rest of the session.
+   *
+   * The observer also picks up a theme set by something that is not
+   * next-themes, which the Storybook decorator does: it writes the attribute
+   * directly, so `useTheme()` there never changes at all.
+   */
   React.useEffect(() => {
-    dirtyRef.current += 1;
-    redrawRef.current?.();
-  }, [resolvedTheme]);
+    const observer = new MutationObserver(() => {
+      dirtyRef.current += 1;
+      redrawRef.current?.();
+    });
+    observer.observe(document.documentElement, {
+      attributes: true,
+      attributeFilter: [COLOR_SCHEME_ATTRIBUTE],
+    });
+    return () => observer.disconnect();
+  }, []);
 
   React.useEffect(() => {
     const el = wrapRef.current;
@@ -318,6 +351,13 @@ export function MobiusFigure() {
       roughReq = true;
       import("roughjs")
         .then((m) => {
+          // `ensureRough` checked `alive` before starting, but the import can
+          // resolve long after the effect was torn down — a navigation away
+          // from the page mid-flight. Without this, cleanup's
+          // `redrawRef.current = null` is undone a moment later by a closure
+          // over a detached canvas, and under reduced motion the `draw()`
+          // below paints straight into it.
+          if (!alive) return;
           const rough = (m as { default?: unknown }).default ?? m;
           rc = (rough as { canvas: (c: HTMLCanvasElement) => RoughCanvas }).canvas(cv);
           redrawRef.current = draw;

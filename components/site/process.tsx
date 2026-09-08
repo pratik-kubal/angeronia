@@ -1,43 +1,54 @@
-import { Path } from "@/components/slds/path";
-import { Grid, Col } from "@/components/slds/layout";
-import { Section } from "@/components/site/section";
+import { ProgressIndicator, ProgressStep } from "@carbon/react";
+import { Section } from "@/components/ui/section";
 import { processSteps, processHeading, processLabel } from "@/data/angeronia";
 
 /**
- * How the studio works: a static Path over a row of steps.
+ * How the studio works: a static rail over a row of steps.
  *
- * The old version scrubbed the rail as you scrolled. The Path now shows every
- * stage at once with the last one current, which is what the copy actually
- * says — four moves that all happen, not a reveal.
+ * Carbon's `ProgressIndicator` replaces the SLDS Path, and the substitution
+ * settles ADR-007 in passing: SLDS hid a completed stage's name behind a
+ * checkmark, which is why every stage here had to render neutral. Carbon keeps
+ * the label visible in every state, so the four stages can simply be four
+ * stages.
  *
- * The steps below the Path carry only their number and their body: the Path is
- * already the graphic that names them, and repeating "Discover" directly under
- * a rail that just said "Discover" is duplication, not emphasis. The name stays
- * in the DOM as assistive text, so a block still announces as "Step 1,
- * Discover" rather than leaving the mapping to reading order alone.
+ * `currentIndex={-1}` is deliberate and is the whole of ADR-007 restated for
+ * Carbon: these are four moves that all happen, not a progress state. Carbon
+ * defaults `currentIndex` to 0, which would paint step one as current and claim
+ * a position in a process the section is only describing. With every index
+ * above the current one, all four render — and announce — incomplete, which is
+ * what a description of a process should say.
  *
- * That is also why these are no longer `Tile`s. The Tile blueprint is a title
- * plus detail; a step with no visible title is not one, and loosening the
- * wrapper to allow a headless Tile would weaken it everywhere to suit one page.
+ * The steps below carry only their number and their body: the rail is already
+ * the graphic that names them, and repeating "Discover" directly under a rail
+ * that just said "Discover" is duplication, not emphasis. The name stays in the
+ * DOM as assistive text, so a block still announces as "Step 1, Discover"
+ * rather than leaving the mapping to reading order alone.
  */
 export function Process() {
   return (
     <Section id="process" kicker={processLabel} heading={processHeading}>
-      {/* No `current`: these are four moves that all happen, not a progress
-          state — and SLDS's complete state hides the stage name behind a
-          check, which would drop three of the four labels (ADR-007). */}
-      <Path steps={processSteps.map((step) => ({ title: step.title }))} label={processLabel} />
-      <Grid wrap stretch gutters className="slds-m-top_large">
+      <ProgressIndicator
+        currentIndex={-1}
+        spaceEqually
+        aria-label={processLabel}
+        className="site-process__rail"
+      >
+        {processSteps.map((step) => (
+          <ProgressStep key={step.title} label={step.title} />
+        ))}
+      </ProgressIndicator>
+
+      <div className="site-cards site-cards_4">
         {processSteps.map((step, index) => (
-          <Col key={step.title} size={12} medium={3} className="slds-m-bottom_medium">
-            <p className="slds-text-title_caps slds-text-color_weak">
+          <div key={step.title}>
+            <p className="site-step__label">
               Step {index + 1}
-              <span className="slds-assistive-text">, {step.title}</span>
+              <span className="cds--visually-hidden">, {step.title}</span>
             </p>
             <p className="site-step__body">{step.body}</p>
-          </Col>
+          </div>
         ))}
-      </Grid>
+      </div>
     </Section>
   );
 }

@@ -1,8 +1,20 @@
 # Decision log — angeronia.com design system
 
-Every architectural decision behind the SLDS 2 redesign, plus every deviation
-from [`docs/plans/slds2-redesign-plan.md`](../plans/slds2-redesign-plan.md)
-made during implementation.
+Every architectural decision behind the site's design system, and every
+deviation from the plan that produced it.
+
+The log spans two migrations, in order:
+
+* **§1–§4** — the SLDS 2 redesign ([`slds2-redesign-plan.md`](../plans/slds2-redesign-plan.md)),
+  landed 2026-09-04. D1–D11, O1–O12 and ADR-001 … ADR-014.
+* **ADR-015 … ADR-018** — the move off SLDS 2 onto IBM Carbon
+  ([`carbon-migration-plan.md`](../plans/carbon-migration-plan.md)), landed
+  2026-09-08.
+
+**Read ADR-015 first if you want the current state.** It supersedes D1, D2, D3,
+D7, D8 and ADR-004 / 006 / 008 / 011, and it says what the site is built on
+today. Everything above it is the record of how it got there, not a description
+of what ships.
 
 **Rule:** record a deviation here *before* acting on it. Entries are append-only;
 supersede rather than rewrite.
@@ -35,7 +47,7 @@ supersede rather than rewrite.
 | O4 | Scheme persistence | **Keep `next-themes`** (plan §2.3). |
 | O5 | Next.js version | **Stay on 15.5.x** for the migration; upgrade to 16 in a separate PR after Phase 5. |
 | O6 | Storybook hosting | **Separate Vercel project** (e.g. `design.angeronia.com`). |
-| O7 | Licensing | **Open — the user's call before Phase 1 ships to production.** SLDS 2 CSS and tokens are under the Salesforce Terms of Use (non-OSI, with an indemnification clause); Carbon icons are Apache-2.0 and IBM Plex is OFL 1.1. Nothing else in the plan blocks on this. |
+| O7 | Licensing | **Closed 2026-09-08 by ADR-015 — the Salesforce Terms of Use are not accepted.** `@salesforce-ux/*` is removed and the UI layer is rebuilt on IBM Carbon (Apache-2.0). Was: open, the user's call before Phase 1 ships to production. |
 | O8 | Density toggle | **Spike in Phase 2**; expose only if SLDS 2 offers a supported switch, else document "comfy only". |
 | O9 | Proof numbers | **Moot — the Proof section was removed** (the figures were the founder's own, not the studio's). Was: static Progress Bar values, no counting animation. |
 | O10 | Logo mark colour | **Re-tinted to teal** (D6). |
@@ -47,7 +59,8 @@ supersede rather than rewrite.
 ## 3. Implementation decisions
 
 Recorded as the phases land. Each entry states what the plan said, what was
-done instead, and why.
+done instead, and why. ADR-001 … ADR-014 belong to the SLDS 2 redesign;
+ADR-015 onward to the Carbon migration.
 
 ### ADR-001 — Skills installed by direct copy, not `npx skills add` (Phase 0)
 
@@ -444,6 +457,220 @@ for a screenshot of current chrome.
 
 ---
 
+### ADR-015 — SLDS 2 is removed; the UI layer is rebuilt on IBM Carbon (closes O7)
+
+**Recorded 2026-09-08, before any code, per the rule at the top of this file.**
+
+O7 ("licensing acceptance") is **closed: the Salesforce Terms of Use are not
+accepted**, and `@salesforce-ux/*` leaves the repository. The replacement is
+IBM Carbon (`@carbon/react`, Apache-2.0). The reasoning, the measurements and
+the phased route are in
+[`docs/plans/carbon-migration-plan.md`](../plans/carbon-migration-plan.md); this
+entry records the decision and what it costs.
+
+**Why.** The grant in `@salesforce-ux/design-system-2/LICENSE.txt` is generous,
+but three clauses are not. The indemnity runs to "any application you develop
+with the Software that infringes … or defames any person or violates their
+rights of publicity or privacy" — limb (b) is about the content of *this site*,
+is uncapped, and runs to a company rather than a hobby project. Salesforce also
+reserves the right to "modify, suspend, or discontinue the Software … with or
+without notice", with no liability, underneath a commercial storefront. The
+"AS IS" clause is ordinary on its own and combines badly with the other two.
+
+Renaming the classes does not help: "These Terms shall be included in all copies
+or substantial portions of the Software", and a renamed copy is a derivative
+work that is still subject to them — and one whose provenance is now hidden.
+Removal has to mean replacement.
+
+**What this supersedes.**
+
+| Superseded | By |
+|---|---|
+| **D1** — consume `@salesforce-ux/design-system-2` from npm | `@carbon/react` from npm, Apache-2.0 |
+| **D2** — Cosmos + `app/theme.angeronia.css`, brand ramp swapped to Carbon Teal | Carbon White / Gray 100 + `styles/_themes.scss`, teal as a `--cds-*` brand override. The teal is the *same* teal: theme block A was already a hand-mapped copy of `@carbon/colors` teal 10–100. |
+| **D3** — SLDS blueprints wrapped in thin React components | `@carbon/react` ships the components; the wrapper layer is deleted, not ported (C1) |
+| **D7** — only `app/theme.angeronia.css` may assign `--slds-*` | only `styles/_themes.scss` may assign `--cds-*` |
+| **D8** — styles in `.css` so `slds-linter` can lint them | styles in `.scss`; the linter is retired (C4, below) |
+| **ADR-004 / ADR-008 / ADR-011** — the assembled vendor stylesheet, its modular build, and the manifest that describes the library | all three vanish with `vendor/`. Carbon is imported as Sass and tree-shaken by the bundler; there is no dangling-artwork problem to solve because Carbon ships no artwork. |
+| **ADR-006** — `slds-linter` at `error` with one scoped exemption | retired with the linter (C4) |
+| **ADR-014**'s premise that "rule 1 keeps Carbon out" | Carbon is now the design system. The Code Socratic replica keeps its own markup — see the note in ADR-014's own section — but its syntax palette can finally be the product's own Carbon values instead of the SLDS palette hooks that stood in for them. |
+
+**What it costs, stated plainly.**
+
+* **The site changes visibly, and that is accepted (C3).** Cosmos rounds; Carbon
+  is square. Design rule 7 ("buttons pill, cards `border-4`, inputs `border-2`")
+  is **replaced, not reinterpreted** — Carbon buttons are rectangles and stay
+  rectangles. Carbon 11 has no elevation scale, so the card's one shadow level
+  becomes a border. The focus ring moves from outset to a 2px inset outline.
+  Carbon's type scale and control heights are tighter than Cosmos's
+  marketing-tuned sizes.
+* **Angeronia converges visually with Code Socratic, deliberately (C5).**
+  `CLAUDE.md` says the two share "hue, typeface and icon set, not its geometry".
+  After this they share the geometry too. That sentence is amended in Phase 5
+  because it becomes actively wrong, not merely stale.
+* **A CI gate disappears (C4).** `slds-linter` has no Carbon equivalent and is
+  **retired rather than replaced**. A `stylelint` config invented to fill the
+  hole would be ceremony, not coverage; the axe pass over every story is the
+  gate that catches real problems, and it stays.
+* **`check:theme` loses most of its job (C7).** It exists to police a theme
+  layer that re-values another vendor's hooks — a contract that no longer
+  exists. Resolved in Phase 5; see ADR-018.
+* **Roughly the same effort as the original SLDS redesign, minus the design
+  work.** The copy, information architecture and page composition are unchanged.
+
+**What does *not* change.** IBM Plex, self-hosted via `next/font` (D11). Carbon
+icons (D10, O12). Carbon Teal as the accent (O1) — byte-identical, because it
+was always Carbon's teal. `next-themes` for scheme persistence (O4). Storybook
+as the source of truth (D4). Next.js 15 App Router (O5). Copy in
+`data/angeronia.ts`. Nothing about the site's words or its shape.
+
+**Open questions resolved on the plan's own recommendation** (§8, all marked
+"not blocking"): C1 — use `@carbon/react` directly in site components rather
+than re-creating a wrapper library, since the wrappers only ever existed because
+SLDS ships no React. C2 — delete the 25 unused wrappers rather than port them.
+C6 — port the Foundations boards to Carbon tokens rather than drop them.
+
+---
+
+### ADR-016 — Three places the §4.1 component mapping did not survive contact
+
+The Carbon migration plan's §4.1 table is a good map and was followed almost
+everywhere. Three entries did not work as written, and the reasons are worth
+recording because each is a property of Carbon rather than of this site.
+
+**1. `layout (Grid/Col)` → `Grid` / `Column`: the wrapper is ours, not
+Carbon's.** `@carbon/react`'s `Grid` dispatches on the `enable-css-grid`
+feature flag and renders the legacy **flexbox** grid when it is off — which it
+is by default in v11. That path was never an option: it needs a `<Row>` layer
+between grid and column, and `styles/_config.scss` sets
+`$use-flexbox-grid: false`, so its stylesheet is not even emitted. The flag has
+no supported way to turn on in v11 either: `FeatureFlags` grew a boolean prop
+for every other flag and not this one, leaving the deprecated `flags` map or a
+`CARBON_ENABLE_CSS_GRID` environment variable that would have to be threaded
+through Next, Vite and Vitest alike.
+
+`components/ui/grid.tsx` renders exactly what Carbon's own `CSSGrid` renders,
+from exports Carbon actually publishes: `GridSettings` in `css-grid` mode,
+which is the only thing `Column` reads to decide which classes to emit. No
+flag, no deprecated prop, and `Column` behaves as documented. In v12, where CSS
+grid is the default, the file collapses back to `Grid` from `@carbon/react`.
+
+**2. Card rows are a CSS grid, not `Column`s.** Carbon's 2x grid has 16 columns
+at `lg` and 8 at `md`. Sixteen does not divide by three, and two of the four
+card rows on the home page are three-up; `lg={5}` ×3 leaves a visible 1/16 of
+slack against the right edge that the section heading above is flush to. One
+`site-cards` grid serves every card row instead — two-up, three-up and four-up
+as modifier classes — which also gives equal-height cards for free. The page
+grid is still Carbon's; only the rows inside a full-width column are not.
+
+**3. `button-group` → `ButtonSet`: not for the scheme switcher.**
+`.cds--btn-set` puts `inline-size: 100%` on every descendant `.cds--btn`, which
+is right for a pair of full-width form actions and wrong for two 32px toggles —
+and `IconButton` nests its button inside a tooltip trigger, so the descendant
+selector reaches it anyway. The switcher is a plain `role="group"` with two
+`IconButton`s. It gained something in the move: Carbon's `IconButton` names the
+control visibly on hover and focus, where the SLDS version could only do it with
+assistive text.
+
+Everything else in §4.1 landed as written: `Button`, `Tag`, `Tile`, `Link`,
+`ProgressIndicator`, plain lists, and `Avatar` / `MediaObject` / `Cluster` /
+`Section` kept as site components.
+
+---
+
+### ADR-017 — Carbon ships whole; the page's CSS more than doubles
+
+**Plan:** §4 — `globals.scss` is `@use config, @carbon/react, themes, site`.
+
+**Done:** exactly that. Measured on 2026-09-08 against the production build:
+
+| | Raw | Gzip |
+|---|---:|---:|
+| Carbon, whole (`@use '@carbon/react'`) | 973 KB | **105 KB** |
+| The SLDS 2 modular build it replaces | 458 KB | 60 KB |
+| Total page CSS before the migration | — | ~47 KB |
+
+That is a real regression — roughly 2.2× the CSS the page used to ship — and it
+is stated here rather than left to be discovered. It is inside the ≤ 150 KB
+gzip budget the original plan set, and `First Load JS` is 143 KB after adding
+`@carbon/react` to `optimizePackageImports` (339 KB without it, so that line in
+`next.config.mjs` is load-bearing).
+
+**The lever, measured but not pulled.** Carbon's component partials are
+self-emitting, so a modular stylesheet is a short file:
+
+```scss
+@use './config';
+@use '@carbon/react/scss/reset';
+@use '@carbon/react/scss/grid';
+@use '@carbon/react/scss/layer';
+@use '@carbon/react/scss/components/button';
+@use '@carbon/react/scss/components/tag';
+@use '@carbon/react/scss/components/tile';
+@use '@carbon/react/scss/components/link';
+@use '@carbon/react/scss/components/progress-indicator';
+@use '@carbon/react/scss/components/tooltip';
+@use './themes';
+@use './site';
+```
+
+That measures **28 KB gzip** — better than the SLDS build it replaces, and a
+quarter of what ships today.
+
+It is not what ships, for the reason ADR-011 already learned the hard way: a
+component missing from the list produces an *unstyled component*, not an error,
+and the harness that caught that class of mistake for SLDS
+(`compare-vendor-css.mjs`, which diffed 1400 computed values across two builds)
+was deleted with the rest of the vendor tooling. Shipping the whole of Carbon is
+correct by construction. Revisit if page weight starts to matter — the switch is
+the file above plus a way to verify it, and both are a day's work, not a
+rewrite.
+
+---
+
+### ADR-018 — `lint:slds` is retired and `check:theme` is rewritten, not retired (closes C4 and C7)
+
+**C4 — decided in the plan, executed here.** `slds-linter` has no Carbon
+equivalent and is **retired rather than replaced**: the script, the
+`@salesforce-ux/*` packages behind it, `eslint.slds.config.mjs` and the CI step
+are all gone, and ADR-006 goes with them. A `stylelint` config invented to fill
+the hole would be ceremony, not coverage. The gate that catches real problems is
+`npm run test:storybook` — axe over every story in both themes, with violations
+failing the run — and it stays, now covering 79 tests across 29 files.
+
+**C7 — decided here: `check:theme` is rewritten, and it gets narrower.** The old
+gate existed to police a theme layer that re-valued *another vendor's* hooks: it
+checked that block A matched its generator byte for byte, that block B contained
+no hex, that the list of blue literals Cosmos hard-codes had not moved, and that
+58 SLDS pairings cleared AA. None of that contract exists any more. There is no
+generated ramp — the teal is `@carbon/colors` teal, used directly — and no
+block B, because Carbon derives its interactive family from tokens rather than
+hard-coding hexes.
+
+What is left is worth keeping, so `scripts/check-contrast.mjs` does it:
+
+1. **Parity.** Every `--cds-*` token assigned in `styles/_themes.scss` is a
+   token Carbon actually defines. A typo in an override is otherwise silent: it
+   declares a custom property that nothing reads.
+2. **Contrast.** Every pairing the brand override creates, in both themes,
+   against WCAG 2.2 — 4.5:1 for text, 3:1 for non-text boundaries. 21 tokens,
+   40 pairings.
+3. **Report.** `docs/design-system/theme-report.md`, committed for review.
+
+It is narrower than the SLDS version *on purpose*. Carbon publishes contrast
+guarantees for its own tokens and tests them upstream; re-deriving those
+pairings here would be checking IBM's homework. What is ours is the teal, so
+that is what is checked.
+
+The mechanism is worth a line of its own: `scripts/carbon-tokens.mjs` compiles
+`styles/globals.scss` with `sass-embedded` and reads the custom properties back
+out of the emitted CSS, following `var()` chains. Nothing is duplicated in
+JavaScript, so the thing being checked cannot drift from the thing that ships —
+and `scripts/build-logos.mjs` draws the OG rasters from the same resolver, which
+is how the logo's teal stays the page's teal.
+
+---
+
 ## 4. Plan closure
 
 `docs/plans/slds2-redesign-plan.md` is **implemented**. Phases 0–6 of §8 all
@@ -472,10 +699,11 @@ later changes made on top of the closed plan, not part of it.
 | README rewritten, PR template | Done |
 | Tier-2 components | Accordion, Alert, Breadcrumbs, ButtonMenu, Checkbox, CheckboxToggle, EmptyState, ExpandableSection, Form Element, Input, Modal, PageHeader, Pill, Popover, RadioGroup, Select, Spinner, Tabs, Textarea, Toast, Tooltip |
 
-**Still open:** O7 (licensing acceptance) — the SLDS 2 Terms of Use are non-OSI
-and carry an indemnification clause. That is the user's call before this ships
-to production; nothing in the implementation blocks on it. The obligations are
-stated in the README.
+**Still open at closure, since resolved:** O7 (licensing acceptance). The SLDS 2
+Terms of Use were not accepted — ADR-015 removes `@salesforce-ux/*` entirely and
+rebuilds the UI layer on IBM Carbon. Everything in the table above describes the
+SLDS 2 implementation as it stood at plan closure on 2026-09-04; it is history,
+not the current state.
 
 Not in scope for this work, and unchanged: O5
 (Next.js 16, deliberately deferred to its own PR), O6 (deploying Storybook as a

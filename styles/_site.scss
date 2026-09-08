@@ -1,0 +1,1184 @@
+// ============================================================================
+// _site.scss — site composition only.
+//
+// Everything Carbon does not ship: the page frame, the section rhythm, the card
+// grid, and the two figures the site owns (the hero Möbius and the Code
+// Socratic replica). Every value is a Carbon token — `theme.$*` for colour,
+// `$spacing-*` / `$layout-*` for space, `type.type-style()` for type — or a
+// `--site-*` custom property declared here or in `_themes.scss`.
+//
+// No `--cds-*` is ever assigned here (design rule 3), and no `.cds--*` selector
+// is overridden: a site rule carries a `site-` class, and wins on source order
+// because this file is loaded after Carbon in `globals.scss`.
+// ============================================================================
+@use './config';
+@use '@carbon/react/scss/theme' as theme;
+@use '@carbon/react/scss/type' as type;
+@use '@carbon/react/scss/spacing' as *;
+@use '@carbon/react/scss/breakpoint' as *;
+@use '@carbon/react/scss/colors' as colors;
+
+// ── Site-owned values Carbon has no token for ────────────────────────────────
+// Carbon has no measure, border-width or figure-size scale. These are the
+// SLDS `sizing-*` hooks the migration had to re-home (plan §4.2), declared once
+// so no rule below carries a bare number.
+:root {
+  // Reading measures. `ch` because a measure is counted in characters.
+  --site-measure: 60ch;
+  --site-measure-heading: 25ch;
+  --site-measure-quote: 35ch;
+  // Carbon draws its own borders at 1px and its interactive edges at 2px; it
+  // exposes neither as a token.
+  --site-border-width: 1px;
+  --site-border-width-strong: 2px;
+  // The hero figure's bounds, and the height a demo pane scrolls within.
+  --site-figure-min: 20rem;
+  --site-figure-max: 30rem;
+  --site-pane-max: 30rem;
+  // The page's own cap. Carbon's grid stops at 99rem, which is a data-dense
+  // application width; marketing copy wants a shorter line than that.
+  --site-container-max: 82rem;
+}
+
+// ── Page frame ───────────────────────────────────────────────────────────────
+// Carbon's reset leaves `body` at `line-height: 1` and no size, on the
+// assumption that every piece of text carries a type token. The page root is
+// continuous prose, so it takes `body-02` (16px/24) once and the rest inherits.
+.site-root {
+  @include type.type-style('body-02');
+
+  display: flex;
+  flex-direction: column;
+  min-block-size: 100dvh;
+}
+
+// The page gutter and the width cap, on Carbon's `Grid`. `.cds--css-grid`
+// already supplies `margin-inline: auto` and the responsive `--cds-grid-margin`
+// padding; this only shortens the line.
+.site-container {
+  max-inline-size: var(--site-container-max);
+}
+
+// Section rhythm: one vertical step between major page sections.
+.site-section {
+  padding-block: $layout-05;
+
+  @include breakpoint(md) {
+    padding-block: $layout-06;
+  }
+}
+
+// A section that carries its own ground, so alternating sections read as bands.
+// Its children are wrapped in a Carbon `<Layer>`, which steps every layer token
+// inside up a level — so a card on this band is `layer-02` (white) while a card
+// on the page ground is `layer-01` (gray 10), and neither needs to know which
+// section it is in.
+.site-section_shade {
+  background-color: theme.$layer-01;
+}
+
+// ── Type ─────────────────────────────────────────────────────────────────────
+
+// The display heading: the marketing top end of Carbon's fluid scale — 32px at
+// `sm` rising to 60px at `max`, in Plex Light from `md` up.
+.site-heading_display {
+  @include type.type-style('fluid-heading-05', true);
+}
+
+// Section headings.
+.site-heading_section {
+  @include type.type-style('fluid-heading-04', true);
+}
+
+// A section's own heading owns the gap under its kicker and over its content,
+// and is held to a heading measure so the line breaks where it should rather
+// than where the container happens to end.
+.site-section__heading {
+  margin-block: $spacing-03 $spacing-07;
+  max-inline-size: var(--site-measure-heading);
+}
+
+// The eyebrow above a section heading. Carbon has no uppercase eyebrow style,
+// so this is `label-01` with the case and tracking a kicker needs.
+.site-kicker {
+  @include type.type-style('label-01');
+
+  color: theme.$text-secondary;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+// Reading measures.
+.site-measure {
+  max-inline-size: var(--site-measure);
+}
+
+.site-measure_heading {
+  max-inline-size: var(--site-measure-heading);
+}
+
+// A footnote. Carbon ships its type scale as Sass tokens only — it emits no
+// `.cds--type-*` utility classes — so the one size the page needs below the
+// root's `body-02` is named here.
+.site-body_small {
+  @include type.type-style('body-01');
+}
+
+// Vertical rhythm inside a block of copy. Carbon resets every margin, so the
+// gaps a section wants have to be asked for.
+.site-stack > * + * {
+  margin-block-start: $spacing-05;
+}
+
+.site-stack_loose > * + * {
+  margin-block-start: $spacing-07;
+}
+
+// ── Skip link ────────────────────────────────────────────────────────────────
+// Hidden until focused, then a real control at the top-left of the viewport.
+// Carbon's `.cds--visually-hidden` does the hiding; this un-hides on focus and
+// paints the revealed chip.
+.site-skip-link:focus {
+  // Every declaration `.cds--visually-hidden` makes has to be undone, not just
+  // the obvious ones: it also sets `margin: -1px` and `padding: 0`.
+  position: fixed;
+  z-index: 9000;
+  display: inline-block;
+  padding: $spacing-04 $spacing-06;
+  border: var(--site-border-width) solid theme.$border-subtle-01;
+  margin: 0;
+  background-color: theme.$background;
+  clip: auto;
+  clip-path: none;
+  color: theme.$text-primary;
+  inline-size: auto;
+  inset-block-start: $spacing-05;
+  inset-inline-start: $spacing-05;
+  block-size: auto;
+  overflow: visible;
+  text-decoration: none;
+  white-space: normal;
+}
+
+// ── Brand lockup ─────────────────────────────────────────────────────────────
+// The disc and cursor take their colours from the brand pair, so the mark
+// re-brands with the theme and never carries a literal (design rule 4).
+.site-brand {
+  display: flex;
+  align-items: center;
+  gap: $spacing-04;
+}
+
+.site-brand__figure {
+  display: flex;
+  flex-shrink: 0;
+}
+
+.site-brand__disc {
+  fill: theme.$background-brand;
+}
+
+.site-brand__cursor {
+  fill: theme.$text-on-color;
+}
+
+.site-brand__word {
+  @include type.type-style('heading-03');
+
+  display: block;
+  color: theme.$text-primary;
+}
+
+.site-brand__sub {
+  @include type.type-style('label-01');
+
+  display: block;
+  color: theme.$text-secondary;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+// ── Header ───────────────────────────────────────────────────────────────────
+// A quiet band that stays put while the page scrolls under it.
+.site-header {
+  position: sticky;
+  z-index: 100;
+  border-block-end: var(--site-border-width) solid theme.$border-subtle-01;
+  background-color: theme.$background;
+  inset-block-start: 0;
+}
+
+.site-header__bar {
+  display: flex;
+  // Wraps rather than overflows: below about 420px the lockup, the scheme
+  // toggle and the call to action do not fit on one line, and the header is
+  // sticky — a horizontal scrollbar on the whole page is a worse answer than a
+  // two-row bar on the narrowest phones. It stays one row everywhere else.
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  padding-block: $spacing-04;
+  gap: $spacing-04 $spacing-05;
+}
+
+.site-header__brand {
+  color: inherit;
+  text-decoration: none;
+}
+
+.site-header__nav {
+  display: none;
+
+  @include breakpoint(lg) {
+    display: block;
+  }
+}
+
+.site-header__nav-list {
+  display: flex;
+  align-items: center;
+  gap: $spacing-06;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.site-header__actions {
+  display: flex;
+  align-items: center;
+  gap: $spacing-04;
+}
+
+// The light/dark toggle pair. See components/site/color-scheme-switcher.tsx for
+// why this is not a Carbon `ButtonSet`.
+.site-scheme-switch {
+  display: flex;
+}
+
+// ── Hero ─────────────────────────────────────────────────────────────────────
+// A little more air above the fold than the standard section rhythm.
+.site-hero {
+  padding-block-start: $layout-06;
+}
+
+.site-hero__copy {
+  align-self: center;
+}
+
+// The heading owns the gap under the kicker and over the call to action.
+.site-hero__heading {
+  margin-block: $spacing-04 $spacing-07;
+}
+
+/*
+ * The hero Möbius (ADR-012). Carbon has no figure primitive, so this is site
+ * CSS built from tokens.
+ *
+ * The `color` on these two elements is not paint — nothing renders in it. It is
+ * how the canvas gets a *resolved* accent: the component reads
+ * `getComputedStyle(el).color` back as an `rgb()` and draws with it, which a
+ * custom property's own token stream would not give it. The wrapper carries the
+ * lit face and the canvas the shaded end (design rule 4: colour in pairs), and
+ * `_themes.scss` names the pair for each scheme.
+ */
+.site-hero__figcol {
+  display: flex;
+  justify-content: center;
+
+  // Drop the figure below `md`: it costs a screenful under the hero copy and
+  // adds the canvas work on the devices least able to spare it. `display: none`
+  // also takes it out of the a11y tree, and because the component only loads
+  // rough.js once its IntersectionObserver reports the figure visible, a phone
+  // never fetches the chunk at all (ADR-013).
+  @include breakpoint-down(md) {
+    display: none;
+  }
+}
+
+.site-hero__figure {
+  position: relative;
+  aspect-ratio: 1 / 1;
+  color: var(--site-figure-lit);
+  cursor: grab;
+  inline-size: clamp(var(--site-figure-min), 28vw, var(--site-figure-max));
+  max-inline-size: 100%;
+  // The figure owns horizontal pointer travel; the page still scrolls on it.
+  touch-action: pan-y;
+  user-select: none;
+}
+
+.site-hero__figure_grabbing {
+  cursor: grabbing;
+}
+
+.site-hero__canvas {
+  position: absolute;
+  display: block;
+  color: var(--site-figure-shade);
+  inset: 0;
+  inline-size: 100%;
+  block-size: 100%;
+}
+
+// ── Cards ────────────────────────────────────────────────────────────────────
+/*
+ * The card grid.
+ *
+ * Not Carbon `Column`s: the 2x grid has 16 columns at `lg`, which do not divide
+ * by three, and two of the four card rows on this page are three-up. One CSS
+ * grid for every row keeps the rows consistent and gives equal-height cards for
+ * free. The gutters are Carbon's own spacing steps. See DECISIONS.md ADR-016.
+ */
+.site-cards {
+  display: grid;
+  gap: $spacing-06;
+  grid-template-columns: 1fr;
+}
+
+@include breakpoint(md) {
+  .site-cards_2,
+  .site-cards_3,
+  .site-cards_4 {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@include breakpoint(lg) {
+  .site-cards_3 {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+
+  .site-cards_4 {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+  }
+}
+
+/*
+ * A card is a Carbon `Tile` with a header row, a body and a footer.
+ *
+ * Carbon 11 has no elevation scale, so the card's edge is a border rather than
+ * the shadow the SLDS build used (plan §6, ADR-015). The ground is Carbon's
+ * `$layer`, which steps automatically inside a `<Layer>` — so the same card
+ * reads correctly on the page ground and on a shaded band.
+ */
+.site-card {
+  @include type.type-style('body-02');
+
+  display: flex;
+  flex-direction: column;
+  border: var(--site-border-width) solid theme.$border-subtle;
+  block-size: 100%;
+  padding: $spacing-06;
+}
+
+.site-card__header {
+  display: flex;
+  align-items: center;
+  gap: $spacing-04;
+  margin-block-end: $spacing-05;
+}
+
+.site-card__icon {
+  display: flex;
+  flex-shrink: 0;
+  color: theme.$icon-primary;
+}
+
+.site-card__title {
+  @include type.type-style('heading-03');
+
+  color: theme.$text-primary;
+}
+
+// The body absorbs the height difference in a row of stretched cards, so their
+// footers line up.
+.site-card__body {
+  flex: 1 0 auto;
+}
+
+.site-card__footer {
+  margin-block-start: $spacing-06;
+  padding-block-start: $spacing-05;
+  border-block-start: var(--site-border-width) solid theme.$border-subtle;
+}
+
+// ── Cluster ──────────────────────────────────────────────────────────────────
+// A row of naturally-sized items that wraps: tags, a pair of actions.
+.site-cluster {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: $spacing-03;
+}
+
+.site-cluster_medium {
+  gap: $spacing-05;
+}
+
+// ── Media object ─────────────────────────────────────────────────────────────
+// A figure beside a body, stacking below `md`. Carbon has no equivalent.
+.site-media {
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-06;
+
+  @include breakpoint(md) {
+    flex-direction: row;
+    align-items: flex-start;
+  }
+}
+
+.site-media__figure {
+  flex-shrink: 0;
+}
+
+.site-media__body {
+  min-inline-size: 0;
+}
+
+// ── Avatar ───────────────────────────────────────────────────────────────────
+// Initials in a disc. Carbon has no avatar, so this is site CSS.
+.site-avatar {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  background-color: theme.$background-brand;
+  color: theme.$text-on-color;
+  inline-size: $spacing-09;
+  block-size: $spacing-09;
+  overflow: hidden;
+}
+
+.site-avatar_large {
+  inline-size: $spacing-10;
+  block-size: $spacing-10;
+}
+
+.site-avatar__initials {
+  @include type.type-style('heading-03');
+
+  border: 0;
+  text-decoration: none;
+}
+
+.site-avatar img {
+  inline-size: 100%;
+  block-size: 100%;
+  object-fit: cover;
+}
+
+// ── Sections ─────────────────────────────────────────────────────────────────
+
+// Process: the rail names the four stages, and the row under it carries the
+// bodies. The rail owns the gap between the two.
+.site-process__rail {
+  margin-block-end: $spacing-09;
+
+  // Four Carbon progress steps have a minimum width each and come to about
+  // 512px, which fits from `md` up and does not below it. So on a phone the
+  // rail scrolls inside itself rather than pushing the page sideways; nothing
+  // is lost by not scrolling it, because each stage's name is also in the step
+  // block beneath, as the assistive text after "Step N".
+  //
+  // Two things this rule has to be careful about, both learned the hard way:
+  //
+  // `overflow-y` is what has to be pinned. Setting only `overflow-x: auto`
+  // forces the other axis off `visible` to `auto`, and Carbon's
+  // `.cds--progress-text` stands 2px proud of its step — it reserves room for a
+  // `secondaryLabel` this rail does not pass. That is 2px of nothing, and it
+  // was enough to raise a vertical scrollbar across the whole rail.
+  //
+  // `overflow-x` is deliberately *not* scoped to the widths that overflow
+  // today. `auto` paints no bar when nothing overflows, so the unconditional
+  // form costs nothing — and `processSteps` is a plain array in
+  // `data/angeronia.ts`. A fifth stage puts the rail's minimum at 5 × 8rem,
+  // past what the grid gives it at `md`, and a guard that only covers phones
+  // would hand the whole page a horizontal scrollbar instead.
+  overflow-x: auto;
+  overflow-y: hidden;
+}
+
+// A step is its number and its body, the rail above having already named it.
+.site-step__label {
+  @include type.type-style('label-01');
+
+  color: theme.$text-secondary;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.site-step__body {
+  margin-block-start: $spacing-03;
+  color: theme.$text-secondary;
+}
+
+// About: the closing line reads as the studio's own words, so it is a
+// blockquote in italics rather than another body paragraph. The rule is the
+// accent, and the only thing marking it as set apart.
+.site-coda {
+  margin-block: $spacing-07 0;
+  margin-inline: 0;
+  padding-inline-start: $spacing-06;
+  border-inline-start: var(--site-border-width-strong) solid theme.$border-interactive;
+  color: theme.$text-secondary;
+  font-style: italic;
+}
+
+// Clients: what the studio is doing for them, set apart from what they are.
+.site-client__engagement {
+  margin-block-start: $spacing-05;
+  padding-block-start: $spacing-05;
+  border-block-start: var(--site-border-width) solid theme.$border-subtle;
+  color: theme.$text-secondary;
+}
+
+// Low-bono: the promise is the section, so it is set one step below the
+// standalone display treatment — it sits in a half-width card, not across the
+// full measure. Both classes, deliberately: `site-coda` owns the top margin a
+// quote following body copy needs, and in the card the header is already that
+// space.
+.site-coda.site-lowbono__quote {
+  margin-block-start: 0;
+}
+
+.site-lowbono__quote {
+  @include type.type-style('heading-04');
+
+  color: theme.$text-primary;
+  max-inline-size: var(--site-measure-quote);
+}
+
+// Product spotlight. The card body runs long enough to need its own rhythm:
+// headline, lede, the session replica, three benefits, the facts strip.
+.site-product__headline {
+  @include type.type-style('fluid-heading-03', true);
+
+  color: theme.$text-primary;
+}
+
+.site-product__body {
+  margin-block-start: $spacing-05;
+}
+
+.site-product__demo,
+.site-product__benefits {
+  margin-block-start: $spacing-07;
+}
+
+.site-product__tags-label {
+  @include type.type-style('heading-02');
+
+  margin-block: $spacing-07 $spacing-04;
+  color: theme.$text-primary;
+}
+
+// Low-bono: the offer's body sits clear of the quote above it.
+.site-lowbono__body {
+  margin-block-start: $spacing-07;
+}
+
+// The three "why would I use this" answers, and the facts strip under them.
+.site-benefits {
+  display: grid;
+  gap: $spacing-06;
+  grid-template-columns: 1fr;
+
+  @include breakpoint(lg) {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+}
+
+.site-benefit__title {
+  @include type.type-style('heading-02');
+
+  margin-block-end: $spacing-03;
+  color: theme.$text-primary;
+}
+
+.site-benefit__body {
+  color: theme.$text-secondary;
+}
+
+.site-facts {
+  display: flex;
+  flex-wrap: wrap;
+  gap: $spacing-03 $spacing-07;
+  margin-block-start: $spacing-05;
+  padding-block-start: $spacing-05;
+  border-block-start: var(--site-border-width) solid theme.$border-subtle;
+  list-style: none;
+}
+
+.site-facts__item {
+  @include type.type-style('body-01');
+
+  color: theme.$text-secondary;
+}
+
+// Each fact is a checked-off claim; the mark is decorative, the text carries it.
+.site-facts__item::before {
+  content: "\2713";
+  margin-inline-end: $spacing-03;
+  color: theme.$link-primary;
+}
+
+// Contact: the closing panel reads as one block, so it gets the roomier pad.
+.site-contact {
+  @include type.type-style('body-02');
+
+  padding: $spacing-09;
+}
+
+.site-contact__heading {
+  margin-block: $spacing-04 $spacing-06;
+}
+
+.site-contact__actions {
+  margin-block-start: $spacing-07;
+}
+
+// About: the coverage tags sit clear of the lead paragraph above them.
+.site-about__range {
+  margin-block-start: $spacing-07;
+}
+
+// ── Footer ───────────────────────────────────────────────────────────────────
+// Sits at the end of the column, whatever the page height.
+.site-footer {
+  margin-block-start: auto;
+  padding-block: $layout-05;
+  border-block-start: var(--site-border-width) solid theme.$border-subtle-01;
+  background-color: theme.$layer-01;
+}
+
+.site-footer__tagline {
+  @include type.type-style('body-01');
+
+  margin-block-start: $spacing-04;
+  color: theme.$text-secondary;
+}
+
+.site-footer__heading {
+  @include type.type-style('label-01');
+
+  margin-block-end: $spacing-04;
+  color: theme.$text-secondary;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.site-footer__list {
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-03;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.site-footer__column {
+  margin-block-end: $spacing-07;
+}
+
+.site-footer__legal {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: $spacing-03;
+  margin-block-start: $spacing-06;
+  padding-block-start: $spacing-06;
+  border-block-start: var(--site-border-width) solid theme.$border-subtle-01;
+}
+
+.site-footer__legal p {
+  @include type.type-style('body-01');
+
+  color: theme.$text-secondary;
+}
+
+.site-footer__legal-links {
+  display: flex;
+  flex-wrap: wrap;
+  gap: $spacing-03 $spacing-06;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+// ── Legal pages ──────────────────────────────────────────────────────────────
+// The only continuous prose on the site, so they get a reading measure rather
+// than the page width, and a rhythm of their own.
+.site-legal {
+  max-inline-size: var(--site-measure);
+}
+
+.site-legal__updated {
+  @include type.type-style('body-01');
+
+  margin-block-start: $spacing-05;
+  color: theme.$text-secondary;
+}
+
+.site-legal__lede {
+  @include type.type-style('body-02');
+
+  margin-block-start: $spacing-06;
+  color: theme.$text-secondary;
+}
+
+.site-legal__heading {
+  @include type.type-style('fluid-heading-03', true);
+
+  margin-block: $spacing-09 $spacing-04;
+  color: theme.$text-primary;
+}
+
+.site-legal p {
+  margin-block-end: $spacing-05;
+}
+
+.site-legal__list {
+  margin-block-end: $spacing-05;
+  padding-inline-start: $spacing-06;
+  list-style: disc;
+}
+
+// ── The Code Socratic session replica (ADR-014) ──────────────────────────────
+/*
+ * The product renders this workspace in Carbon, and so does this replica now —
+ * but from the site's own markup rather than by importing three product
+ * components (ADR-014). The layer language is the product's own: the pane keeps
+ * `$layer-01`, the speaker who is not the tutor steps up to `$layer-02`.
+ * "Difference in depth, not in colour" — which is also why the two roles stay
+ * legible with no colour-only meaning (design rule 10).
+ */
+.site-demo {
+  margin: 0;
+}
+
+.site-demo__caption {
+  @include type.type-style('heading-03');
+
+  margin-block-end: $spacing-05;
+  color: theme.$text-primary;
+}
+
+.site-demo__frame {
+  border: var(--site-border-width) solid theme.$border-subtle;
+  background-color: theme.$background;
+  overflow: hidden;
+}
+
+// ── Top bar ──
+.site-demo__bar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+  gap: $spacing-04;
+  padding: $spacing-04 $spacing-05;
+  border-block-end: var(--site-border-width) solid theme.$border-subtle;
+  background-color: theme.$layer-01;
+}
+
+.site-demo__crumbs {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: $spacing-04;
+}
+
+// The language is a fact about the harness, not a control, so it reads as the
+// quieter half of a breadcrumb — in the code face the rest of the pane uses.
+.site-demo__lang,
+.site-demo__title {
+  @include type.type-style('code-01');
+
+  font-style: italic;
+}
+
+.site-demo__lang,
+.site-demo__sep {
+  color: theme.$text-secondary;
+}
+
+.site-demo__title {
+  color: theme.$text-primary;
+  font-weight: 600;
+}
+
+.site-demo__stat {
+  @include type.type-style('body-01');
+
+  display: flex;
+  align-items: center;
+  gap: $spacing-03;
+  color: theme.$text-secondary;
+  white-space: nowrap;
+}
+
+.site-demo__stat strong {
+  color: theme.$text-primary;
+}
+
+.site-demo__credits {
+  margin-inline-start: auto;
+}
+
+// ── The two panes ──
+.site-demo__split {
+  display: grid;
+  grid-template-columns: 1fr;
+
+  @include breakpoint(lg) {
+    grid-template-columns: 1.25fr 1fr;
+  }
+}
+
+@include breakpoint(lg) {
+  .site-demo__side {
+    border-inline-start: var(--site-border-width) solid theme.$border-subtle;
+  }
+}
+
+.site-demo__editor,
+.site-demo__side {
+  display: flex;
+  flex-direction: column;
+  min-inline-size: 0;
+}
+
+.site-demo__filepane {
+  display: flex;
+  flex: 1 1 auto;
+  flex-direction: column;
+  min-block-size: 0;
+}
+
+// The open file, as a single tab that reads as the surface it sits on.
+.site-demo__filetab {
+  @include type.type-style('code-01');
+
+  align-self: flex-start;
+  padding: $spacing-04 $spacing-06;
+  border-block-end: var(--site-border-width) solid theme.$border-subtle;
+  border-inline-end: var(--site-border-width) solid theme.$border-subtle;
+  color: theme.$text-primary;
+}
+
+// Each pane scrolls inside itself; the page never grows a horizontal bar.
+.site-demo__scroll {
+  flex: 1 1 auto;
+  min-block-size: 0;
+  max-block-size: var(--site-pane-max);
+  overflow: auto;
+}
+
+// ── Run actions ──
+.site-demo__actions {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+  gap: $spacing-04;
+  padding: $spacing-05 $spacing-06;
+  border-block-start: var(--site-border-width) solid theme.$border-subtle;
+}
+
+/*
+ * These are `disabled` buttons, not Carbon `Button`s: the replica must not offer
+ * a control that does nothing, and a real Button would inherit real affordances.
+ */
+.site-demo__btn {
+  @include type.type-style('body-01');
+
+  display: inline-flex;
+  align-items: center;
+  gap: $spacing-03;
+  padding: $spacing-04 $spacing-06;
+  border: var(--site-border-width) solid theme.$border-strong;
+  background-color: theme.$background;
+  color: theme.$text-secondary;
+  font: inherit;
+}
+
+.site-demo__btn_primary {
+  background-color: theme.$layer-accent-01;
+}
+
+.site-demo__btn kbd {
+  @include type.type-style('code-01');
+
+  opacity: 0.7;
+}
+
+// ── Side tabs ──
+.site-demo__tabs {
+  display: flex;
+  flex-wrap: wrap;
+  border-block-end: var(--site-border-width) solid theme.$border-subtle;
+  background-color: theme.$layer-01;
+}
+
+.site-demo__tab {
+  @include type.type-style('body-01');
+
+  display: inline-flex;
+  align-items: center;
+  gap: $spacing-03;
+  padding: $spacing-04 $spacing-06;
+  border: 0;
+  border-block-start: var(--site-border-width-strong) solid transparent;
+  background: none;
+  color: theme.$text-secondary;
+  cursor: pointer;
+  font: inherit;
+}
+
+.site-demo__tab[aria-selected="true"] {
+  border-block-start-color: theme.$border-interactive;
+  background-color: theme.$background;
+  color: theme.$text-primary;
+  font-weight: 600;
+}
+
+.site-demo__panel {
+  flex: 1 1 auto;
+  min-block-size: 0;
+}
+
+.site-demo__tutor {
+  display: flex;
+  flex-direction: column;
+  block-size: 100%;
+}
+
+// The strip above the chat is where the session's own numbers live — phase,
+// hints, and the clock running since the problem was presented.
+.site-demo__status {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: $spacing-04 $spacing-06;
+  padding: $spacing-04 $spacing-06;
+  border-block-end: var(--site-border-width) solid theme.$border-subtle;
+  background-color: theme.$layer-01;
+}
+
+.site-demo__phases {
+  display: flex;
+  flex: 1 1 auto;
+  flex-wrap: wrap;
+  gap: $spacing-04 $spacing-07;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.site-demo__phase {
+  @include type.type-style('body-01');
+
+  display: flex;
+  align-items: center;
+  gap: $spacing-03;
+  color: theme.$text-secondary;
+}
+
+// The marker is the accent; the assistive text beside it carries the same state
+// in words, so the rail never means something by colour alone (design rule 10).
+.site-demo__phase svg {
+  fill: theme.$icon-interactive;
+}
+
+// ── The exchange ──
+.site-demo__chat {
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-05;
+  margin: 0;
+  padding: $spacing-06;
+  list-style: none;
+}
+
+// A turn is a block, not a bubble: no rounding, no tail, no alignment games.
+.site-demo__who {
+  @include type.type-style('body-01');
+
+  margin-block-end: $spacing-03;
+  color: theme.$text-secondary;
+}
+
+.site-demo__said {
+  padding: $spacing-05 $spacing-06;
+  border: var(--site-border-width) solid theme.$border-subtle;
+  color: theme.$text-primary;
+}
+
+.site-demo__msg_tutor .site-demo__said {
+  background-color: theme.$background;
+}
+
+.site-demo__msg_you .site-demo__said {
+  border-color: theme.$border-strong;
+  background-color: theme.$layer-01;
+}
+
+// ── Composer ──
+.site-demo__composer {
+  display: flex;
+  align-items: stretch;
+  gap: $spacing-04;
+  padding: $spacing-05 $spacing-06;
+  border-block-start: var(--site-border-width) solid theme.$border-subtle;
+}
+
+// A `<span>`, not an input. A disabled textarea still reads as a field someone
+// could be expected to fill in; this is a picture of one.
+.site-demo__field {
+  @include type.type-style('body-01');
+
+  flex: 1 1 auto;
+  padding: $spacing-04;
+  border-block-end: var(--site-border-width) solid theme.$border-strong;
+  background-color: theme.$layer-01;
+  color: theme.$text-secondary;
+}
+
+.site-demo__send {
+  @include type.type-style('body-01');
+
+  display: inline-flex;
+  align-items: center;
+  gap: $spacing-03;
+  padding-inline: $spacing-06;
+  border: 0;
+  background-color: theme.$layer-accent-01;
+  color: theme.$text-secondary;
+  font: inherit;
+}
+
+// ── Instructions / Results prose ──
+.site-demo__prose {
+  padding: $spacing-06;
+}
+
+.site-demo__prose p {
+  margin-block-end: $spacing-05;
+}
+
+.site-demo__prose-head {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: $spacing-04;
+  margin-block-end: $spacing-05;
+}
+
+.site-demo__prose-title {
+  @include type.type-style('heading-03');
+
+  color: theme.$text-primary;
+}
+
+.site-demo__prose-sub {
+  @include type.type-style('heading-02');
+
+  margin-block: $spacing-06 $spacing-04;
+  color: theme.$text-primary;
+}
+
+.site-demo__prose code,
+.site-demo__constraints code {
+  @include type.type-style('code-01');
+
+  color: theme.$link-primary;
+}
+
+.site-demo__constraints {
+  margin: 0;
+  padding-inline-start: $spacing-06;
+}
+
+.site-demo__results-heading {
+  @include type.type-style('heading-02');
+
+  color: theme.$text-primary;
+}
+
+.site-demo__results {
+  display: flex;
+  flex-wrap: wrap;
+  gap: $spacing-07;
+  margin-block: $spacing-05;
+}
+
+.site-demo__result dt {
+  @include type.type-style('body-01');
+
+  color: theme.$text-secondary;
+}
+
+.site-demo__result dd {
+  @include type.type-style('heading-04');
+
+  margin: 0;
+  color: theme.$text-primary;
+}
+
+.site-demo__note,
+.site-demo__static {
+  @include type.type-style('body-01');
+
+  color: theme.$text-secondary;
+}
+
+.site-demo__static {
+  margin-block-start: $spacing-04;
+  font-style: italic;
+}
+
+// ── Python, highlighted ──────────────────────────────────────────────────────
+// The four token classes now take the product's own Carbon values, declared per
+// scheme in `_themes.scss`. The SLDS build had to substitute palette hooks for
+// them because a literal was not allowed; on Carbon they are the same colours
+// the real editor paints (ADR-014, ADR-015).
+.site-code {
+  @include type.type-style('code-01');
+
+  display: flex;
+  gap: $spacing-05;
+  padding: $spacing-05 $spacing-06;
+  line-height: 1.5;
+}
+
+.site-code__gutter {
+  display: flex;
+  flex-direction: column;
+  flex-shrink: 0;
+  color: theme.$text-secondary;
+  text-align: end;
+  user-select: none;
+}
+
+.site-code__pre {
+  margin: 0;
+  min-inline-size: 0;
+  color: theme.$text-primary;
+}
+
+.site-code__keyword {
+  color: var(--site-code-keyword);
+}
+
+.site-code__number {
+  color: var(--site-code-number);
+}
+
+.site-code__string {
+  color: var(--site-code-string);
+}
+
+.site-code__comment {
+  color: var(--site-code-comment);
+}

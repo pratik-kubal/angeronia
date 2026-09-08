@@ -4,14 +4,14 @@ import { IBM_Plex_Sans, IBM_Plex_Mono } from "next/font/google";
 import { ThemeProvider } from "@/components/site/theme-provider";
 import { SkipLink } from "@/components/site/skip-link";
 import { BRAND, LINKS, SITE_URL } from "@/data/angeronia";
-import "./slds.css";
+import "@/styles/globals.scss";
 
 const siteUrl = SITE_URL;
 
 // IBM Plex, self-hosted by next/font — no request reaches Google at runtime,
 // and the generated size-adjusted fallback keeps the swap from shifting layout.
-// The two CSS variables are consumed in `app/theme.angeronia.css` block C and
-// nowhere else (D11, design rule 5).
+// The two CSS variables are consumed by Carbon's `$font-families` map in
+// `styles/_config.scss` and nowhere else (D11, design rule 5).
 const plexSans = IBM_Plex_Sans({
   subsets: ["latin"],
   weight: ["300", "400", "600", "700"],

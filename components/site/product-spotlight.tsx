@@ -1,10 +1,10 @@
 import { Terminal } from "@carbon/icons-react";
-import { Badge } from "@/components/slds/badge";
-import { Card } from "@/components/slds/card";
-import { Cluster, Grid, Col } from "@/components/slds/layout";
-import { Link } from "@/components/slds/link";
-import { Heading, Body } from "@/components/slds/text";
-import { Section } from "@/components/site/section";
+import { Tag } from "@carbon/react";
+import { Card } from "@/components/ui/card";
+import { Cluster } from "@/components/ui/cluster";
+import { ExternalLink } from "@/components/ui/external-link";
+import { Section } from "@/components/ui/section";
+import { Body } from "@/components/ui/text";
 import { CodeSocraticDemo } from "@/components/site/code-socratic-demo";
 import { product } from "@/data/angeronia";
 
@@ -24,34 +24,30 @@ export function ProductSpotlight() {
         heading={
           <span className="site-cluster">
             <span>{product.name}</span>
-            <Badge variant="lightest">{product.kicker}</Badge>
+            <Tag type="outline" size="sm">
+              {product.kicker}
+            </Tag>
           </span>
         }
         headingLevel={2}
         icon={Terminal}
-        footer={
-          <Link href={product.cta.href} external>
-            {product.cta.label}
-          </Link>
-        }
+        footer={<ExternalLink href={product.cta.href}>{product.cta.label}</ExternalLink>}
       >
-        <Heading level={3} size="medium" className="site-measure_heading">
-          {product.headline}
-        </Heading>
-        <Body className="slds-m-top_medium site-measure">{product.body}</Body>
+        <h3 className="site-product__headline site-measure_heading">{product.headline}</h3>
+        <Body className="site-product__body">{product.body}</Body>
 
-        <div className="slds-m-top_large">
+        <div className="site-product__demo">
           <CodeSocraticDemo />
         </div>
 
-        <Grid wrap gutters="large" className="slds-m-top_large">
+        <div className="site-benefits site-product__benefits">
           {product.benefits.map((benefit) => (
-            <Col key={benefit.title} size={12} medium={4} className="slds-m-bottom_medium">
+            <div key={benefit.title}>
               <h4 className="site-benefit__title">{benefit.title}</h4>
               <p className="site-benefit__body">{benefit.body}</p>
-            </Col>
+            </div>
           ))}
-        </Grid>
+        </div>
 
         <ul className="site-facts">
           {product.facts.map((fact) => (
@@ -61,10 +57,12 @@ export function ProductSpotlight() {
           ))}
         </ul>
 
-        <p className="slds-text-title slds-m-top_large">{product.tagsLabel}</p>
-        <Cluster className="slds-m-top_x-small">
+        <p className="site-product__tags-label">{product.tagsLabel}</p>
+        <Cluster>
           {product.tags.map((tag) => (
-            <Badge key={tag}>{tag}</Badge>
+            <Tag key={tag} type="outline" size="sm">
+              {tag}
+            </Tag>
           ))}
         </Cluster>
       </Card>

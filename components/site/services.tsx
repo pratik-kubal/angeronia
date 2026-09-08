@@ -1,36 +1,42 @@
 import { Bot, CloudServices, Rocket, Meter } from "@carbon/icons-react";
-import { Badge } from "@/components/slds/badge";
-import { Card } from "@/components/slds/card";
-import { Grid, Col, Cluster } from "@/components/slds/layout";
-import { Section } from "@/components/site/section";
+import { Tag } from "@carbon/react";
+import { Card } from "@/components/ui/card";
+import { Cluster } from "@/components/ui/cluster";
+import { Section } from "@/components/ui/section";
 import { services, servicesHeading, servicesLabel } from "@/data/angeronia";
 
 const ICONS = [Bot, CloudServices, Rocket, Meter];
 
-/** What the studio takes on: four cards, two by two from the medium breakpoint. */
+/**
+ * What the studio takes on: four cards, two by two from `md`.
+ *
+ * The technology tags are Carbon `Tag`s in the neutral `outline` type. Design
+ * rule 4 reserves the coloured types for meaning, and a technology tag means
+ * nothing beyond itself.
+ */
 export function Services() {
   return (
     <Section id="services" kicker={servicesLabel} heading={servicesHeading}>
-      <Grid wrap stretch gutters>
+      <div className="site-cards site-cards_2">
         {services.map((service, index) => (
-          <Col key={service.title} size={12} medium={6} className="slds-m-bottom_medium">
-            <Card
-              heading={service.title}
-              icon={ICONS[index]}
-              fill
-              footer={
-                <Cluster>
-                  {service.tags.map((tag) => (
-                    <Badge key={tag}>{tag}</Badge>
-                  ))}
-                </Cluster>
-              }
-            >
-              <p>{service.blurb}</p>
-            </Card>
-          </Col>
+          <Card
+            key={service.title}
+            heading={service.title}
+            icon={ICONS[index]}
+            footer={
+              <Cluster>
+                {service.tags.map((tag) => (
+                  <Tag key={tag} type="outline" size="sm">
+                    {tag}
+                  </Tag>
+                ))}
+              </Cluster>
+            }
+          >
+            <p>{service.blurb}</p>
+          </Card>
         ))}
-      </Grid>
+      </div>
     </Section>
   );
 }

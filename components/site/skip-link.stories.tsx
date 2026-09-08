@@ -9,10 +9,11 @@ const meta = {
     docs: {
       description: {
         component:
-          "The first focusable thing on the page. `slds-assistive-text` hides " +
-          "it from sight but not from the accessibility tree; " +
-          "`.site-skip-link:focus` brings it back on keyboard focus. It renders " +
-          "on the server, so it works before hydration.",
+          "The first focusable thing on the page. Carbon's " +
+          "`.cds--visually-hidden` hides it from sight but not from the " +
+          "accessibility tree; `.site-skip-link:focus` brings it back on " +
+          "keyboard focus. It renders on the server, so it works before " +
+          "hydration.",
       },
     },
   },
@@ -25,10 +26,10 @@ export const Default: Story = {
   render: () => (
     <div>
       <SkipLink />
-      <p className="slds-m-top_large">
+      <p>
         Press <kbd>Tab</kbd> — the link appears over the top-left of the page.
       </p>
-      <main id="main" className="slds-m-top_medium">
+      <main id="main">
         <p>Main content.</p>
       </main>
     </div>

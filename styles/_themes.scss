@@ -1,0 +1,152 @@
+// ============================================================================
+// Themes — Carbon White (light) and Carbon Gray 100 (dark).
+//
+// This is the ONLY file allowed to assign a `--cds-*` custom property
+// (design rule 3). Everywhere else they are referenced and never re-valued.
+//
+// The theme is selected by `data-theme` on <html>: `next-themes` writes it
+// (components/site/theme-provider.tsx) and its head script paints it before
+// hydration. `@include theme.theme(...)` emits every Carbon token as a
+// `--cds-*` custom property, so plain CSS can read them.
+// ============================================================================
+@use './config';
+@use 'sass:color';
+@use '@carbon/react/scss/theme';
+@use '@carbon/react/scss/themes';
+@use '@carbon/react/scss/colors' as colors;
+
+// ── Brand accent: teal ───────────────────────────────────────────────────────
+// Carbon ships Blue 60 as its interactive colour; Angeronia's accent is teal.
+//
+// This is the same teal the site already had. The SLDS theme layer's brand ramp
+// was a hand-mapped copy of `@carbon/colors` teal 10–100 (ADR-015), so the
+// migration changes the *mechanism* and not one hex.
+//
+// Teal 60/40 are luminance twins of Blue 60/40 — 5.0:1 on White, 7.8:1 on
+// Gray 100 — so the family drops straight into the slots Carbon designed around
+// blue, and white text still passes on the button. Every other Carbon token
+// keeps its stock value: `support-*` stays Carbon's, because design rule 4
+// reserves the feedback families for feedback.
+@mixin brand-light {
+  --cds-interactive: #{colors.$teal-60};
+  --cds-focus: #{colors.$teal-60};
+  --cds-border-interactive: #{colors.$teal-60};
+  --cds-icon-interactive: #{colors.$teal-60};
+  --cds-link-primary: #{colors.$teal-60};
+  --cds-link-primary-hover: #{colors.$teal-70};
+  --cds-link-secondary: #{colors.$teal-70};
+  --cds-background-brand: #{colors.$teal-60};
+  --cds-highlight: #{colors.$teal-20};
+  // Carbon's hover step is a shade rather than a whole palette stop, so the
+  // button darkens without lurching.
+  --cds-button-primary: #{colors.$teal-60};
+  --cds-button-primary-hover: #{color.mix(colors.$teal-60, colors.$teal-70, 50%)};
+  --cds-button-primary-active: #{colors.$teal-80};
+  // The tertiary button is an outline that fills on hover with white text, so
+  // its hover and active steps stay dark enough to carry it.
+  --cds-button-tertiary: #{colors.$teal-60};
+  --cds-button-tertiary-hover: #{colors.$teal-70};
+  --cds-button-tertiary-active: #{colors.$teal-80};
+  // "Inverse" means sitting on the opposite theme's ground, so these take the
+  // value the *other* theme uses — Carbon does the same with its blues.
+  --cds-link-inverse: #{colors.$teal-40};
+  --cds-link-inverse-hover: #{colors.$teal-30};
+  --cds-notification-action-tertiary-inverse: #{colors.$teal-40};
+  --cds-notification-action-tertiary-inverse-hover: #{colors.$teal-30};
+  --cds-notification-action-tertiary-inverse-active: #{colors.$teal-30};
+}
+
+@mixin brand-dark {
+  --cds-interactive: #{colors.$teal-40};
+  --cds-border-interactive: #{colors.$teal-40};
+  --cds-icon-interactive: #{colors.$teal-40};
+  --cds-link-primary: #{colors.$teal-40};
+  --cds-link-primary-hover: #{colors.$teal-30};
+  --cds-link-secondary: #{colors.$teal-30};
+  --cds-highlight: #{colors.$teal-90};
+  --cds-focus-inverse: #{colors.$teal-60};
+  // `$button-primary` is Blue 60 in *both* Carbon themes, so its teal stays 60.
+  --cds-background-brand: #{colors.$teal-60};
+  --cds-button-primary: #{colors.$teal-60};
+  --cds-button-primary-hover: #{color.mix(colors.$teal-60, colors.$teal-70, 50%)};
+  --cds-button-primary-active: #{colors.$teal-80};
+  // `$focus` and `$button-tertiary` are white on Gray 100 by Carbon's design: a
+  // white focus ring reads even on a brand-coloured control. Both stay.
+  --cds-link-inverse: #{colors.$teal-60};
+  --cds-link-inverse-hover: #{colors.$teal-70};
+  --cds-notification-action-tertiary-inverse: #{colors.$teal-60};
+  --cds-notification-action-tertiary-inverse-hover: #{colors.$teal-70};
+  --cds-notification-action-tertiary-inverse-active: #{colors.$teal-80};
+}
+
+// ── Site tokens that vary by scheme ──────────────────────────────────────────
+// Only what Carbon has no word for. Everything else is a `--cds-*` token, and
+// anything scheme-independent lives in `_site.scss` instead.
+@mixin site-tokens-light {
+  // The hero Möbius (ADR-012). The canvas is painted in JS, so it reads these
+  // back off two probe elements with `getComputedStyle`; they are declared as
+  // real colours here rather than derived, because a solid needs a lit face and
+  // a shaded end far enough apart to model with, and no Carbon token pair
+  // spans that range.
+  //
+  // Light takes the narrower, darker-lit pair: on a near-white ground a Teal 20
+  // band washes out, and shading toward Teal 100 turns the figure black-green.
+  --site-figure-lit: #{colors.$teal-60};
+  --site-figure-shade: #{colors.$teal-90};
+
+  // Syntax, for the Python rendered as HTML in the Code Socratic replica
+  // (ADR-014). These are now the product's own values verbatim — the same four
+  // `@carbon/colors` stops `CodeEditor.tsx` gives its `carbon-light` theme —
+  // where the SLDS build had to substitute palette hooks for them (ADR-015).
+  --site-code-keyword: #{colors.$blue-60};
+  --site-code-string: #{colors.$teal-70};
+  --site-code-comment: #{colors.$gray-60};
+  --site-code-number: #{colors.$purple-70};
+}
+
+@mixin site-tokens-dark {
+  // Dark can carry the wider range: Teal 20 lit down to Teal 100 shaded.
+  --site-figure-lit: #{colors.$teal-20};
+  --site-figure-shade: #{colors.$teal-100};
+
+  // Mirrors `carbon-dark` in the product's own editor theme.
+  --site-code-keyword: #{colors.$blue-40};
+  --site-code-string: #{colors.$teal-30};
+  --site-code-comment: #{colors.$gray-50};
+  --site-code-number: #{colors.$purple-40};
+}
+
+:root {
+  @include theme.theme(themes.$white);
+  @include site-tokens-light;
+  @include brand-light;
+}
+
+:root[data-theme='dark'] {
+  @include theme.theme(themes.$g100);
+  @include site-tokens-dark;
+  @include brand-dark;
+}
+
+// No-JS fallback: follow the OS until `next-themes`' head script sets
+// `data-theme`. With JS the attribute is always present, so this never applies.
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme]) {
+    @include theme.theme(themes.$g100);
+    @include site-tokens-dark;
+    @include brand-dark;
+  }
+}
+
+// Carbon emits the same token set on its theme *zone* classes, which is what a
+// `<Theme theme="…">` subtree reads. Those blocks come from Carbon's own
+// stylesheet, so without this a zone would keep Blue 60.
+.cds--white,
+.cds--g10 {
+  @include brand-light;
+}
+
+.cds--g90,
+.cds--g100 {
+  @include brand-dark;
+}

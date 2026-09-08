@@ -12,7 +12,7 @@ import {
   TestTool,
   Time,
 } from "@carbon/icons-react";
-import { Badge } from "@/components/slds/badge";
+import { Tag } from "@carbon/react";
 import { CodeBlock } from "@/components/site/code-block";
 import { productDemo } from "@/data/angeronia";
 
@@ -23,8 +23,10 @@ import { productDemo } from "@/data/angeronia";
  * (`../code-socratic/apps/web/components/SessionPreview.tsx`): the bar, the
  * editor with its gutter, the four side tabs, the tutor's status rail and the
  * exchange, the run actions and the composer. The content is the product's; the
- * markup and every colour are this site's, because the original is Carbon and
- * rule 1 keeps Carbon out (ADR-014).
+ * markup is this site's, because the original reuses three product components
+ * fed by `@repo/shared` (ADR-014). Both properties now run on Carbon, so the
+ * colours are finally the product's own tokens rather than the SLDS hooks that
+ * had to stand in for them (ADR-015).
  *
  * Nothing acts. The tabs are the one thing a visitor can work — which is the
  * point, since the tabs are what show the tutoring, the tests and the score are
@@ -62,7 +64,7 @@ function TutorPanel() {
               <li key={phase.label} className="site-demo__phase">
                 <Glyph size={16} aria-hidden="true" />
                 <span>{phase.label}</span>
-                <span className="slds-assistive-text">
+                <span className="cds--visually-hidden">
                   {phase.done ? " — complete" : " — in progress"}
                 </span>
               </li>
@@ -110,7 +112,9 @@ function InstructionsPanel() {
     <div className="site-demo__scroll site-demo__prose">
       <div className="site-demo__prose-head">
         <h4 className="site-demo__prose-title">{productDemo.bar.title}</h4>
-        <Badge variant="lightest">{productDemo.bar.difficulty}</Badge>
+        <Tag type="outline" size="sm">
+          {productDemo.bar.difficulty}
+        </Tag>
       </div>
       {productDemo.instructions.paragraphs.map((parts, i) => (
         <p key={i}>
@@ -178,7 +182,8 @@ export function CodeSocraticDemo() {
   const [active, setActive] = React.useState<TabId>("tutor");
   const refs = React.useRef(new Map<TabId, HTMLButtonElement>());
 
-  // Same keyboard contract as `components/slds/tabs`: one tab stop for the
+  // The standard tablist keyboard contract, hand-rolled because these are the
+  // product's contained tabs rather than Carbon's: one tab stop for the
   // tablist, arrows between tabs, Home and End to the ends.
   const move = (from: number, delta: number) => {
     const next = (from + delta + TABS.length) % TABS.length;
@@ -213,7 +218,9 @@ export function CodeSocraticDemo() {
               /
             </span>
             <span className="site-demo__title">{productDemo.bar.title}</span>
-            <Badge variant="lightest">{productDemo.bar.difficulty}</Badge>
+            <Tag type="outline" size="sm">
+              {productDemo.bar.difficulty}
+            </Tag>
           </span>
           <span className="site-demo__stat site-demo__credits">
             {productDemo.bar.creditsLabel} <strong>{productDemo.bar.credits}</strong>

@@ -3,28 +3,31 @@
  *
  * These rules describe the design system rather than being part of it: they
  * style swatch grids and sample tiles that never appear on the site. They live
- * under `.storybook/` for that reason — outside the `lint:slds` glob, which
- * covers the CSS the product actually ships.
+ * under `.storybook/` for that reason, and they consume `--cds-*` tokens the
+ * same way site CSS does — a board must never show a colour the page is not
+ * actually using.
+ *
+ * Carbon is square, so nothing here has a radius: the boards look like the
+ * system they document (ADR-015, plan §6).
  */
 
 .sb-grid {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(15rem, 1fr));
-  gap: var(--slds-g-spacing-4, 1rem);
+  gap: var(--cds-spacing-05, 1rem);
 }
 
 .sb-swatch {
   display: flex;
   align-items: center;
-  gap: var(--slds-g-spacing-3, 0.75rem);
+  gap: var(--cds-spacing-04, 0.75rem);
 }
 
 .sb-swatch__chip {
-  inline-size: var(--slds-g-sizing-9, 2rem);
-  block-size: var(--slds-g-sizing-9, 2rem);
   flex: none;
-  border-radius: var(--slds-g-radius-border-2, 0.5rem);
-  border: 1px solid var(--slds-g-color-border-1);
+  inline-size: var(--cds-spacing-07, 2rem);
+  block-size: var(--cds-spacing-07, 2rem);
+  border: 1px solid var(--cds-border-subtle-01);
 }
 
 .sb-swatch__meta {
@@ -33,54 +36,102 @@
   min-inline-size: 0;
 }
 
+.sb-mono {
+  font-family: var(--cds-code-01-font-family, monospace);
+}
+
+.sb-quiet {
+  color: var(--cds-text-secondary);
+}
+
 .sb-pairing__sample {
-  padding: var(--slds-g-spacing-4, 1rem);
-  border-radius: var(--slds-g-radius-border-2, 0.5rem);
-  margin-block-end: var(--slds-g-spacing-2, 0.5rem);
+  padding: var(--cds-spacing-05, 1rem);
+  margin-block-end: var(--cds-spacing-03, 0.5rem);
 }
 
 .sb-ramp {
   display: grid;
-  grid-template-columns: 4rem 1fr 1fr;
   align-items: center;
-  gap: var(--slds-g-spacing-2, 0.5rem);
+  gap: var(--cds-spacing-03, 0.5rem);
+  grid-template-columns: 6rem 1fr 1fr;
 }
 
 .sb-ramp__bar {
-  block-size: var(--slds-g-sizing-9, 2rem);
-  border-radius: var(--slds-g-radius-border-1, 0.25rem);
+  block-size: var(--cds-spacing-07, 2rem);
 }
 
 .sb-tile {
-  padding: var(--slds-g-spacing-4, 1rem);
-  border-radius: var(--slds-g-radius-border-2, 0.5rem);
-  background: var(--slds-g-color-surface-container-1);
-  border: 1px solid var(--slds-g-color-border-1);
+  border: 1px solid var(--cds-border-subtle-01);
+  background: var(--cds-layer-01);
+  padding: var(--cds-spacing-05, 1rem);
 }
 
 .sb-box {
-  background: var(--slds-g-color-accent-container-1);
-  block-size: var(--slds-g-sizing-7, 1.5rem);
-  border-radius: var(--slds-g-radius-border-1, 0.25rem);
+  background: var(--cds-background-brand);
+  block-size: var(--cds-spacing-06, 1.5rem);
 }
 
 .sb-surface {
-  padding: var(--slds-g-spacing-6, 2rem);
+  padding: var(--cds-spacing-07, 2rem);
 }
 
 .sb-table {
-  inline-size: 100%;
   border-collapse: collapse;
+  inline-size: 100%;
 }
 
 .sb-table th,
 .sb-table td {
+  padding: var(--cds-spacing-03, 0.5rem);
+  border-block-end: 1px solid var(--cds-border-subtle-01);
   text-align: start;
-  padding: var(--slds-g-spacing-2, 0.5rem);
-  border-block-end: 1px solid var(--slds-g-color-border-1);
   vertical-align: top;
 }
 
 .sb-scroll {
   overflow-x: auto;
+}
+
+.sb-board {
+  margin-block-end: var(--cds-spacing-09, 3rem);
+}
+
+.sb-board__title {
+  margin-block-end: var(--cds-spacing-05, 1rem);
+  color: var(--cds-text-primary);
+  font-size: 1.25rem;
+}
+
+.sb-note {
+  margin-block-start: var(--cds-spacing-05, 1rem);
+  color: var(--cds-text-secondary);
+}
+
+.sb-stack > * + * {
+  margin-block-start: var(--cds-spacing-05, 1rem);
+}
+
+.sb-swatch__icon {
+  display: flex;
+  flex: none;
+  align-items: center;
+  justify-content: center;
+  inline-size: var(--cds-spacing-07, 2rem);
+  block-size: var(--cds-spacing-07, 2rem);
+  color: var(--cds-icon-primary);
+}
+
+.sb-cluster {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-end;
+  gap: var(--cds-spacing-07, 2rem);
+}
+
+.sb-size {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--cds-spacing-03, 0.5rem);
+  color: var(--cds-icon-primary);
 }

@@ -8,9 +8,9 @@ const meta = {
     docs: {
       description: {
         component:
-          "The mark is drawn in hooks, not hexes: the disc is " +
-          "`accent-container-1` (Teal 60 in both schemes) and the cursor is its " +
-          "paired `on-accent-1`, which is what keeps it legible at 4.99:1 " +
+          "The mark is drawn in tokens, not hexes: the disc is " +
+          "`$background-brand` (Teal 60 in both themes) and the cursor is its " +
+          "paired `$text-on-color`, which is what keeps it legible at 4.99:1 " +
           "without the component knowing what colour either one is.\n\n" +
           "`scripts/build-logos.mjs` renders the same geometry for the " +
           "OG/social rasters, and `scripts/retint-favicon.mjs` maps the faceted " +
@@ -31,11 +31,9 @@ export const WithoutSubline: Story = { args: { showSub: false } };
 
 export const Sizes: Story = {
   render: () => (
-    <div className="slds-grid slds-grid_vertical">
+    <div className="site-cards">
       {[20, 28, 40, 64].map((size) => (
-        <div key={size} className="slds-col slds-m-bottom_medium">
-          <BrandMark size={size} showSub={false} />
-        </div>
+        <BrandMark key={size} size={size} showSub={false} />
       ))}
     </div>
   ),

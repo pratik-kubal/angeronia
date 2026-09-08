@@ -2,22 +2,29 @@
 
 import type * as React from "react";
 import { ThemeProvider as NextThemesProvider } from "next-themes";
-import { COLOR_SCHEMES, COLOR_SCHEME_CLASS, DEFAULT_COLOR_SCHEME } from "@/lib/slds/scheme";
+import {
+  COLOR_SCHEMES,
+  COLOR_SCHEME_ATTRIBUTE,
+  DEFAULT_COLOR_SCHEME,
+} from "@/lib/theme";
 
 /**
- * Wires `next-themes` to SLDS 2's colour-scheme classes.
+ * Wires `next-themes` to Carbon's themes.
  *
- * `attribute="class"` plus `value` makes next-themes write
- * `slds-color-scheme_light | _dark | _system` on `<html>` instead of its own
- * names, so the design system's `darkMode` utility does the actual work and
- * nothing else in the app needs to know a scheme exists.
+ * `attribute="data-theme"` makes next-themes write `data-theme="light" | "dark"`
+ * on `<html>`, which is the selector `styles/_themes.scss` keys both Carbon
+ * token sets off. With `enableSystem`, `system` resolves to one of the two
+ * before it is written, so the attribute always names a real theme and CSS
+ * never has to reason about "system".
+ *
+ * The provider also injects a head script that paints the attribute before
+ * hydration, so there is no flash of the wrong scheme.
  */
 export function ThemeProvider({ children }: { children: React.ReactNode }) {
   return (
     <NextThemesProvider
-      attribute="class"
+      attribute={COLOR_SCHEME_ATTRIBUTE}
       themes={[...COLOR_SCHEMES]}
-      value={COLOR_SCHEME_CLASS}
       defaultTheme={DEFAULT_COLOR_SCHEME}
       enableSystem
       disableTransitionOnChange

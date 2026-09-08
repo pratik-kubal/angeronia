@@ -2,84 +2,78 @@ import type { Meta, StoryObj } from "@storybook/nextjs-vite";
 import { Board, Pairing, Swatch } from "./Swatch";
 
 /**
- * Colour by role: which hook to reach for, and what it is paired with.
+ * Colour by role: which token to reach for, and what it is paired with.
  *
  * Nothing here is a palette to pick from — the roles are the API. Reaching for
- * a hex, or for a feedback colour to mean something other than feedback, is
- * what design rule 4 forbids.
+ * a hex, or for a support colour to mean something other than status, is what
+ * design rule 4 forbids.
  */
 function ColorBoard() {
   return (
     <div>
-      <Board title="Surfaces and their ink">
+      <Board title="Grounds and their ink">
         <div className="sb-grid">
-          {["surface-1", "surface-2", "surface-3"].map((s) => (
-            <Pairing key={s} on="--slds-g-color-on-surface-3" container={`--slds-g-color-${s}`} />
+          {["background", "layer-01", "layer-02"].map((s) => (
+            <Pairing key={s} on="--cds-text-primary" container={`--cds-${s}`} />
           ))}
         </div>
-      </Board>
-
-      <Board title="Containers">
-        <div className="sb-grid">
-          {[
-            "surface-container-1",
-            "surface-container-2",
-            "surface-container-3",
-            "surface-inverse-1",
-            "surface-inverse-2",
-          ].map((name) => (
-            <Swatch key={name} name={`--slds-g-color-${name}`} />
-          ))}
-        </div>
-      </Board>
-
-      <Board title="Accent — the brand, reachable only through these">
-        <div className="sb-grid">
-          {[
-            "accent-1",
-            "accent-2",
-            "accent-3",
-            "accent-container-1",
-            "accent-container-2",
-            "accent-container-3",
-            "border-accent-1",
-            "border-accent-2",
-          ].map((name) => (
-            <Swatch key={name} name={`--slds-g-color-${name}`} />
-          ))}
-        </div>
-        <p className="slds-m-top_medium site-measure">
-          Links are <code className="slds-text-font_monospace">accent-2</code>; their hover state is{" "}
-          <code className="slds-text-font_monospace">accent-3</code>. Both come from the base
-          stylesheet, so a link needs no styling of its own.
+        <p className="sb-note site-measure">
+          Carbon&rsquo;s layer model steps <em>up</em> from the page ground: the page is{" "}
+          <code className="sb-mono">background</code>, a shaded band is{" "}
+          <code className="sb-mono">layer-01</code>, and a card on that band is{" "}
+          <code className="sb-mono">layer-02</code>. A <code className="sb-mono">&lt;Layer&gt;</code>{" "}
+          does the stepping, so a card never has to know which band it is on.
         </p>
-      </Board>
-
-      <Board title="Feedback — for feedback only">
-        <div className="sb-grid">
-          {["error", "warning", "success", "info"].map((family) => (
-            <Pairing
-              key={family}
-              on={`--slds-g-color-on-${family}-1`}
-              container={`--slds-g-color-${family}-container-1`}
-            />
-          ))}
-        </div>
       </Board>
 
       <Board title="Text and border">
         <div className="sb-grid">
           {[
-            "on-surface-1",
-            "on-surface-2",
-            "on-surface-3",
-            "border-1",
-            "border-2",
-            "border-3",
+            "text-primary",
+            "text-secondary",
+            "text-on-color",
+            "border-subtle-01",
+            "border-subtle-02",
+            "border-strong-01",
           ].map((name) => (
-            <Swatch key={name} name={`--slds-g-color-${name}`} />
+            <Swatch key={name} name={`--cds-${name}`} />
           ))}
         </div>
+      </Board>
+
+      <Board title="Brand — the teal, reachable only through these">
+        <div className="sb-grid">
+          {[
+            "link-primary",
+            "link-primary-hover",
+            "link-secondary",
+            "background-brand",
+            "button-primary",
+            "border-interactive",
+            "icon-interactive",
+            "focus",
+          ].map((name) => (
+            <Swatch key={name} name={`--cds-${name}`} />
+          ))}
+        </div>
+        <p className="sb-note site-measure">
+          These are the tokens <code className="sb-mono">styles/_themes.scss</code> reassigns from
+          Carbon&rsquo;s Blue 60 family to Teal. Everything else on this page is Carbon&rsquo;s stock
+          value.
+        </p>
+      </Board>
+
+      <Board title="Support — for status only">
+        <div className="sb-grid">
+          {["support-error", "support-success", "support-warning", "support-info"].map((name) => (
+            <Pairing key={name} on={`--cds-${name}`} container="--cds-background" min={3} />
+          ))}
+        </div>
+        <p className="sb-note site-measure">
+          Untouched by the brand override, and deliberately so: teal sits close to Carbon&rsquo;s
+          green on the wheel, and a brand colour that can be mistaken for &ldquo;success&rdquo; is a
+          colour-only meaning waiting to happen (design rule 4).
+        </p>
       </Board>
     </div>
   );

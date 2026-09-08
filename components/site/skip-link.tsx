@@ -2,22 +2,19 @@ import { copy } from "@/data/angeronia";
 
 /**
  * The first focusable thing on the page: a link that jumps past the header to
- * `#main` (design rule 10, SLDS Accessibility → Keyboard Interaction).
+ * `#main` (design rule 10).
  *
- * `slds-assistive-text` hides it from sight but not from the accessibility
- * tree, and `slds-assistive-text_focus` — SLDS's own pairing for exactly this
- * — brings it back on keyboard focus. Both set their properties `!important`,
- * so the visible treatment lives on an inner span rather than fighting them.
+ * `cds--visually-hidden` is Carbon's own hide-from-sight-not-from-the-tree
+ * utility; unlike the SLDS pairing it replaces, it sets no `!important`, so the
+ * revealed treatment is a plain `:focus` rule in `styles/_site.scss` on the
+ * same element rather than on an inner span.
  *
  * It renders on the server, so it works before hydration.
  */
 export function SkipLink() {
   return (
-    <a
-      href="#main"
-      className="slds-assistive-text slds-assistive-text_focus site-skip-link"
-    >
-      <span className="site-skip-link__label">{copy.skipLink}</span>
+    <a href="#main" className="cds--visually-hidden site-skip-link">
+      {copy.skipLink}
     </a>
   );
 }

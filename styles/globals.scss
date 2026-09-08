@@ -1,0 +1,12 @@
+// ============================================================================
+// angeronia.com — the single stylesheet entry point (IBM Carbon v11).
+//
+// Order matters: `config` first (it configures Carbon), then all of Carbon,
+// then the theme custom properties, then the site's own layer.
+//
+// See docs/design-system/DESIGN-RULES.md.
+// ============================================================================
+@use './config';
+@use '@carbon/react';
+@use './themes';
+@use './site';

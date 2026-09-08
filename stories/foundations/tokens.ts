@@ -1,19 +1,18 @@
 /**
  * Helpers for the Foundations boards.
  *
- * Everything here reads the *live* computed value of a styling hook rather
- * than a copy of the token JSON, so a board can never show a colour the page
- * is not actually using — including after a `@salesforce-ux/design-system-2`
- * bump.
+ * Everything here reads the *live* computed value of a token rather than a copy
+ * of the theme JSON, so a board can never show a colour the page is not
+ * actually using — including after a `@carbon/react` bump.
  */
 
-/** Resolved value of a styling hook on `<html>`. */
-export function hook(name: string): string {
+/** Resolved value of a custom property on `<html>`. */
+export function token(name: string): string {
   if (typeof document === "undefined") return "";
   return getComputedStyle(document.documentElement).getPropertyValue(name).trim();
 }
 
-/** Resolve a colour hook to `rgb(...)` by letting the browser do it. */
+/** Resolve any colour value to `rgb(...)` by letting the browser do it. */
 export function resolveColor(value: string): string {
   const probe = document.createElement("span");
   probe.style.color = value;
@@ -45,28 +44,38 @@ export function contrast(fg: string, bg: string): number {
   return (Math.max(a, b) + 0.05) / (Math.min(a, b) + 0.05);
 }
 
-/** The seventeen brand reference steps, darkest first. */
-export const BRAND_STEPS = [
-  5, 10, 15, 20, 30, 35, 40, 45, 50, 55, 60, 65, 70, 80, 85, 90, 95,
-] as const;
+/** Carbon's teal ramp, lightest first — the brand family. */
+export const TEAL_STEPS = [10, 20, 30, 40, 50, 60, 70, 80, 90, 100] as const;
 
-/** Cosmos's own electric-blue ramp, for the side-by-side on the Brand board. */
-export const COSMOS_BRAND: Record<number, string> = {
-  5: "#000314",
-  10: "#001642",
-  15: "#001e5b",
-  20: "#002775",
-  30: "#022ac0",
-  35: "#003ecd",
-  40: "#0250d9",
-  45: "#045dec",
-  50: "#066afe",
-  55: "#287efe",
-  60: "#4992fe",
-  65: "#5f9ffe",
-  70: "#7cb1fe",
-  80: "#a8cbff",
-  85: "#c2daff",
-  90: "#d6e6ff",
-  95: "#edf4ff",
+/**
+ * The two ramps side by side on the Brand board.
+ *
+ * Carbon's own interactive family is Blue; Angeronia's is Teal. Teal 60/40 are
+ * luminance twins of Blue 60/40, which is what lets the swap keep every
+ * contrast pairing Carbon designed around blue.
+ */
+export const CARBON_TEAL: Record<number, string> = {
+  10: "#d9fbfb",
+  20: "#9ef0f0",
+  30: "#3ddbd9",
+  40: "#08bdba",
+  50: "#009d9a",
+  60: "#007d79",
+  70: "#005d5d",
+  80: "#004144",
+  90: "#022b30",
+  100: "#081a1c",
+};
+
+export const CARBON_BLUE: Record<number, string> = {
+  10: "#edf5ff",
+  20: "#d0e2ff",
+  30: "#a6c8ff",
+  40: "#78a9ff",
+  50: "#4589ff",
+  60: "#0f62fe",
+  70: "#0043ce",
+  80: "#002d9c",
+  90: "#001d6c",
+  100: "#001141",
 };

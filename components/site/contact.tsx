@@ -1,33 +1,43 @@
-import { Button } from "@/components/slds/button";
-import { Box, Container, Cluster } from "@/components/slds/layout";
-import { Link } from "@/components/slds/link";
-import { Heading, Body } from "@/components/slds/text";
+import { Button, Column, Link, Tile } from "@carbon/react";
+import { Grid } from "@/components/ui/grid";
+import { Cluster } from "@/components/ui/cluster";
+import { Heading, Body, Kicker } from "@/components/ui/text";
 import { contact } from "@/data/angeronia";
 
-/** The closing call to action: one box, one primary action, one plain address. */
+/**
+ * The closing call to action: one panel, one primary action, one plain address.
+ *
+ * The panel is a Carbon `Tile` at the page's own layer level, so it takes
+ * `$layer-01` and reads as a band the way the shaded sections do. Deliberately
+ * *not* wrapped in a `<Layer>`: that would step it to `$layer-02`, which is
+ * white in the light theme — a panel the same colour as the page it is meant to
+ * stand out from.
+ */
 export function Contact() {
   return (
     <section id="contact" className="site-section" aria-labelledby="contact-heading">
-      <Container size="x-large">
-        <Box theme="shade" className="site-contact">
-          <p className="slds-text-title_caps slds-text-color_weak">{contact.label}</p>
-          <Heading
-            level={2}
-            size="large"
-            id="contact-heading"
-            className="site-measure_heading slds-m-top_x-small"
-          >
-            {contact.heading}
-          </Heading>
-          <Body className="slds-m-top_medium">{contact.body}</Body>
-          <Cluster gap="medium" className="slds-m-top_large">
-            <Button variant="brand" href={contact.cta.href}>
-              {contact.cta.label}
-            </Button>
-            <Link href={`mailto:${contact.emailText}`}>{contact.emailText}</Link>
-          </Cluster>
-        </Box>
-      </Container>
+      <Grid className="site-container">
+        <Column sm={4} md={8} lg={16}>
+          <Tile className="site-contact">
+            <Kicker>{contact.label}</Kicker>
+            <Heading
+              level={2}
+              size="section"
+              id="contact-heading"
+              className="site-measure_heading site-contact__heading"
+            >
+              {contact.heading}
+            </Heading>
+            <Body>{contact.body}</Body>
+            <Cluster gap="medium" className="site-contact__actions">
+              <Button kind="primary" href={contact.cta.href}>
+                {contact.cta.label}
+              </Button>
+              <Link href={`mailto:${contact.emailText}`}>{contact.emailText}</Link>
+            </Cluster>
+          </Tile>
+        </Column>
+      </Grid>
     </section>
   );
 }

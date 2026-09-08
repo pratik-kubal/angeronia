@@ -1,26 +1,48 @@
 import type { Meta, StoryObj } from "@storybook/nextjs-vite";
 import { Board } from "./Swatch";
-import { hook } from "./tokens";
+import { token } from "./tokens";
 
-const SPACING = ["1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11", "12"];
-const RADIUS = ["border-1", "border-2", "border-3", "border-4", "border-pill"];
-const SHADOW = ["1", "2", "3", "4"];
-const DURATION = ["immediately", "quickly", "promptly", "slowly", "paused"];
+const SPACING = [
+  "01",
+  "02",
+  "03",
+  "04",
+  "05",
+  "06",
+  "07",
+  "08",
+  "09",
+  "10",
+  "11",
+  "12",
+  "13",
+];
+const SITE_VALUES = [
+  { name: "--site-measure", use: "The prose measure — a paragraph's maximum line." },
+  { name: "--site-measure-heading", use: "The heading measure, so a display line breaks well." },
+  { name: "--site-measure-quote", use: "The low-bono quote, one step narrower than a heading." },
+  { name: "--site-border-width", use: "Carbon draws its own borders at this width." },
+  { name: "--site-border-width-strong", use: "An interactive or accent edge." },
+  { name: "--site-figure-min", use: "The hero Möbius, at its smallest." },
+  { name: "--site-figure-max", use: "The hero Möbius, at its largest." },
+  { name: "--site-pane-max", use: "How tall a pane in the session replica scrolls within." },
+  { name: "--site-container-max", use: "The page's own width cap, shorter than Carbon's 99rem." },
+];
 
 /**
- * Spacing, sizing, shape and motion — the non-colour half of the visual
- * language, on one board because the rules that govern them are the same:
- * reference the hook, never the number.
+ * Spacing, shape and motion — the non-colour half of the visual language, on
+ * one board because the rule that governs them is the same: reference the
+ * token, never the number.
  */
 function ShapeBoard() {
   return (
     <div>
-      <Board title="Spacing — a 4-pt scale, for margin, padding and gap">
+      <Board title="Spacing — Carbon's scale, for margin, padding and gap">
         <div className="sb-scroll">
           <table className="sb-table">
             <thead>
               <tr>
-                <th scope="col">Hook</th>
+                <th scope="col">Token</th>
                 <th scope="col">Value</th>
                 <th scope="col">Width</th>
               </tr>
@@ -29,13 +51,13 @@ function ShapeBoard() {
               {SPACING.map((step) => (
                 <tr key={step}>
                   <td>
-                    <code className="slds-text-font_monospace">spacing-{step}</code>
+                    <code className="sb-mono">spacing-{step}</code>
                   </td>
-                  <td>{hook(`--slds-g-spacing-${step}`)}</td>
+                  <td>{token(`--cds-spacing-${step}`)}</td>
                   <td>
                     <span
                       className="sb-box"
-                      style={{ display: "block", width: `var(--slds-g-spacing-${step})` }}
+                      style={{ display: "block", width: `var(--cds-spacing-${step})` }}
                     />
                   </td>
                 </tr>
@@ -43,69 +65,64 @@ function ShapeBoard() {
             </tbody>
           </table>
         </div>
-        <p className="slds-m-top_medium site-measure">
-          Sizing hooks — <code className="slds-text-font_monospace">--slds-g-sizing-*</code> — are a
-          separate family, for width and height. Using a spacing hook for a
-          width is the mistake this split exists to prevent.
+        <p className="sb-note site-measure">
+          Section rhythm uses the <code className="sb-mono">$layout-*</code> scale on top of these.
+          Both are Sass-side in Carbon; the custom properties above exist because Carbon emits them
+          for consumption from plain CSS.
         </p>
       </Board>
 
-      <Board title="Radius — less is best; never mix sharp and rounded">
+      <Board title="Shape — square, on purpose">
         <div className="sb-grid">
-          {RADIUS.map((name) => (
-            <div key={name} className="sb-tile" style={{ borderRadius: `var(--slds-g-radius-${name})` }}>
-              <code className="slds-text-font_monospace">radius-{name}</code>
-              <p className="slds-text-body_small slds-text-color_weak">
-                {hook(`--slds-g-radius-${name}`)}
-              </p>
-            </div>
-          ))}
+          <div className="sb-tile">
+            <code className="sb-mono">A card</code>
+            <p className="sb-quiet site-body_small">1px border, no radius, no shadow.</p>
+          </div>
         </div>
-        <p className="slds-m-top_medium site-measure">
-          On this site: buttons are pill, cards are{" "}
-          <code className="slds-text-font_monospace">border-4</code>, inputs are{" "}
-          <code className="slds-text-font_monospace">border-2</code>.
+        <p className="sb-note site-measure">
+          Carbon is square and has no elevation scale in v11. The site takes both as they come
+          (ADR-015): buttons are rectangles, a card&rsquo;s edge is a border rather than a shadow,
+          and nothing on the page carries a radius. The SLDS build&rsquo;s pill buttons,{" "}
+          <code className="sb-mono">border-4</code> cards and single shadow level are gone with it.
         </p>
       </Board>
 
-      <Board title="Shadow — one level per element, never stacked">
-        <div className="sb-grid">
-          {SHADOW.map((step) => (
-            <div key={step} className="sb-tile" style={{ boxShadow: `var(--slds-g-shadow-${step})` }}>
-              <code className="slds-text-font_monospace">shadow-{step}</code>
-              <p className="slds-text-body_small slds-text-color_weak">
-                {["at rest", "default", "hover", "floating"][Number(step) - 1]}
-              </p>
-            </div>
-          ))}
-        </div>
-      </Board>
-
-      <Board title="Motion — SLDS durations only, nothing scroll-linked">
+      <Board title="Site values — what Carbon has no token for">
         <div className="sb-scroll">
           <table className="sb-table">
             <thead>
               <tr>
-                <th scope="col">Hook</th>
+                <th scope="col">Custom property</th>
                 <th scope="col">Value</th>
+                <th scope="col">What it is</th>
               </tr>
             </thead>
             <tbody>
-              {DURATION.map((name) => (
+              {SITE_VALUES.map(({ name, use }) => (
                 <tr key={name}>
                   <td>
-                    <code className="slds-text-font_monospace">duration-{name}</code>
+                    <code className="sb-mono">{name}</code>
                   </td>
-                  <td>{hook(`--slds-g-duration-${name}`)}</td>
+                  <td>{token(name) || "—"}</td>
+                  <td className="sb-quiet">{use}</td>
                 </tr>
               ))}
             </tbody>
           </table>
         </div>
-        <p className="slds-m-top_medium site-measure">
-          The site uses only the transitions the theme already defines — the
-          brand button&rsquo;s hover lift and the link colour change. No
-          scroll-linked animation, no canvas, no autoplay.
+        <p className="sb-note site-measure">
+          Declared once at the top of <code className="sb-mono">styles/_site.scss</code>, so no rule
+          in that file carries a bare number.
+        </p>
+      </Board>
+
+      <Board title="Motion — Carbon durations only, nothing scroll-linked">
+        <p className="site-measure">
+          The site uses only the transitions Carbon&rsquo;s own components define — a button&rsquo;s
+          hover, a link&rsquo;s colour change, the focus ring. No scroll-linked animation and no
+          autoplay, with one waiver: the hero Möbius turns on its own (ADR-013), stops off screen,
+          draws a single static frame under <code className="sb-mono">prefers-reduced-motion</code>,
+          and is not rendered at all below <code className="sb-mono">md</code>.
         </p>
       </Board>
     </div>

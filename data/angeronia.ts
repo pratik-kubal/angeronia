@@ -2,7 +2,7 @@
 // landing page. Every string the site renders lives here (design rule 13);
 // components take content as props and never inline copy of their own.
 
-import type { ColorScheme } from "@/lib/slds/scheme";
+import type { ColorScheme } from "@/lib/theme";
 
 /** Chrome and control labels — the strings that are not page content. */
 export const copy = {
