@@ -3,18 +3,19 @@ import { Badge } from "@/components/slds/badge";
 import { Card } from "@/components/slds/card";
 import { Cluster, Grid, Col } from "@/components/slds/layout";
 import { Link } from "@/components/slds/link";
-import { List, ListItem } from "@/components/slds/list";
-import { ProgressIndicator } from "@/components/slds/progress-indicator";
 import { Heading, Body } from "@/components/slds/text";
 import { Section } from "@/components/site/section";
+import { CodeSocraticDemo } from "@/components/site/code-socratic-demo";
 import { product } from "@/data/angeronia";
 
 /**
- * Code Socratic — the studio's own product, as one card.
+ * Code Socratic — the studio's own product, met the way a customer meets it.
  *
- * The old version cycled the three-step loop on a timer. It is now a static
- * Progress Indicator: the loop is a fact about the product, not something that
- * needs to be performed (design rule 8, O9).
+ * The card used to argue from the studio's side: what the thing is built from,
+ * closing on it as proof the consultancy can ship. It now leads with the
+ * product's own question, answers "why would I use this" three times, and shows
+ * a session rather than describing one (ADR-014). The stack stays, but as a
+ * footnote to the argument instead of the argument itself.
  */
 export function ProductSpotlight() {
   return (
@@ -34,42 +35,38 @@ export function ProductSpotlight() {
           </Link>
         }
       >
-        <Grid wrap gutters="large">
-          <Col size={12} medium={7}>
-            <Heading level={3} size="medium" className="site-measure_heading">
-              {product.headline}
-            </Heading>
+        <Heading level={3} size="medium" className="site-measure_heading">
+          {product.headline}
+        </Heading>
+        <Body className="slds-m-top_medium site-measure">{product.body}</Body>
 
-            <div className="slds-m-vertical_large site-product__loop">
-              <ProgressIndicator
-                steps={product.loop.map((label) => ({ label }))}
-                current={product.loop.length}
-                label={`${product.name} loop`}
-                showLabels
-              />
-            </div>
+        <div className="slds-m-top_large">
+          <CodeSocraticDemo />
+        </div>
 
-            <Body>{product.body}</Body>
-          </Col>
-
-          <Col size={12} medium={5}>
-            <List variant="dotted">
-              {product.points.map((point) => (
-                <ListItem key={point}>{point}</ListItem>
-              ))}
-            </List>
-
-            <Cluster className="slds-m-top_large">
-              {product.tags.map((tag) => (
-                <Badge key={tag}>{tag}</Badge>
-              ))}
-            </Cluster>
-
-            <p className="slds-text-body_small slds-text-color_weak slds-m-top_large">
-              {product.note}
-            </p>
-          </Col>
+        <Grid wrap gutters="large" className="slds-m-top_large">
+          {product.benefits.map((benefit) => (
+            <Col key={benefit.title} size={12} medium={4} className="slds-m-bottom_medium">
+              <h4 className="site-benefit__title">{benefit.title}</h4>
+              <p className="site-benefit__body">{benefit.body}</p>
+            </Col>
+          ))}
         </Grid>
+
+        <ul className="site-facts">
+          {product.facts.map((fact) => (
+            <li key={fact} className="site-facts__item">
+              {fact}
+            </li>
+          ))}
+        </ul>
+
+        <p className="slds-text-title slds-m-top_large">{product.tagsLabel}</p>
+        <Cluster className="slds-m-top_x-small">
+          {product.tags.map((tag) => (
+            <Badge key={tag}>{tag}</Badge>
+          ))}
+        </Cluster>
       </Card>
     </Section>
   );

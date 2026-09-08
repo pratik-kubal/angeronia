@@ -10,12 +10,17 @@ const meta = {
     docs: {
       description: {
         component:
-          "A three-way choice with a persistent selection is a set of toggles, " +
-          "not a cycling button: `aria-pressed` says which one is on, so the " +
-          "current scheme is announced rather than inferred from an icon.\n\n" +
-          "Before hydration `theme` is unknown, so every button renders " +
-          "unpressed — rendering a guess would announce the wrong state to " +
-          "anyone whose scheme differs from the default.",
+          "A choice with a persistent selection is a set of toggles, not a " +
+          "cycling button: `aria-pressed` says which one is on, so the current " +
+          "scheme is announced rather than inferred from an icon.\n\n" +
+          "There is no Match-system button, but `system` is still the default " +
+          "scheme — a first visit follows the reader's OS. That is why the " +
+          "pressed state reads `resolvedTheme` rather than `theme`: on a " +
+          "system-dark machine Dark is the button that reads pressed, because " +
+          "dark is what the reader is actually looking at.\n\n" +
+          "Before hydration it is unknown, so both render unpressed — " +
+          "rendering a guess would announce the wrong state to anyone whose " +
+          "scheme differs from the default.",
       },
     },
   },

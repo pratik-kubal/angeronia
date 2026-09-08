@@ -1,7 +1,7 @@
 # angeronia.com
 
 Marketing site for **Angeronia Labs LLC** — a software engineering studio in
-Philadelphia, and the maker of [Code Socratic](https://code-socratic.com).
+Philadelphia, and the maker of [Code Socratic](https://code-socratic.angeronia.com/).
 
 Built on **Salesforce Lightning Design System 2** (Cosmos theme) under an
 Angeronia theme layer: IBM Carbon Teal as the brand accent, IBM Plex as the

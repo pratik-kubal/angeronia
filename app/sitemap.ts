@@ -1,7 +1,7 @@
 import type { MetadataRoute } from "next";
-import { SITE_URL } from "@/data/angeronia";
+import { SITE_URL, legalDocuments } from "@/data/angeronia";
 
-/** One page, for now. Add routes here as they land. */
+/** The home page, plus one entry per legal document. */
 export default function sitemap(): MetadataRoute.Sitemap {
   return [
     {
@@ -10,5 +10,11 @@ export default function sitemap(): MetadataRoute.Sitemap {
       changeFrequency: "monthly",
       priority: 1,
     },
+    ...legalDocuments.map((doc) => ({
+      url: `${SITE_URL}/${doc.slug}`,
+      lastModified: new Date(doc.updatedIso),
+      changeFrequency: "yearly" as const,
+      priority: 0.3,
+    })),
   ];
 }

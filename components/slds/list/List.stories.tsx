@@ -15,7 +15,7 @@ const meta = {
     },
   },
   args: {
-    children: product.points.map((point) => <ListItem key={point}>{point}</ListItem>),
+    children: product.facts.map((fact) => <ListItem key={fact}>{fact}</ListItem>),
   },
 } satisfies Meta<typeof List>;
 

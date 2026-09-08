@@ -1,6 +1,7 @@
 import type { Meta, StoryObj } from "@storybook/nextjs-vite";
 import { ArrowRight, Launch } from "@carbon/icons-react";
 import { Button } from "./Button";
+import { LINKS } from "@/data/angeronia";
 
 const meta = {
   title: "Components/Button",
@@ -79,7 +80,7 @@ export const WithIcons: Story = {
         </Button>
       </div>
       <div className="slds-col">
-        <Button iconLeft={Launch} href="https://code-socratic.com">
+        <Button iconLeft={Launch} href={LINKS.codeSocratic}>
           Visit Code Socratic
         </Button>
       </div>

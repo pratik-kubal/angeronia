@@ -4,7 +4,7 @@ import { MediaObject } from "@/components/slds/media-object";
 import { Cluster } from "@/components/slds/layout";
 import { Body } from "@/components/slds/text";
 import { Section } from "@/components/site/section";
-import { aboutCoda, aboutHeading, aboutKicker, aboutLabel, aboutRange } from "@/data/angeronia";
+import { aboutCoda, aboutHeading, aboutLabel, aboutRange } from "@/data/angeronia";
 import { aboutLead } from "@/data/angeronia";
 
 /**
@@ -23,14 +23,15 @@ export function About() {
       >
         <Body>{aboutLead}</Body>
 
-        <p className="slds-text-title slds-m-top_large">{aboutKicker}</p>
-        <Cluster className="slds-m-top_x-small">
+        <Cluster className="slds-m-top_large">
           {aboutRange.map((area) => (
             <Badge key={area}>{area}</Badge>
           ))}
         </Cluster>
 
-        <Body className="slds-m-top_large">{aboutCoda}</Body>
+        <blockquote className="site-coda">
+          <p>{aboutCoda}</p>
+        </blockquote>
       </MediaObject>
     </Section>
   );

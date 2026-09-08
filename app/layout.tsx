@@ -32,7 +32,7 @@ const description =
 export const metadata: Metadata = {
   metadataBase: new URL(siteUrl),
   title: {
-    default: "Angeronia Labs — Software Engineering Studio",
+    default: "Angeronia Labs",
     template: "%s | Angeronia Labs",
   },
   description,
@@ -52,14 +52,14 @@ export const metadata: Metadata = {
   openGraph: {
     type: "website",
     url: siteUrl,
-    title: "Angeronia Labs — Software Engineering Studio",
+    title: "Angeronia Labs",
     description,
     siteName: BRAND.name,
     images: [{ url: "/angeronia-logo-light.png", width: 500, height: 500, alt: BRAND.name }],
   },
   twitter: {
     card: "summary_large_image",
-    title: "Angeronia Labs — Software Engineering Studio",
+    title: "Angeronia Labs",
     description,
     images: ["/angeronia-logo-light.png"],
   },

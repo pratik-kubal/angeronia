@@ -1,39 +1,49 @@
-import { ArrowRight } from "@carbon/icons-react";
 import { Button } from "@/components/slds/button";
-import { Container, Cluster } from "@/components/slds/layout";
+import { Container, Grid, Col } from "@/components/slds/layout";
 import { Heading, Kicker, Body } from "@/components/slds/text";
+import { MobiusFigure } from "./mobius-figure";
 import { hero } from "@/data/angeronia";
 
 /**
  * The page opening.
  *
- * One column, held to the heading measure (`sizing-heading-2`, 25ch) so the
- * display line breaks where it should rather than where the viewport happens
- * to end. No scroll hint and no figure — motion is not scroll-linked (design
- * rule 8), and O3 puts the illustration out of Phase 3.
+ * Two columns from the medium breakpoint up — copy at 7/12, the Möbius at
+ * 5/12, the same split the product spotlight uses — and one stacked column
+ * below it, where the figure drops out entirely. The heading stays held to
+ * `sizing-heading-2` (25ch) so the display line breaks where it should rather
+ * than where its column happens to end.
+ *
+ * The figure is the page's one illustration (design rule 9) and the only thing
+ * on the site that moves by itself; ADR-012 and ADR-013 carry the reasoning.
  */
 export function Hero() {
   return (
     <section className="site-section site-hero" aria-labelledby="hero-heading">
       <Container size="x-large">
-        <Kicker>{hero.kicker}</Kicker>
-        <Heading
-          level={1}
-          size="display"
-          id="hero-heading"
-          className="site-measure_heading slds-m-top_small"
-        >
-          {hero.h1}
-        </Heading>
-        <Body className="slds-m-top_medium site-hero__lede">{hero.body}</Body>
-        <Cluster gap="medium" className="slds-m-top_large">
-          <Button variant="brand" href={hero.ctaPrimary.href}>
-            {hero.ctaPrimary.label}
-          </Button>
-          <Button variant="neutral" href={hero.ctaSecondary.href} iconRight={ArrowRight}>
-            {hero.ctaSecondary.label}
-          </Button>
-        </Cluster>
+        <Grid wrap gutters="large" verticalAlign="center">
+          <Col size={12} medium={7}>
+            <Kicker>{hero.kicker}</Kicker>
+            <Heading
+              level={1}
+              size="display"
+              id="hero-heading"
+              className="site-measure_heading slds-m-top_small"
+            >
+              {hero.h1}
+            </Heading>
+            <Button
+              variant="brand"
+              href={hero.ctaPrimary.href}
+              className="slds-m-top_large"
+            >
+              {hero.ctaPrimary.label}
+            </Button>
+          </Col>
+
+          <Col size={12} medium={5} className="site-hero__figcol">
+            <MobiusFigure />
+          </Col>
+        </Grid>
       </Container>
     </section>
   );

@@ -215,6 +215,83 @@
   color: var(--slds-g-color-on-surface-2, #2e2e2e);
 }
 
+/*
+ * The hero Möbius (ADR-012). Rung 4 of the selection ladder: SLDS has no
+ * figure primitive, so this is custom CSS built from hooks.
+ *
+ * The `color` on each of these two elements is not paint — nothing renders in
+ * it. It is how the canvas gets a *resolved* accent: every scheme-aware hook is
+ * a `light-dark()` pair, and reading the custom property back gives the token
+ * stream (`light-dark(#005d5d, #9ef0f0)`), not the branch in force. Used in a
+ * real property it collapses, so `getComputedStyle().color` hands the component
+ * an `rgb()` per scheme. The wrapper carries the lit face, the canvas the
+ * shaded end (design rule 4: colour by role, in pairs).
+ *
+ * Each scheme names its own pair, because one pair cannot serve both. The
+ * scheme-aware accent hooks all travel together — `accent-container-2` and
+ * `-3` sit two ramp steps apart in either scheme — which is too narrow a range
+ * to shade a solid with. So all four hooks here are the scheme-independent
+ * ones, chosen explicitly:
+ *
+ *   light — lit `accent-container-1` (Teal 60, the same teal as the brand
+ *           button) down to `accent-dark-1` (Teal 90). A teal object with
+ *           teal shadows, on a near-white ground.
+ *   dark  — lit `accent-light-2` (Teal 20) down to `accent-dark-2` (Teal 100),
+ *           the wider range a dark ground can carry.
+ *
+ * `light-dark()` resolves against the `color-scheme` the `slds-color-scheme_*`
+ * classes set, which is the same mechanism the theme's own hooks rely on.
+ */
+.site-hero__figcol {
+  display: flex;
+  justify-content: center;
+}
+
+.site-hero__figure {
+  color: light-dark(
+    var(--slds-g-color-accent-container-1, #007d79),
+    var(--slds-g-color-accent-light-2, #9ef0f0)
+  );
+  position: relative;
+  /* Sizing hooks for the bounds, viewport width between them (design rule 6). */
+  inline-size: clamp(var(--slds-g-sizing-15, 20rem), 28vw, var(--slds-g-sizing-16, 30rem));
+  max-inline-size: 100%;
+  aspect-ratio: 1 / 1;
+  cursor: grab;
+  /* The figure owns horizontal pointer travel; the page still scrolls on it. */
+  touch-action: pan-y;
+  user-select: none;
+}
+
+.site-hero__figure_grabbing {
+  cursor: grabbing;
+}
+
+.site-hero__canvas {
+  color: light-dark(
+    var(--slds-g-color-accent-dark-1, #022b30),
+    var(--slds-g-color-accent-dark-2, #081a1c)
+  );
+  position: absolute;
+  inset: 0;
+  display: block;
+  inline-size: 100%;
+  block-size: 100%;
+}
+
+/*
+ * Drop the figure on phones: it costs a screenful below the hero copy and adds
+ * the canvas work on the devices least able to spare it. `display:none` also
+ * takes it out of the a11y tree, and because the component only loads rough.js
+ * once its IntersectionObserver reports the figure visible, a phone never
+ * fetches the chunk at all (ADR-013).
+ */
+@media (max-width: 40em) {
+  .site-hero__figcol {
+    display: none;
+  }
+}
+
 /* Contact: the closing panel reads as one block, so it gets the roomier pad. */
 .site-contact {
   padding: var(--slds-g-spacing-9, 3rem);
@@ -294,11 +371,594 @@
 }
 
 /*
- * The product loop sits at the width of the copy beside it rather than the
- * full card, so its three markers are not stranded across 1100px.
+ * Legal pages. The only continuous prose on the site, so they get a reading
+ * measure rather than the page width, and a rhythm of their own — every other
+ * page is short blocks and needs none.
  */
-.site-product__loop {
+.site-legal {
   max-inline-size: var(--slds-g-sizing-content-3, 60ch);
+}
+
+.site-legal__updated {
+  margin-block-start: var(--slds-g-spacing-4, 1rem);
+  font-size: var(--slds-g-font-scale-1, 0.875rem);
+  color: var(--slds-g-color-on-surface-2, #2e2e2e);
+}
+
+.site-legal__lede {
+  margin-block-start: var(--slds-g-spacing-5, 1.5rem);
+  font-size: var(--slds-g-font-scale-3, 1.25rem);
+  color: var(--slds-g-color-on-surface-2, #2e2e2e);
+}
+
+.site-legal__heading {
+  margin-block-start: var(--slds-g-spacing-9, 3rem);
+  margin-block-end: var(--slds-g-spacing-3, 0.75rem);
+  font-size: var(--slds-g-font-scale-4, 1.5rem);
+  color: var(--slds-g-color-on-surface-3, #181818);
+}
+
+.site-legal p {
+  margin-block-end: var(--slds-g-spacing-4, 1rem);
+}
+
+.site-legal__list {
+  margin-block-end: var(--slds-g-spacing-4, 1rem);
+  padding-inline-start: var(--slds-g-spacing-5, 1.5rem);
+  list-style: disc;
+}
+
+/* The legal row carries links now, so it needs a row of its own on narrow
+   screens rather than crowding the copyright. */
+.site-footer__legal-links {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--slds-g-spacing-2, 0.5rem) var(--slds-g-spacing-5, 1.5rem);
+  margin: 0;
+  padding: 0;
+  font-size: var(--slds-g-font-scale-1, 0.875rem);
+  list-style: none;
+}
+
+/*
+ * Clients: what the studio is doing for them, set apart from what they are.
+ * Rung 4 — the two paragraphs are different kinds of statement and the Card
+ * body gives them no separation of its own.
+ */
+.site-client__engagement {
+  margin-block-start: var(--slds-g-spacing-4, 1rem);
+  padding-block-start: var(--slds-g-spacing-4, 1rem);
+  border-block-start: var(--slds-g-sizing-border-1, 1px) solid
+    var(--slds-g-color-border-1, #e5e5e5);
+  color: var(--slds-g-color-on-surface-2, #2e2e2e);
+}
+
+/*
+ * Low-bono: the promise is the section, so it is set at display size. It reuses
+ * `site-coda`'s accent rule — the same device for the same kind of line, the
+ * studio speaking rather than being described.
+ */
+/* Both classes, deliberately: `site-coda` is defined further down the file, so
+   a single-class rule here would lose its `margin-block-start` on source order
+   alone. Its top margin is for a quote that follows body copy; in the card the
+   header is already the space above, so it is dropped rather than added to. */
+.site-coda.site-lowbono__quote {
+  margin-block-start: 0;
+}
+
+.site-lowbono__quote {
+  /* One step down from the standalone treatment: it now sits in a half-width
+     card beside a client card, not across the full measure. */
+  font-size: var(--slds-g-font-scale-5, 1.75rem);
+  line-height: var(--slds-g-font-lineheight-2, 1.25);
+  color: var(--slds-g-color-on-surface-3, #181818);
+  max-inline-size: var(--slds-g-sizing-heading-3, 35ch);
+}
+
+/*
+ * Process: a step is its number and its body, the Path above having already
+ * named it. Only the gap under the number needs saying — the type comes from
+ * `slds-text-title_caps` on the label (design rule 2, rung 3).
+ */
+.site-step__body {
+  margin-block-start: var(--slds-g-spacing-2, 0.5rem);
+  color: var(--slds-g-color-on-surface-2, #2e2e2e);
+}
+
+/*
+ * About: the closing line reads as the studio's own words, so it is a
+ * blockquote in italics rather than another body paragraph. The rule is the
+ * accent, which is the only thing marking it as set apart.
+ */
+.site-coda {
+  /* Owns its own spacing. A `margin: 0` here plus an `slds-m-top_*` utility on
+     the element would silently cancel the utility, so the rule carries the gap
+     rather than leaving two owners for it. */
+  margin-block: var(--slds-g-spacing-7, 2rem) 0;
+  margin-inline: 0;
+  padding-inline-start: var(--slds-g-spacing-5, 1.5rem);
+  border-inline-start: var(--slds-g-sizing-border-2, 2px) solid
+    var(--slds-g-color-accent-container-2, #005d5d);
+  font-style: italic;
+  color: var(--slds-g-color-on-surface-2, #2e2e2e);
+}
+
+/*
+ * Product spotlight — the three "why would I use this" answers, and the facts
+ * strip under them. Rung 4 of the ladder: SLDS has no benefit-block, and a
+ * Card each would put three borders inside a card that already has one.
+ */
+.site-benefit__title {
+  font-size: var(--slds-g-font-scale-2, 1rem);
+  font-weight: var(--slds-g-font-weight-6, 600);
+  color: var(--slds-g-color-on-surface-3, #181818);
+  margin-block-end: var(--slds-g-spacing-2, 0.5rem);
+}
+
+.site-benefit__body {
+  color: var(--slds-g-color-on-surface-2, #2e2e2e);
+}
+
+.site-facts {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--slds-g-spacing-2, 0.5rem) var(--slds-g-spacing-6, 2rem);
+  margin-block-start: var(--slds-g-spacing-4, 1rem);
+  padding-block-start: var(--slds-g-spacing-4, 1rem);
+  border-block-start: var(--slds-g-sizing-border-1, 1px) solid
+    var(--slds-g-color-border-1, #e5e5e5);
+  list-style: none;
+}
+
+.site-facts__item {
+  font-size: var(--slds-g-font-scale-1, 0.875rem);
+  color: var(--slds-g-color-on-surface-2, #2e2e2e);
+}
+
+/* Each fact is a checked-off claim; the mark is decorative, the text carries it. */
+.site-facts__item::before {
+  content: "✓";
+  margin-inline-end: var(--slds-g-spacing-2, 0.5rem);
+  color: var(--slds-g-color-accent-container-2, #005d5d);
+}
+
+/*
+ * The Code Socratic session replica (ADR-014).
+ *
+ * The product renders this workspace in Carbon; rule 1 keeps Carbon out, so
+ * every surface here is rebuilt from hooks. The layer language is the product's
+ * own: the pane keeps `surface-container-1`, the speaker who is not the tutor
+ * steps up to `-2`. "Difference in depth, not in colour" — which is also why
+ * the two roles stay legible with no colour-only meaning (design rule 10).
+ */
+.site-demo {
+  margin: 0;
+}
+
+.site-demo__caption {
+  margin-block-end: var(--slds-g-spacing-4, 1rem);
+  font-size: var(--slds-g-font-scale-3, 1.25rem);
+  color: var(--slds-g-color-on-surface-3, #181818);
+}
+
+.site-demo__frame {
+  border: var(--slds-g-sizing-border-1, 1px) solid var(--slds-g-color-border-1, #e5e5e5);
+  background-color: var(--slds-g-color-surface-container-1, #fff);
+  overflow: hidden;
+}
+
+/* ── Top bar ── */
+.site-demo__bar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+  gap: var(--slds-g-spacing-3, 0.75rem);
+  padding: var(--slds-g-spacing-3, 0.75rem) var(--slds-g-spacing-4, 1rem);
+  border-block-end: var(--slds-g-sizing-border-1, 1px) solid
+    var(--slds-g-color-border-1, #e5e5e5);
+  background-color: var(--slds-g-color-surface-container-2, #f3f3f3);
+}
+
+.site-demo__crumbs {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--slds-g-spacing-3, 0.75rem);
+}
+
+/* The language is a fact about the harness, not a control, so it reads as the
+   quieter half of a breadcrumb — in the code face the rest of the pane uses. */
+.site-demo__lang,
+.site-demo__title {
+  font-family: var(--slds-g-font-family-monospace, monospace);
+  font-size: var(--slds-g-font-scale-1, 0.875rem);
+  font-style: italic;
+}
+
+.site-demo__lang,
+.site-demo__sep {
+  color: var(--slds-g-color-on-surface-2, #2e2e2e);
+}
+
+.site-demo__title {
+  font-weight: var(--slds-g-font-weight-6, 600);
+  color: var(--slds-g-color-on-surface-3, #181818);
+}
+
+.site-demo__stat {
+  display: flex;
+  align-items: center;
+  gap: var(--slds-g-spacing-2, 0.5rem);
+  font-size: var(--slds-g-font-scale-1, 0.875rem);
+  color: var(--slds-g-color-on-surface-2, #2e2e2e);
+  white-space: nowrap;
+}
+
+.site-demo__stat strong {
+  color: var(--slds-g-color-on-surface-3, #181818);
+}
+
+.site-demo__credits {
+  margin-inline-start: auto;
+}
+
+/* ── The two panes ── */
+.site-demo__split {
+  display: grid;
+  grid-template-columns: 1fr;
+}
+
+@media (min-width: 64em) {
+  .site-demo__split {
+    grid-template-columns: 1.25fr 1fr;
+  }
+
+  .site-demo__side {
+    border-inline-start: var(--slds-g-sizing-border-1, 1px) solid
+      var(--slds-g-color-border-1, #e5e5e5);
+  }
+}
+
+.site-demo__editor,
+.site-demo__side {
+  display: flex;
+  flex-direction: column;
+  min-inline-size: 0;
+}
+
+.site-demo__filepane {
+  display: flex;
+  flex-direction: column;
+  flex: 1 1 auto;
+  min-block-size: 0;
+}
+
+/* The open file, as a single tab that reads as the surface it sits on. */
+.site-demo__filetab {
+  padding: var(--slds-g-spacing-3, 0.75rem) var(--slds-g-spacing-5, 1.5rem);
+  border-block-end: var(--slds-g-sizing-border-1, 1px) solid
+    var(--slds-g-color-border-1, #e5e5e5);
+  border-inline-end: var(--slds-g-sizing-border-1, 1px) solid
+    var(--slds-g-color-border-1, #e5e5e5);
+  align-self: flex-start;
+  font-family: var(--slds-g-font-family-monospace, monospace);
+  font-size: var(--slds-g-font-scale-1, 0.875rem);
+  color: var(--slds-g-color-on-surface-3, #181818);
+}
+
+/* Each pane scrolls inside itself; the page never grows a horizontal bar. */
+.site-demo__scroll {
+  flex: 1 1 auto;
+  min-block-size: 0;
+  max-block-size: var(--slds-g-sizing-16, 30rem);
+  overflow: auto;
+}
+
+/* ── Run actions ── */
+.site-demo__actions {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+  gap: var(--slds-g-spacing-3, 0.75rem);
+  padding: var(--slds-g-spacing-4, 1rem) var(--slds-g-spacing-5, 1.5rem);
+  border-block-start: var(--slds-g-sizing-border-1, 1px) solid
+    var(--slds-g-color-border-1, #e5e5e5);
+}
+
+/*
+ * These are `disabled` buttons, not `.slds-button`s: the replica must not offer
+ * a control that does nothing. Styled here rather than through the Button
+ * wrapper for the same reason — a real Button would inherit real affordances.
+ */
+.site-demo__btn {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--slds-g-spacing-2, 0.5rem);
+  padding: var(--slds-g-spacing-3, 0.75rem) var(--slds-g-spacing-5, 1.5rem);
+  border: var(--slds-g-sizing-border-1, 1px) solid var(--slds-g-color-border-2, #c9c9c9);
+  border-radius: var(--slds-g-radius-border-pill, 62.5rem);
+  background-color: var(--slds-g-color-surface-container-1, #fff);
+  font: inherit;
+  font-size: var(--slds-g-font-scale-1, 0.875rem);
+  color: var(--slds-g-color-on-surface-2, #2e2e2e);
+}
+
+.site-demo__btn_primary {
+  background-color: var(--slds-g-color-surface-container-3, #ecebea);
+}
+
+.site-demo__btn kbd {
+  font-family: var(--slds-g-font-family-monospace, monospace);
+  opacity: 0.7;
+}
+
+/* ── Side tabs ── */
+.site-demo__tabs {
+  display: flex;
+  flex-wrap: wrap;
+  border-block-end: var(--slds-g-sizing-border-1, 1px) solid
+    var(--slds-g-color-border-1, #e5e5e5);
+  background-color: var(--slds-g-color-surface-container-2, #f3f3f3);
+}
+
+.site-demo__tab {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--slds-g-spacing-2, 0.5rem);
+  padding: var(--slds-g-spacing-3, 0.75rem) var(--slds-g-spacing-5, 1.5rem);
+  border: 0;
+  border-block-start: var(--slds-g-sizing-border-2, 2px) solid transparent;
+  background: none;
+  font: inherit;
+  font-size: var(--slds-g-font-scale-1, 0.875rem);
+  color: var(--slds-g-color-on-surface-2, #2e2e2e);
+  cursor: pointer;
+}
+
+.site-demo__tab[aria-selected="true"] {
+  border-block-start-color: var(--slds-g-color-accent-container-2, #005d5d);
+  background-color: var(--slds-g-color-surface-container-1, #fff);
+  font-weight: var(--slds-g-font-weight-6, 600);
+  color: var(--slds-g-color-on-surface-3, #181818);
+}
+
+.site-demo__panel {
+  flex: 1 1 auto;
+  min-block-size: 0;
+}
+
+.site-demo__tutor {
+  display: flex;
+  flex-direction: column;
+  block-size: 100%;
+}
+
+/* The strip above the chat is where the session's own numbers live — phase,
+   hints, and the clock running since the problem was presented. */
+.site-demo__status {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--slds-g-spacing-3, 0.75rem) var(--slds-g-spacing-5, 1.5rem);
+  padding: var(--slds-g-spacing-3, 0.75rem) var(--slds-g-spacing-5, 1.5rem);
+  border-block-end: var(--slds-g-sizing-border-1, 1px) solid
+    var(--slds-g-color-border-1, #e5e5e5);
+  background-color: var(--slds-g-color-surface-container-2, #f3f3f3);
+}
+
+.site-demo__phases {
+  display: flex;
+  flex-wrap: wrap;
+  flex: 1 1 auto;
+  gap: var(--slds-g-spacing-3, 0.75rem) var(--slds-g-spacing-6, 2rem);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.site-demo__phase {
+  display: flex;
+  align-items: center;
+  gap: var(--slds-g-spacing-2, 0.5rem);
+  font-size: var(--slds-g-font-scale-1, 0.875rem);
+  color: var(--slds-g-color-on-surface-2, #2e2e2e);
+}
+
+/* The marker is the accent; the assistive text beside it carries the same state
+   in words, so the rail never means something by colour alone (design rule 10). */
+.site-demo__phase svg {
+  fill: var(--slds-g-color-accent-container-2, #005d5d);
+}
+
+/* ── The exchange ── */
+.site-demo__chat {
+  display: flex;
+  flex-direction: column;
+  gap: var(--slds-g-spacing-4, 1rem);
+  margin: 0;
+  padding: var(--slds-g-spacing-5, 1.5rem);
+  list-style: none;
+}
+
+/* A turn is a block, not a bubble: no rounding, no tail, no alignment games. */
+.site-demo__who {
+  font-size: var(--slds-g-font-scale-1, 0.875rem);
+  color: var(--slds-g-color-on-surface-2, #2e2e2e);
+  margin-block-end: var(--slds-g-spacing-2, 0.5rem);
+}
+
+.site-demo__said {
+  padding: var(--slds-g-spacing-4, 1rem) var(--slds-g-spacing-5, 1.5rem);
+  border: var(--slds-g-sizing-border-1, 1px) solid var(--slds-g-color-border-1, #e5e5e5);
+  color: var(--slds-g-color-on-surface-1, #181818);
+}
+
+.site-demo__msg_tutor .site-demo__said {
+  background-color: var(--slds-g-color-surface-container-1, #fff);
+}
+
+.site-demo__msg_you .site-demo__said {
+  background-color: var(--slds-g-color-surface-container-2, #f3f3f3);
+  border-color: var(--slds-g-color-border-2, #c9c9c9);
+}
+
+/* ── Composer ── */
+.site-demo__composer {
+  display: flex;
+  align-items: stretch;
+  gap: var(--slds-g-spacing-3, 0.75rem);
+  padding: var(--slds-g-spacing-4, 1rem) var(--slds-g-spacing-5, 1.5rem);
+  border-block-start: var(--slds-g-sizing-border-1, 1px) solid
+    var(--slds-g-color-border-1, #e5e5e5);
+}
+
+/* A `<span>`, not an input. A disabled textarea still reads as a field someone
+   could be expected to fill in; this is a picture of one. */
+.site-demo__field {
+  flex: 1 1 auto;
+  padding: var(--slds-g-spacing-3, 0.75rem);
+  border-block-end: var(--slds-g-sizing-border-1, 1px) solid
+    var(--slds-g-color-border-2, #c9c9c9);
+  background-color: var(--slds-g-color-surface-container-2, #f3f3f3);
+  font-size: var(--slds-g-font-scale-1, 0.875rem);
+  color: var(--slds-g-color-on-surface-2, #2e2e2e);
+}
+
+.site-demo__send {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--slds-g-spacing-2, 0.5rem);
+  padding-inline: var(--slds-g-spacing-5, 1.5rem);
+  border: 0;
+  background-color: var(--slds-g-color-surface-container-3, #ecebea);
+  font: inherit;
+  font-size: var(--slds-g-font-scale-1, 0.875rem);
+  color: var(--slds-g-color-on-surface-2, #2e2e2e);
+}
+
+/* ── Instructions / Results prose ── */
+.site-demo__prose {
+  padding: var(--slds-g-spacing-5, 1.5rem);
+}
+
+.site-demo__prose p {
+  margin-block-end: var(--slds-g-spacing-4, 1rem);
+}
+
+.site-demo__prose-head {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--slds-g-spacing-3, 0.75rem);
+  margin-block-end: var(--slds-g-spacing-4, 1rem);
+}
+
+.site-demo__prose-title {
+  font-size: var(--slds-g-font-scale-3, 1.25rem);
+  color: var(--slds-g-color-on-surface-3, #181818);
+}
+
+.site-demo__prose-sub {
+  margin-block: var(--slds-g-spacing-5, 1.5rem) var(--slds-g-spacing-3, 0.75rem);
+  font-weight: var(--slds-g-font-weight-6, 600);
+  color: var(--slds-g-color-on-surface-3, #181818);
+}
+
+.site-demo__prose code,
+.site-demo__constraints code {
+  font-family: var(--slds-g-font-family-monospace, monospace);
+  font-size: var(--slds-g-font-scale-1, 0.875rem);
+  color: var(--slds-g-color-accent-2, #005d5d);
+}
+
+.site-demo__constraints {
+  margin: 0;
+  padding-inline-start: var(--slds-g-spacing-5, 1.5rem);
+}
+
+.site-demo__results-heading {
+  font-weight: var(--slds-g-font-weight-6, 600);
+  color: var(--slds-g-color-on-surface-3, #181818);
+}
+
+.site-demo__results {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--slds-g-spacing-6, 2rem);
+  margin-block: var(--slds-g-spacing-4, 1rem);
+}
+
+.site-demo__result dt {
+  font-size: var(--slds-g-font-scale-1, 0.875rem);
+  color: var(--slds-g-color-on-surface-2, #2e2e2e);
+}
+
+.site-demo__result dd {
+  margin: 0;
+  font-size: var(--slds-g-font-scale-4, 1.5rem);
+  font-weight: var(--slds-g-font-weight-6, 600);
+  color: var(--slds-g-color-on-surface-3, #181818);
+}
+
+.site-demo__note,
+.site-demo__static {
+  font-size: var(--slds-g-font-scale-1, 0.875rem);
+  color: var(--slds-g-color-on-surface-2, #2e2e2e);
+}
+
+.site-demo__static {
+  margin-block-start: var(--slds-g-spacing-3, 0.75rem);
+  font-style: italic;
+}
+
+/*
+ * Python, highlighted.
+ *
+ * The product paints these four token classes with Carbon literals — blue-60
+ * keywords, purple-70 numbers. Literals are not available here (design rule 3),
+ * so each class takes the SLDS palette hook that plays the same role. They are
+ * `light-dark()` pairs, so the theme inverts them for the dark scheme on its
+ * own, exactly as Code Socratic swaps its own two sets.
+ */
+.site-code {
+  display: flex;
+  gap: var(--slds-g-spacing-4, 1rem);
+  padding: var(--slds-g-spacing-4, 1rem) var(--slds-g-spacing-5, 1.5rem);
+  font-family: var(--slds-g-font-family-monospace, monospace);
+  font-size: var(--slds-g-font-scale-1, 0.875rem);
+  line-height: var(--slds-g-font-lineheight-4, 1.5);
+}
+
+.site-code__gutter {
+  display: flex;
+  flex-direction: column;
+  flex-shrink: 0;
+  text-align: end;
+  color: var(--slds-g-color-on-surface-2, #2e2e2e);
+  user-select: none;
+}
+
+.site-code__pre {
+  margin: 0;
+  min-inline-size: 0;
+  color: var(--slds-g-color-on-surface-1, #181818);
+}
+
+.site-code__keyword {
+  color: var(--slds-g-color-palette-blue-40, #0b5cab);
+}
+
+.site-code__number {
+  color: var(--slds-g-color-palette-purple-40, #7526e3);
+}
+
+.site-code__string {
+  color: var(--slds-g-color-accent-2, #005d5d);
+}
+
+.site-code__comment {
+  color: var(--slds-g-color-on-surface-2, #2e2e2e);
 }
 
 /*

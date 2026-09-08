@@ -64,7 +64,7 @@ export const PageOpening: Story = {
       <Heading level={1} size="display" className="site-measure_heading slds-m-top_small">
         {hero.h1}
       </Heading>
-      <Body className="slds-m-top_medium">{hero.body}</Body>
+      <Body className="slds-m-top_medium">{hero.subhead}</Body>
     </div>
   ),
 };

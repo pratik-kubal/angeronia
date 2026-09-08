@@ -17,7 +17,7 @@ supersede rather than rewrite.
 | **D2** | Theme = **Cosmos + an Angeronia theme layer** (`app/theme.angeronia.css`) that swaps the brand reference palette to **Carbon Teal** (Teal 60 light / Teal 40 dark) and re-tints the semantic hooks Cosmos hard-codes in blue. Light + dark + system via `color-scheme`. | SLDS 2 reserves value assignment for the theme layer ("value assignment is reserved for theming tools"), so a theme file is the sanctioned place to re-brand. Luminance-matched mapping preserves every Cosmos contrast pairing (plan §2.8). |
 | **D3** | Framework stays **Next.js App Router + React 19 + TypeScript**; SLDS 2 CSS is consumed as plain CSS with SLDS class names (component blueprints), wrapped in thin React components. | SLDS 2's Lightning Base Components are LWC-only. Blueprints are explicitly published for "environments where Salesforce's Lightning Component framework isn't available". |
 | **D4** | **Storybook 10.x with `@storybook/nextjs-vite`** is the design source of truth. Every UI component ships stories; pages are composed only from storied components. | Requested; matches how Salesforce ships SLDS 2 and how the sister product Code Socratic works. |
-| **D5** | **Remove** everything not expressible in SLDS 2: the rough.js Möbius canvas, scroll-scrubbed continuity line / process rail / meter graph, scroll spine, enter-reveals, the Noir theme and grain, the citron UI palette, hard "block" shadows, 0–2 px radii, the Google display fonts, Tailwind and `tw-animate-css`. | Plan §4 maps each removal to the guideline it violates. |
+| **D5** | **Remove** everything not expressible in SLDS 2: the rough.js Möbius canvas, scroll-scrubbed continuity line / process rail / meter graph, scroll spine, enter-reveals, the Noir theme and grain, the citron UI palette, hard "block" shadows, 0–2 px radii, the Google display fonts, Tailwind and `tw-animate-css`. | Plan §4 maps each removal to the guideline it violates. **The Möbius clause is reversed by ADR-012**; every other removal stands. |
 | **D6** | The Angeronia **logo mark** (disc + cursor) is kept as a brand SVG and **re-tinted to teal**: disc `--slds-g-color-accent-container-1`, cursor `--slds-g-color-on-accent-1`. `app/icon.svg` is re-mapped onto the Carbon teal ramp at equal OKLab lightness; the raster logos in `public/` are regenerated. Citron leaves the repo entirely. | Matches Code Socratic's teal favicon — one accent across the family. |
 | **D7** | Global (`--slds-g-*`), shared (`--slds-s-*`) and reference (`--slds-r-*`) hooks are **referenced in components, never reassigned**. The only file allowed to assign them is `app/theme.angeronia.css`. | Hard rule from the Global Styling Hooks and Develop guidelines; the theme file is the one sanctioned exception. |
 | **D8** | Styles live in `.css` files — never inline `style={}`, never Tailwind — so **`@salesforce-ux/slds-linter`** can lint them in CI. | The linter is ESLint-based and reads `.css` / `.html` / `.js`, not TSX. |
@@ -31,13 +31,13 @@ supersede rather than rewrite.
 |---|----------|---------|
 | O1 | Accent colour | **Carbon Teal via the Angeronia theme layer** (D2, plan §2.8). |
 | O2 | Tailwind | **Removed entirely**; SLDS utilities replace it. |
-| O3 | Hero illustration | **None** in Phase 3. A static flat teal Möbius SVG (hooks only, one per page) may be added later as its own storied `Illustration` component — separate ADR. |
+| O3 | Hero illustration | **Settled — superseded by ADR-012.** Was: none in Phase 3, with a static flat teal Möbius SVG possible later. The hero now carries the rough.js Möbius canvas ported from `../portfolio`, re-tinted from hooks, autoplaying under the ADR-013 waiver. |
 | O4 | Scheme persistence | **Keep `next-themes`** (plan §2.3). |
 | O5 | Next.js version | **Stay on 15.5.x** for the migration; upgrade to 16 in a separate PR after Phase 5. |
 | O6 | Storybook hosting | **Separate Vercel project** (e.g. `design.angeronia.com`). |
 | O7 | Licensing | **Open — the user's call before Phase 1 ships to production.** SLDS 2 CSS and tokens are under the Salesforce Terms of Use (non-OSI, with an indemnification clause); Carbon icons are Apache-2.0 and IBM Plex is OFL 1.1. Nothing else in the plan blocks on this. |
 | O8 | Density toggle | **Spike in Phase 2**; expose only if SLDS 2 offers a supported switch, else document "comfy only". |
-| O9 | Proof numbers | **Static** Progress Bar values, no counting animation. |
+| O9 | Proof numbers | **Moot — the Proof section was removed** (the figures were the founder's own, not the studio's). Was: static Progress Bar values, no counting animation. |
 | O10 | Logo mark colour | **Re-tinted to teal** (D6). |
 | O11 | Typeface | **IBM Plex Sans 300/400/600/700 + IBM Plex Mono 400** (D11). |
 | O12 | Icon set | **Carbon** (`@carbon/icons-react`, D10). |
@@ -296,10 +296,159 @@ the mechanism for that is per-route CSS, not a second manifest.
 
 ---
 
+### ADR-012 — The rough.js Möbius returns to the hero, reversing D5 and O3
+
+D5 removed `mobius-figure.tsx` outright, and O3 left the door open only for "a
+static flat teal Möbius SVG (hooks only) … as its own storied `Illustration`
+component". Both are now superseded: the hero carries the **rough.js canvas
+figure ported from `../portfolio`**, re-tinted teal, with its drag-and-fling
+interaction intact.
+
+The reasoning behind the removal was that a hand-drawn sketch language does not
+belong to Cosmos's geometry — which is still true of *chrome*. It is not true
+of a single decorative figure. Angeronia and Code Socratic already share a hue,
+a typeface and an icon set; the Möbius is the one mark the studio owns
+outright, and a flat SVG of it is a diagram where the canvas is a figure. Rule
+9 is satisfied — it is the only illustration on the page, and it sits beside
+the hero copy rather than replacing it.
+
+What the port changes, so it stays inside the rest of the contract:
+
+* **Colour comes from hooks, never from a literal (rule 3).** The portfolio
+  version hard-codes `#C7DD3A` / `#FBFAF6` / `#14130F`. Here the wrapper and the
+  canvas carry `color` in `app/site.css` and the component reads the *resolved*
+  `rgb()` back with `getComputedStyle`. That is a consumption of the hooks, not
+  an assignment, and it is why `light-dark()` has to resolve through a real CSS
+  property rather than be parsed out of the custom property's token stream.
+
+  Each scheme names its own lit/shade pair, because the scheme-aware accent
+  hooks all travel together — `accent-container-2` and `-3` are two ramp steps
+  apart in either scheme, too narrow a range to shade a solid with. So all four
+  are the scheme-independent hooks, picked per scheme:
+
+  | Scheme | Lit face | Shaded end |
+  |---|---|---|
+  | light | `accent-container-1` — Teal 60, the brand button's teal | `accent-dark-1` — Teal 90 |
+  | dark | `accent-light-2` — Teal 20 | `accent-dark-2` — Teal 100 |
+
+  Light needs the narrower, darker-lit pair: on a near-white ground a Teal 20
+  band would wash out, and shading toward Teal 100 turned the whole figure
+  black-green rather than teal.
+* **No inline styles (rule 12).** Every rule lives in `app/site.css`; the
+  canvas element is given a class, not a `cssText`.
+* **A story before the page (rule 11).** `mobius-figure.stories.tsx` covers
+  both schemes and the reduced-motion frame.
+* **Rule 1 holds.** `roughjs` is a canvas drawing library, not a CSS framework
+  or an icon set. It is a lazy `import()`, so it is a separate chunk that only
+  loads when the figure is actually on screen — and never on phones, where the
+  figure is `display:none` and the IntersectionObserver therefore never fires.
+
+Revisit if the sketch language spreads past this one figure; the rule it is an
+exception to is still the rule.
+
+---
+
+### ADR-013 — Rule 8's "no autoplay" is waived for the hero Möbius
+
+The figure rotates continuously at 30°/s from the moment it is visible. Rule 8
+says "SLDS durations only. Nothing scroll-linked. No autoplay", and this
+deviates on two of the three counts: the rotation is autoplaying, and a
+continuous `requestAnimationFrame` spin has no `--slds-g-duration-*` to be
+expressed in. Nothing here is scroll-linked, which is the clause the rule cares
+most about and the one D5 removed a whole category of work over.
+
+Taken deliberately. The turn is what makes a Möbius band legible as a Möbius
+band — a still frame of it reads as a twisted ring, and the one-sidedness only
+resolves when the surface travels. That is the figure supporting the text
+(rule 9), which is the job the illustration was let in to do.
+
+The guard rails that keep it from being the thing rule 8 exists to prevent:
+
+* `prefers-reduced-motion: reduce` draws **one static frame** and never starts
+  the loop, and the drag handler is not attached at all.
+* An `IntersectionObserver` stops the loop the moment the hero leaves the
+  viewport, so the page is not redrawing 128 quads behind the fold.
+* The figure is `display:none` below 640px, so no phone runs the loop.
+* It is decorative: `role="img"` with a label on the wrapper, `aria-hidden` on
+  the canvas. Nothing in the page's meaning depends on the motion.
+
+Revisit if a second autoplaying element is ever proposed — the waiver is for
+this figure, not a general licence.
+
+---
+
+### ADR-014 — The product spotlight carries a replica of a Code Socratic session
+
+The spotlight used to argue for Code Socratic in the studio's voice — a list of
+what it is built from, closing on "the same team that consults for you shipped
+a production, multi-tenant AI SaaS". That is a builder talking to a builder. The
+section now approaches the product the way a customer meets it: the product's
+own headline, three benefits that answer "why would I use this", and a replica
+of a session with the problem solved.
+
+The replica's content is lifted from the product's own landing page
+(`../code-socratic/apps/web/components/SessionPreview.tsx`) — same problem, same
+Socratic exchange, same clean run, same workspace: the bar, the editor with its
+gutter, the four side tabs, the tutor's status rail, the run actions and the
+composer. What is *not* carried over is the implementation. Over there the
+preview reuses the product's real `SidePane`, `ResultsPanel` and `CodeBlock`,
+all Carbon, all fed by `@repo/shared`. Bringing those across would mean either
+importing Carbon into an SLDS 2 site — which rule 1 forbids outright — or
+rebuilding three product components to render one marketing panel.
+
+So the markup is this site's, in two files plus a `site-demo__*` block in
+`app/site.css`:
+
+* `code-socratic-demo.tsx` — the workspace. The side tabs are hand-rolled rather
+  than the `Tabs` wrapper: the wrapper renders the SLDS tab look, and what is
+  wanted here is the *product's* contained-tab look inside a replica frame. The
+  keyboard contract is copied from the wrapper verbatim (roving `tabindex`,
+  arrows, Home/End), so the two behave identically even though they do not look
+  alike. Both action buttons and the send control are really `disabled`, and the
+  composer is a `<span>` rather than a disabled `<textarea>` — a picture of a
+  field, not a field that rejects you.
+* `code-block.tsx` — the Python highlighter, ported from the product's own
+  `CodeBlock.tsx` including Monaco's keyword list verbatim. That list is why
+  `len` and `max` colour as keywords rather than as calls: Monaco's Python
+  tokenizer has no function scope, so the real editor does not colour a call
+  either, and agreeing with the product means matching what it emits.
+
+**The syntax palette is the one place this cannot be literal.** The product
+paints four token classes with Carbon values — `blue-60` keywords, `purple-70`
+numbers, `teal-70` strings, `gray-60` comments — and rule 3 does not allow a
+hex here. SLDS ships its own palette hooks, so each class takes the hook that
+plays the same role: `palette-blue-40`, `palette-purple-40`,
+`accent-2` and `on-surface-2`. They are `light-dark()` pairs, so the scheme
+swap that Code Socratic does with two hand-written sets happens here for free.
+Blue re-entering a page that was rebranded off Salesforce blue is deliberate and
+contained: it is the conventional colour of a keyword inside a code sample, not
+a UI colour, and it appears nowhere outside `.site-code__keyword`.
+
+Two things follow from it being a replica rather than an embed:
+
+* **It is honest about being static.** Only the tabs work. The demo says so in
+  its own footnote rather than leaving a visitor to discover that the composer
+  is dead. Nothing animates, so rule 8 is untouched — the ADR-013 waiver stays
+  scoped to the Möbius. The one scripted behaviour is the chat opening on the
+  newest turn, which the live panel does too: the exchange is longer than the
+  pane and the turn worth reading is the tutor's last question.
+* **It is not the page's illustration.** Rule 9 allows one illustration per
+  page and that is the hero Möbius. This is a product screenshot rendered in
+  markup: it shows the thing being described, and every word in it is real
+  content from the product.
+
+The risk is drift — the product's session UI will move and this will not follow
+it. Accepted: the replica is making a claim about the *conversation*, which is
+the part of Code Socratic that is stable. Revisit if it ever starts standing in
+for a screenshot of current chrome.
+
+---
+
 ## 4. Plan closure
 
 `docs/plans/slds2-redesign-plan.md` is **implemented**. Phases 0–6 of §8 all
-landed; the deviations are ADR-001 … ADR-011 above.
+landed; the deviations are ADR-001 … ADR-011 above. ADR-012 and ADR-013 are
+later changes made on top of the closed plan, not part of it.
 
 | Plan acceptance criterion | Outcome |
 |---|---|
@@ -316,7 +465,7 @@ landed; the deviations are ADR-001 … ADR-011 above.
 | Every Tier-1 component: docs, default, variants, dark | Done |
 | `test:storybook` zero a11y violations | 185 tests, 50 files, green |
 | Story ≡ `localhost:3000` | `Pages/Home` and `app/page.tsx` compose the same list |
-| No `ang-*`, citron, roughjs, Space Grotesk, Geist, "Salesforce" in the HTML | Verified against the rendered page |
+| No `ang-*`, citron, roughjs, Space Grotesk, Geist, "Salesforce" in the HTML | Verified against the rendered page — true at plan closure; `roughjs` was reinstated afterwards by ADR-012 |
 | CSS ≤ 150 KB gzip | ~47 KB total |
 | Lighthouse mobile: perf ≥ 90, a11y 100, best practices ≥ 95 | 97 / 100 / 100, SEO 100, CLS 0 |
 | CI: typecheck, lint, theme, stories | `.github/workflows/ci.yml` |
@@ -328,7 +477,8 @@ and carry an indemnification clause. That is the user's call before this ships
 to production; nothing in the implementation blocks on it. The obligations are
 stated in the README.
 
-Not in scope for this work, and unchanged: O3 (a hero illustration), O5
+Not in scope for this work, and unchanged: O5
 (Next.js 16, deliberately deferred to its own PR), O6 (deploying Storybook as a
 separate Vercel project), O8 (a density toggle — SLDS 2 exposes no supported
-switch, so the site is comfy-only).
+switch, so the site is comfy-only). O3 was still open at closure and has since
+been settled by ADR-012.

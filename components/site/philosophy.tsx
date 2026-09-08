@@ -7,6 +7,12 @@ import { philosophy } from "@/data/angeronia";
 /**
  * Three beats, three cards.
  *
+ * Shaded because of where it sits, not because of what it is: the page runs
+ * four card sections back to back (clients, product, services, this), and the
+ * band alternates across them so no two shaded grounds touch. Move this section
+ * and the `shade` has to move with it — see `services.tsx`, which gave the band
+ * up when the two swapped.
+ *
  * This replaces the scroll-drawn continuity line: the idea it illustrated —
  * one unbroken stroke from scope to hand-off — is now carried by the copy and
  * by the cards sitting on one row, rather than by an animation nobody with
@@ -16,7 +22,7 @@ const ICONS = [Idea, Compare, Package];
 
 export function Philosophy() {
   return (
-    <Section id="philosophy" kicker={philosophy.kicker} heading={philosophy.heading}>
+    <Section id="philosophy" kicker={philosophy.kicker} heading={philosophy.heading} shade>
       <Grid wrap stretch gutters>
         {philosophy.beats.map((beat, index) => (
           <Col key={beat.tag} size={12} medium={4} className="slds-m-bottom_medium">

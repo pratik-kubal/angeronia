@@ -1,6 +1,15 @@
 import type { Meta, StoryObj } from "@storybook/nextjs-vite";
 import { ProgressBar } from "./ProgressBar";
-import { metrics } from "@/data/angeronia";
+/*
+ * A local fixture. This used to render the site's Proof section from
+ * `data/angeronia.ts`; that section was removed, and a component story should
+ * not have depended on page copy in the first place.
+ */
+const SAMPLE = [
+  { label: "Coverage", percent: 70, valueText: "70% org-wide", note: "dependency-injection patterns, made default" },
+  { label: "Latency budget", percent: 90, valueText: "90% used", note: "p95 against the 200ms target" },
+  { label: "Pipeline", percent: 100, valueText: "100% green", note: "last 30 runs" },
+];
 
 const meta = {
   title: "Components/ProgressBar",
@@ -64,16 +73,16 @@ export const Bounds: Story = {
   },
 };
 
-export const ProofSection: Story = {
+export const Stacked: Story = {
   render: () => (
     <div className="slds-grid slds-grid_vertical">
-      {metrics.map((metric) => (
-        <div key={metric.label} className="slds-col slds-m-bottom_medium">
+      {SAMPLE.map((row) => (
+        <div key={row.label} className="slds-col slds-m-bottom_medium">
           <ProgressBar
-            value={metric.percent}
-            label={metric.label}
-            valueText={`${metric.value.toFixed(metric.decimals)}${metric.suffix}${metric.word ? ` ${metric.word}` : ""}`}
-            note={metric.note}
+            value={row.percent}
+            label={row.label}
+            valueText={row.valueText}
+            note={row.note}
           />
         </div>
       ))}
@@ -82,6 +91,6 @@ export const ProofSection: Story = {
 };
 
 export const Dark: Story = {
-  ...ProofSection,
+  ...Stacked,
   globals: { colorScheme: "dark" },
 };

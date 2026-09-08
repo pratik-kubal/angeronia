@@ -81,9 +81,13 @@ at rest, `-2` default, `-3` hover, `-4` floating.
 
 SLDS durations only (`--slds-g-duration-*`). Nothing scroll-linked. No autoplay.
 
+One standing exception: the hero Möbius rotates on its own, under the waiver
+in ADR-013. It is scoped to that figure and is not a precedent.
+
 ## 9. Illustration
 
 At most one per page, and it supports the text rather than replacing it.
+On the home page that one is the hero Möbius (ADR-012).
 
 ## 10. Accessibility
 

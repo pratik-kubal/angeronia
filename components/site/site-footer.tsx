@@ -42,6 +42,13 @@ export function SiteFooter() {
         </Grid>
 
         <div className="slds-grid slds-wrap slds-grid_align-spread site-footer__legal">
+          <ul className="site-footer__legal-links">
+            {footer.legal.map((link) => (
+              <li key={link.label}>
+                <Link href={link.href}>{link.label}</Link>
+              </li>
+            ))}
+          </ul>
           <p className="slds-text-body_small slds-text-color_weak">{footer.copyrightLeft}</p>
           <p className="slds-text-body_small slds-text-color_weak">{footer.copyrightRight}</p>
         </div>

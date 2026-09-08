@@ -35,7 +35,8 @@
     "next": "15.5.12",
     "next-themes": "^0.4.4",
     "react": "^19",
-    "react-dom": "^19"
+    "react-dom": "^19",
+    "roughjs": "^4.6.6"
   },
   "devDependencies": {
     "@carbon/colors": "^11.57.0",

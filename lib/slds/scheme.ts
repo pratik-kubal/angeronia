@@ -11,6 +11,21 @@ export const COLOR_SCHEMES = ["light", "dark", "system"] as const;
 
 export type ColorScheme = (typeof COLOR_SCHEMES)[number];
 
+/**
+ * What the switcher offers, which is not the same list.
+ *
+ * `system` stays a real scheme — it is the default, so a first visit follows
+ * the reader's OS — but it is no longer a button. The toggle shows the scheme
+ * in force rather than the setting that produced it, so on a system-dark
+ * machine the Dark button is the one that reads pressed. The cost is that once
+ * someone pins a scheme there is no control to hand it back to the OS; clearing
+ * site data is the only way back, which is the trade the two-button toggle
+ * makes.
+ */
+export const SELECTABLE_COLOR_SCHEMES = ["light", "dark"] as const;
+
+export type SelectableColorScheme = (typeof SELECTABLE_COLOR_SCHEMES)[number];
+
 /** The class `next-themes` writes on `<html>` for each scheme. */
 export const COLOR_SCHEME_CLASS: Record<ColorScheme, string> = {
   light: "slds-color-scheme_light",
