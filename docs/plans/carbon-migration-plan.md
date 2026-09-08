@@ -1,8 +1,22 @@
 # angeronia.com — SLDS 2 → IBM Carbon migration plan
 
-**Status: PROPOSED (2026-09-08).** Nothing in this plan has been implemented.
-The site on `main` today is SLDS 2 (Cosmos + the Angeronia theme layer) as
-described by `docs/design-system/DESIGN-RULES.md`.
+**Status: IMPLEMENTED (2026-09-08).** Phases 0–5 all landed. The site no longer
+depends on `@salesforce-ux/*`; it runs on IBM Carbon. This document is kept as
+the historical hand-off — the live documents are
+`docs/design-system/DESIGN-RULES.md` (rewritten for Carbon) and
+`docs/design-system/DECISIONS.md` (ADR-015 … ADR-018 close this plan out).
+
+Where the implementation diverged, the plan is left as written and the
+divergence is in `DECISIONS.md`:
+
+| Plan said | What happened |
+|---|---|
+| §4.1 `layout (Grid/Col)` → `Grid` / `Column` | Carbon's `Grid` is the *flexbox* grid in v11 unless a feature flag with no supported API is on. `components/ui/grid.tsx` renders what `CSSGrid` renders, via the published `GridSettings` export. **ADR-016** |
+| §4.1 card rows on `Column`s | Carbon's 16 columns do not divide by three, and two rows are three-up. One `site-cards` CSS grid serves every card row. **ADR-016** |
+| §4.1 `button-group` → `ButtonSet` | `.cds--btn-set` stretches every descendant button; the scheme switcher is a plain `role="group"`. **ADR-016** |
+| §4 `@use '@carbon/react'` | Done as written — and it costs 105 KB gzip against the old build's 47 KB. The modular alternative measures 28 KB and is documented but not shipped. **ADR-017** |
+| §5 Phase 5, C7 open | `check:theme` is rewritten rather than retired, and narrowed to the brand override's own pairings. **ADR-018** |
+| §5 Phase 4 after Phase 3 | `_site.scss` was written during Phase 1 — nothing compiles without it, the same reason ADR-003 pulled a deletion forward in the SLDS migration. |
 
 **Written:** 2026-09-08, after O7 (licensing acceptance) was raised.
 **Audience:** whoever implements this, and whoever advises on the licence first.
@@ -296,14 +310,14 @@ below is therefore the agreed target, not a warning.
 | C4 | Replace `slds-linter` with `stylelint`, or retire the gate? | **Retire it**, on the record in `DECISIONS.md`. The a11y stories are the real gate. |
 | C5 | Does Angeronia want to look like Code Socratic? | **Yes — accepted and intended.** Phase 5 amends the `CLAUDE.md` sentence that says otherwise. |
 
-### Still open
+### Closed during implementation
 
-| # | Question | Recommendation |
+| # | Question | Outcome |
 |---|---|---|
-| C1 | Keep a wrapper library, or use `@carbon/react` directly in site components? | **Directly.** The wrappers existed because SLDS ships no React. Not blocking — proceed on the recommendation unless told otherwise. |
-| C2 | Delete the 25 unused wrappers or port them? | **Delete.** Used by nothing but their own stories; Carbon supplies equivalents if ever needed. Not blocking. |
-| C6 | Storybook `foundations` stories document SLDS tokens — port or drop? | Port; they are how the theme stays reviewable. Not blocking. |
-| C7 | Does `check:theme` get a Carbon equivalent, or retire with `lint:slds`? | Decide at Phase 5, once it is clear what Carbon guarantees on contrast out of the box. |
+| C1 | Keep a wrapper library, or use `@carbon/react` directly in site components? | **Directly**, as recommended. `components/ui/` holds seven files: only what Carbon does not provide, plus the grid wrapper ADR-016 explains. |
+| C2 | Delete the 25 unused wrappers or port them? | **Deleted**, with their stories. |
+| C6 | Storybook `foundations` stories document SLDS tokens — port or drop? | **Ported.** All five boards now read `--cds-*` off the live page. |
+| C7 | Does `check:theme` get a Carbon equivalent, or retire with `lint:slds`? | **Rewritten, and narrowed.** It checks token parity and the brand override's own contrast — 21 tokens, 40 pairings — and leaves Carbon's own pairings to Carbon. **ADR-018** |
 
 ## 9. Effort
 

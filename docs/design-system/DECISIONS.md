@@ -1,8 +1,20 @@
 # Decision log — angeronia.com design system
 
-Every architectural decision behind the SLDS 2 redesign, plus every deviation
-from [`docs/plans/slds2-redesign-plan.md`](../plans/slds2-redesign-plan.md)
-made during implementation.
+Every architectural decision behind the site's design system, and every
+deviation from the plan that produced it.
+
+The log spans two migrations, in order:
+
+* **§1–§4** — the SLDS 2 redesign ([`slds2-redesign-plan.md`](../plans/slds2-redesign-plan.md)),
+  landed 2026-09-04. D1–D11, O1–O12 and ADR-001 … ADR-014.
+* **ADR-015 … ADR-018** — the move off SLDS 2 onto IBM Carbon
+  ([`carbon-migration-plan.md`](../plans/carbon-migration-plan.md)), landed
+  2026-09-08.
+
+**Read ADR-015 first if you want the current state.** It supersedes D1, D2, D3,
+D7, D8 and ADR-004 / 006 / 008 / 011, and it says what the site is built on
+today. Everything above it is the record of how it got there, not a description
+of what ships.
 
 **Rule:** record a deviation here *before* acting on it. Entries are append-only;
 supersede rather than rewrite.
@@ -47,7 +59,8 @@ supersede rather than rewrite.
 ## 3. Implementation decisions
 
 Recorded as the phases land. Each entry states what the plan said, what was
-done instead, and why.
+done instead, and why. ADR-001 … ADR-014 belong to the SLDS 2 redesign;
+ADR-015 onward to the Carbon migration.
 
 ### ADR-001 — Skills installed by direct copy, not `npx skills add` (Phase 0)
 
@@ -516,6 +529,145 @@ as the source of truth (D4). Next.js 15 App Router (O5). Copy in
 than re-creating a wrapper library, since the wrappers only ever existed because
 SLDS ships no React. C2 — delete the 25 unused wrappers rather than port them.
 C6 — port the Foundations boards to Carbon tokens rather than drop them.
+
+---
+
+### ADR-016 — Three places the §4.1 component mapping did not survive contact
+
+The Carbon migration plan's §4.1 table is a good map and was followed almost
+everywhere. Three entries did not work as written, and the reasons are worth
+recording because each is a property of Carbon rather than of this site.
+
+**1. `layout (Grid/Col)` → `Grid` / `Column`: the wrapper is ours, not
+Carbon's.** `@carbon/react`'s `Grid` dispatches on the `enable-css-grid`
+feature flag and renders the legacy **flexbox** grid when it is off — which it
+is by default in v11. That path was never an option: it needs a `<Row>` layer
+between grid and column, and `styles/_config.scss` sets
+`$use-flexbox-grid: false`, so its stylesheet is not even emitted. The flag has
+no supported way to turn on in v11 either: `FeatureFlags` grew a boolean prop
+for every other flag and not this one, leaving the deprecated `flags` map or a
+`CARBON_ENABLE_CSS_GRID` environment variable that would have to be threaded
+through Next, Vite and Vitest alike.
+
+`components/ui/grid.tsx` renders exactly what Carbon's own `CSSGrid` renders,
+from exports Carbon actually publishes: `GridSettings` in `css-grid` mode,
+which is the only thing `Column` reads to decide which classes to emit. No
+flag, no deprecated prop, and `Column` behaves as documented. In v12, where CSS
+grid is the default, the file collapses back to `Grid` from `@carbon/react`.
+
+**2. Card rows are a CSS grid, not `Column`s.** Carbon's 2x grid has 16 columns
+at `lg` and 8 at `md`. Sixteen does not divide by three, and two of the four
+card rows on the home page are three-up; `lg={5}` ×3 leaves a visible 1/16 of
+slack against the right edge that the section heading above is flush to. One
+`site-cards` grid serves every card row instead — two-up, three-up and four-up
+as modifier classes — which also gives equal-height cards for free. The page
+grid is still Carbon's; only the rows inside a full-width column are not.
+
+**3. `button-group` → `ButtonSet`: not for the scheme switcher.**
+`.cds--btn-set` puts `inline-size: 100%` on every descendant `.cds--btn`, which
+is right for a pair of full-width form actions and wrong for two 32px toggles —
+and `IconButton` nests its button inside a tooltip trigger, so the descendant
+selector reaches it anyway. The switcher is a plain `role="group"` with two
+`IconButton`s. It gained something in the move: Carbon's `IconButton` names the
+control visibly on hover and focus, where the SLDS version could only do it with
+assistive text.
+
+Everything else in §4.1 landed as written: `Button`, `Tag`, `Tile`, `Link`,
+`ProgressIndicator`, plain lists, and `Avatar` / `MediaObject` / `Cluster` /
+`Section` kept as site components.
+
+---
+
+### ADR-017 — Carbon ships whole; the page's CSS more than doubles
+
+**Plan:** §4 — `globals.scss` is `@use config, @carbon/react, themes, site`.
+
+**Done:** exactly that. Measured on 2026-09-08 against the production build:
+
+| | Raw | Gzip |
+|---|---:|---:|
+| Carbon, whole (`@use '@carbon/react'`) | 973 KB | **105 KB** |
+| The SLDS 2 modular build it replaces | 458 KB | 60 KB |
+| Total page CSS before the migration | — | ~47 KB |
+
+That is a real regression — roughly 2.2× the CSS the page used to ship — and it
+is stated here rather than left to be discovered. It is inside the ≤ 150 KB
+gzip budget the original plan set, and `First Load JS` is 143 KB after adding
+`@carbon/react` to `optimizePackageImports` (339 KB without it, so that line in
+`next.config.mjs` is load-bearing).
+
+**The lever, measured but not pulled.** Carbon's component partials are
+self-emitting, so a modular stylesheet is a short file:
+
+```scss
+@use './config';
+@use '@carbon/react/scss/reset';
+@use '@carbon/react/scss/grid';
+@use '@carbon/react/scss/layer';
+@use '@carbon/react/scss/components/button';
+@use '@carbon/react/scss/components/tag';
+@use '@carbon/react/scss/components/tile';
+@use '@carbon/react/scss/components/link';
+@use '@carbon/react/scss/components/progress-indicator';
+@use '@carbon/react/scss/components/tooltip';
+@use './themes';
+@use './site';
+```
+
+That measures **28 KB gzip** — better than the SLDS build it replaces, and a
+quarter of what ships today.
+
+It is not what ships, for the reason ADR-011 already learned the hard way: a
+component missing from the list produces an *unstyled component*, not an error,
+and the harness that caught that class of mistake for SLDS
+(`compare-vendor-css.mjs`, which diffed 1400 computed values across two builds)
+was deleted with the rest of the vendor tooling. Shipping the whole of Carbon is
+correct by construction. Revisit if page weight starts to matter — the switch is
+the file above plus a way to verify it, and both are a day's work, not a
+rewrite.
+
+---
+
+### ADR-018 — `lint:slds` is retired and `check:theme` is rewritten, not retired (closes C4 and C7)
+
+**C4 — decided in the plan, executed here.** `slds-linter` has no Carbon
+equivalent and is **retired rather than replaced**: the script, the
+`@salesforce-ux/*` packages behind it, `eslint.slds.config.mjs` and the CI step
+are all gone, and ADR-006 goes with them. A `stylelint` config invented to fill
+the hole would be ceremony, not coverage. The gate that catches real problems is
+`npm run test:storybook` — axe over every story in both themes, with violations
+failing the run — and it stays, now covering 79 tests across 29 files.
+
+**C7 — decided here: `check:theme` is rewritten, and it gets narrower.** The old
+gate existed to police a theme layer that re-valued *another vendor's* hooks: it
+checked that block A matched its generator byte for byte, that block B contained
+no hex, that the list of blue literals Cosmos hard-codes had not moved, and that
+58 SLDS pairings cleared AA. None of that contract exists any more. There is no
+generated ramp — the teal is `@carbon/colors` teal, used directly — and no
+block B, because Carbon derives its interactive family from tokens rather than
+hard-coding hexes.
+
+What is left is worth keeping, so `scripts/check-contrast.mjs` does it:
+
+1. **Parity.** Every `--cds-*` token assigned in `styles/_themes.scss` is a
+   token Carbon actually defines. A typo in an override is otherwise silent: it
+   declares a custom property that nothing reads.
+2. **Contrast.** Every pairing the brand override creates, in both themes,
+   against WCAG 2.2 — 4.5:1 for text, 3:1 for non-text boundaries. 21 tokens,
+   40 pairings.
+3. **Report.** `docs/design-system/theme-report.md`, committed for review.
+
+It is narrower than the SLDS version *on purpose*. Carbon publishes contrast
+guarantees for its own tokens and tests them upstream; re-deriving those
+pairings here would be checking IBM's homework. What is ours is the teal, so
+that is what is checked.
+
+The mechanism is worth a line of its own: `scripts/carbon-tokens.mjs` compiles
+`styles/globals.scss` with `sass-embedded` and reads the custom properties back
+out of the emitted CSS, following `var()` chains. Nothing is duplicated in
+JavaScript, so the thing being checked cannot drift from the thing that ships —
+and `scripts/build-logos.mjs` draws the OG rasters from the same resolver, which
+is how the logo's teal stays the page's teal.
 
 ---
 
