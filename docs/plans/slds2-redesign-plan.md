@@ -1,6 +1,11 @@
 # angeronia.com — SLDS 2 redesign plan
 
-**Status:** plan only — nothing in this document has been implemented.
+**Status: IMPLEMENTED (2026-09-04).** This document is kept as the historical
+hand-off. The live documents are `docs/design-system/DESIGN-RULES.md` (the
+binding contract) and `docs/design-system/DECISIONS.md`, whose §4 records what
+each acceptance criterion actually produced and where the implementation
+deviated (ADR-001 … ADR-011). Where this plan and DECISIONS.md disagree,
+DECISIONS.md is what shipped.
 **Written:** 2026-09-04. **Rev 2 (same day):** Cosmos is *extended* with an
 Angeronia theme layer whose accent is Code Socratic's teal; Salesforce icons,
 illustrations and trademarks are removed from scope; icons come from IBM

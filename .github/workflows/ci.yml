@@ -1,0 +1,85 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+env:
+  # Storybook and the linter both phone home by default.
+  STORYBOOK_DISABLE_TELEMETRY: "1"
+  NEXT_TELEMETRY_DISABLED: "1"
+
+jobs:
+  quality:
+    name: Types, styles and theme
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+
+      - uses: actions/setup-node@v5
+        with:
+          node-version: 22
+          cache: npm
+
+      - run: npm ci
+
+      # Assembles vendor/slds2.css and fails if the design system grew a
+      # reference to Salesforce artwork the manifest does not recognise.
+      - name: Build vendor CSS
+        run: npm run build:css
+
+      - name: TypeScript
+        run: npx tsc --noEmit
+
+      - name: SLDS linter
+        run: npm run lint:slds
+
+      # Block A against its generator, the blue-literal sweep against the
+      # shipped tokens, and 58 contrast pairings against WCAG AA — plus the
+      # favicon against the teal ramp and the committed theme report.
+      - name: Theme gate
+        run: npm run check:theme
+
+      - name: Next build (strict)
+        run: npm run build
+
+  storybook:
+    name: Storybook — a11y and interactions
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+
+      - uses: actions/setup-node@v5
+        with:
+          node-version: 22
+          cache: npm
+
+      - run: npm ci
+
+      # The stories load the production `app/slds.css`, which imports the
+      # generated vendor stylesheet. Without this the setup file cannot resolve
+      # its CSS and every story file fails to import.
+      - name: Build vendor CSS
+        run: npm run build:css
+
+      - name: Install Chromium
+        run: npx playwright install --with-deps chromium
+
+      # Every story, in both colour schemes, with axe violations failing the
+      # run rather than reporting.
+      - name: Story tests
+        run: npm run test:storybook
+
+      - name: Build Storybook
+        run: npm run build-storybook
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: storybook-static
+          path: storybook-static
+          retention-days: 7

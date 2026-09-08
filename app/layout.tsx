@@ -1,30 +1,28 @@
 import type React from "react";
 import type { Metadata } from "next";
-import { Space_Grotesk, Geist, Geist_Mono } from "next/font/google";
-import { ThemeProvider } from "@/components/theme-provider";
-import { BRAND, LINKS } from "@/data/angeronia";
-import "./globals.css";
+import { IBM_Plex_Sans, IBM_Plex_Mono } from "next/font/google";
+import { ThemeProvider } from "@/components/site/theme-provider";
+import { SkipLink } from "@/components/site/skip-link";
+import { BRAND, LINKS, SITE_URL } from "@/data/angeronia";
+import "./slds.css";
 
-const siteUrl = "https://angeronia.com";
+const siteUrl = SITE_URL;
 
-const spaceGrotesk = Space_Grotesk({
+// IBM Plex, self-hosted by next/font — no request reaches Google at runtime,
+// and the generated size-adjusted fallback keeps the swap from shifting layout.
+// The two CSS variables are consumed in `app/theme.angeronia.css` block C and
+// nowhere else (D11, design rule 5).
+const plexSans = IBM_Plex_Sans({
   subsets: ["latin"],
-  variable: "--font-space-grotesk",
-  weight: ["400", "500", "600", "700"],
+  weight: ["300", "400", "600", "700"],
+  variable: "--font-plex-sans",
   display: "swap",
 });
 
-const geist = Geist({
+const plexMono = IBM_Plex_Mono({
   subsets: ["latin"],
-  variable: "--font-geist",
-  weight: ["400", "500"],
-  display: "swap",
-});
-
-const geistMono = Geist_Mono({
-  subsets: ["latin"],
-  variable: "--font-geist-mono",
-  weight: ["400", "500"],
+  weight: ["400"],
+  variable: "--font-plex-mono",
   display: "swap",
 });
 
@@ -34,7 +32,7 @@ const description =
 export const metadata: Metadata = {
   metadataBase: new URL(siteUrl),
   title: {
-    default: "Angeronia Labs — Software Engineering Studio",
+    default: "Angeronia Labs",
     template: "%s | Angeronia Labs",
   },
   description,
@@ -54,14 +52,14 @@ export const metadata: Metadata = {
   openGraph: {
     type: "website",
     url: siteUrl,
-    title: "Angeronia Labs — Software Engineering Studio",
+    title: "Angeronia Labs",
     description,
     siteName: BRAND.name,
     images: [{ url: "/angeronia-logo-light.png", width: 500, height: 500, alt: BRAND.name }],
   },
   twitter: {
     card: "summary_large_image",
-    title: "Angeronia Labs — Software Engineering Studio",
+    title: "Angeronia Labs",
     description,
     images: ["/angeronia-logo-light.png"],
   },
@@ -122,35 +120,18 @@ export default function RootLayout({
     <html
       lang="en"
       suppressHydrationWarning
-      className={`${spaceGrotesk.variable} ${geist.variable} ${geistMono.variable}`}
+      className={`${plexSans.variable} ${plexMono.variable}`}
     >
       <head>
-        <style>{`
-html { font-family: var(--font-geist), system-ui, sans-serif; }
-        `}</style>
         <script
           type="application/ld+json"
           dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
         />
-        {/* Pre-paint motion gate: mark motion available only when reduced-motion
-            is off AND JS runs. 3s failsafe reveals everything if an engine never
-            loads. No-JS / reduced-motion never set data-motion, so the final,
-            static state always shows. */}
-        <script
-          dangerouslySetInnerHTML={{
-            __html: `(function(){try{if(!matchMedia('(prefers-reduced-motion: reduce)').matches){document.documentElement.dataset.motion='on';setTimeout(function(){document.documentElement.removeAttribute('data-motion')},3000)}}catch(e){}})();`,
-          }}
-        />
       </head>
       <body>
-        <ThemeProvider
-          attribute={["class", "data-theme"]}
-          themes={["light", "dark", "bw"]}
-          defaultTheme="light"
-          enableSystem={false}
-          disableTransitionOnChange
-        >
-          <div className="relative z-10 min-h-screen flex flex-col">{children}</div>
+        <ThemeProvider>
+          <SkipLink />
+          <div className="site-root">{children}</div>
         </ThemeProvider>
       </body>
     </html>

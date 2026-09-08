@@ -30,3 +30,12 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+# generated vendor CSS (scripts/build-vendor-css.mjs)
+/vendor/
+
+# Storybook build output
+/storybook-static/
+
+# test output
+/coverage/
