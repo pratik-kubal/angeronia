@@ -47,11 +47,28 @@ export const KeyboardAndState: Story = {
     const group = canvas.getByRole("group", { name: "Colour scheme" });
     await expect(group).toBeInTheDocument();
 
-    const dark = canvas.getByRole("button", { name: "Dark" });
+    // The toggles are found by position, not by accessible name. Carbon's
+    // `IconButton` names its button with `aria-labelledby` pointing at the
+    // tooltip, and the tooltip is `aria-hidden` until it opens — a reference
+    // the accname spec says to follow anyway (and axe does, which is why the
+    // a11y pass on this story is green), but which `dom-accessibility-api`
+    // resolves to the empty string. So the naming path is asserted explicitly
+    // below rather than assumed by the query.
+    const [light, dark] = canvas.getAllByRole("button");
+
+    for (const [button, expected] of [
+      [light, "Light"],
+      [dark, "Dark"],
+    ] as const) {
+      const labelId = button.getAttribute("aria-labelledby");
+      await expect(labelId).toBeTruthy();
+      await expect(document.getElementById(labelId as string)).toHaveTextContent(expected);
+    }
+
     await userEvent.click(dark);
     await expect(dark).toHaveAttribute("aria-pressed", "true");
+    await expect(light).toHaveAttribute("aria-pressed", "false");
 
-    const light = canvas.getByRole("button", { name: "Light" });
     await userEvent.click(light);
     await expect(light).toHaveAttribute("aria-pressed", "true");
     await expect(dark).toHaveAttribute("aria-pressed", "false");

@@ -1,7 +1,6 @@
 import { Idea, Compare, Package } from "@carbon/icons-react";
-import { Card } from "@/components/slds/card";
-import { Grid, Col } from "@/components/slds/layout";
-import { Section } from "@/components/site/section";
+import { Card } from "@/components/ui/card";
+import { Section } from "@/components/ui/section";
 import { philosophy } from "@/data/angeronia";
 
 /**
@@ -23,15 +22,13 @@ const ICONS = [Idea, Compare, Package];
 export function Philosophy() {
   return (
     <Section id="philosophy" kicker={philosophy.kicker} heading={philosophy.heading} shade>
-      <Grid wrap stretch gutters>
+      <div className="site-cards site-cards_3">
         {philosophy.beats.map((beat, index) => (
-          <Col key={beat.tag} size={12} medium={4} className="slds-m-bottom_medium">
-            <Card heading={beat.tag} icon={ICONS[index]} fill>
-              <p>{beat.text}</p>
-            </Card>
-          </Col>
+          <Card key={beat.tag} heading={beat.tag} icon={ICONS[index]}>
+            <p>{beat.text}</p>
+          </Card>
         ))}
-      </Grid>
+      </div>
     </Section>
   );
 }

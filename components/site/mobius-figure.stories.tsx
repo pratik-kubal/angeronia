@@ -15,23 +15,21 @@ const meta = {
           "between frames.\n\n" +
           "No colour is hard-coded. The wrapper carries the lit face and the " +
           "canvas the shaded end as `color`, and the component reads the " +
-          "resolved `rgb()` back out of both — the only way to collapse a " +
-          "`light-dark()` pair, since reading the custom property itself " +
-          "returns the token stream rather than the branch in force. Every face " +
-          "is then a Lambert mix of that pair.\n\n" +
-          "Each scheme gets its own pair, because the scheme-aware accent hooks " +
-          "all travel together and land too close to shade a solid with. Light " +
-          "runs `accent-container-1` (Teal 60, the brand button's teal) down to " +
-          "`accent-dark-1` (Teal 90); dark runs `accent-light-2` (Teal 20) down " +
-          "to `accent-dark-2` (Teal 100), the wider range a dark ground can " +
-          "carry.\n\n" +
+          "resolved `rgb()` back out of both — reading the custom property " +
+          "itself returns its token stream rather than a colour. Every face is " +
+          "then a Lambert mix of that pair.\n\n" +
+          "Each theme names its own pair in `styles/_themes.scss`, because no " +
+          "Carbon token pair spans a range wide enough to shade a solid with. " +
+          "Light runs Teal 60 — the brand button's teal — down to Teal 90; " +
+          "dark runs Teal 20 down to Teal 100, the wider range a dark ground " +
+          "can carry.\n\n" +
           "It turns on its own at 30°/s, which is the one waiver to design " +
           "rule 8's \"no autoplay\" (ADR-013): a still Möbius reads as a " +
           "twisted ring, and the one-sidedness only resolves when the surface " +
           "travels. Drag it to scrub, flick to fling. Under " +
           "`prefers-reduced-motion` it draws a single static frame and the drag " +
-          "handler is never attached; off screen the loop stops; below 40em the " +
-          "hero drops the figure and rough.js is never fetched.",
+          "handler is never attached; off screen the loop stops; below `md` " +
+          "the hero drops the figure and rough.js is never fetched.",
       },
     },
   },

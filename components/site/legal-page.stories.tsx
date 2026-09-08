@@ -14,8 +14,8 @@ const meta = {
           "policy and the terms cannot drift apart in layout or in type — the " +
           "difference between them is entirely data.\n\n" +
           "These are the only pages on the site read as continuous prose, so " +
-          "the body is held to `sizing-content-3` (60ch) rather than the page " +
-          "width. The updated date is a `<time>` with a machine-readable " +
+          "the body is held to a 60ch measure rather than the page width. The " +
+          "updated date is a `<time>` with a machine-readable " +
           "`dateTime`: a legal document's date is its notice, so it should be " +
           "as legible to a crawler or a reader-mode as it is on the page.",
       },

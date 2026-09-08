@@ -15,16 +15,16 @@ const meta = {
           "exchange, the run actions and the composer (ADR-014).\n\n" +
           "The content is carried over; the implementation is not. Over there " +
           "the preview reuses Code Socratic's real `SidePane`, `ResultsPanel` " +
-          "and `CodeBlock`, which are Carbon — and Carbon cannot enter an SLDS " +
-          "2 site (design rule 1). The side tabs are hand-rolled rather than " +
-          "the `Tabs` wrapper, because what is wanted is the *product's* " +
+          "and `CodeBlock`, all fed by `@repo/shared` — bringing those across " +
+          "would mean rebuilding three product components to render one " +
+          "marketing panel. The side tabs are likewise hand-rolled rather than " +
+          "Carbon `Tabs`, because what is wanted is the *product's* " +
           "contained-tab look inside a replica frame; the keyboard contract is " +
-          "the wrapper's, copied verbatim.\n\n" +
-          "The syntax palette is the one thing that could not be literal. The " +
-          "product uses Carbon's blue, purple, teal and grey; rule 3 allows no " +
-          "hex here, so each token class takes the SLDS palette hook playing " +
-          "the same role — and because those are `light-dark()` pairs, the " +
-          "dark scheme inverts them without a second set.\n\n" +
+          "the standard tablist one.\n\n" +
+          "The syntax palette is now the product's own: both properties run on " +
+          "Carbon, so the four token classes take the same `@carbon/colors` " +
+          "stops the real editor paints with, declared per theme in " +
+          "`styles/_themes.scss` (ADR-015).\n\n" +
           "Nothing acts. Both actions and the send control are really " +
           "`disabled`, the composer is a `<span>` rather than a dead field, and " +
           "the footnote says so rather than leaving a visitor to find out.",

@@ -9,12 +9,13 @@ const meta = {
     docs: {
       description: {
         component:
-          "Built from layout utilities and Tier-1 parts rather than " +
-          "`slds-context-bar` — the SLDS Global Header and Global Navigation " +
-          "are Salesforce application chrome and are out of scope (D10).\n\n" +
-          "The nav links collapse below the large breakpoint, where the " +
-          "in-page anchors they point at are only a scroll away; the CTA and " +
-          "the scheme switcher stay, because neither has another route.",
+          "Built from the 2x grid and Tier-1 parts rather than Carbon's " +
+          "`UIShell` header — the UI Shell is application chrome for a product " +
+          "with a global nav, and this is a five-link marketing bar that has " +
+          "to sit inside the page's own container.\n\n" +
+          "The nav links collapse below `lg`, where the in-page anchors they " +
+          "point at are only a scroll away; the CTA and the scheme switcher " +
+          "stay, because neither has another route.",
       },
     },
   },

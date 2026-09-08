@@ -10,9 +10,10 @@ import { hero } from "@/data/angeronia";
  *
  * Ported from `../portfolio`'s `mobius-figure.tsx`. Three things change to keep
  * it inside this site's contract (ADR-012): the colours are read back from the
- * theme's hooks instead of being hard-coded citron, every rule lives in
- * `app/site.css` rather than a `style` attribute, and the figure is storied.
- * The rotation itself is the deviation, waived for this one figure by ADR-013.
+ * theme's tokens instead of being hard-coded citron, every rule lives in
+ * `styles/_site.scss` rather than a `style` attribute, and the figure is
+ * storied. The rotation itself is the deviation, waived for this one figure by
+ * ADR-013.
  *
  * Exposed as a labelled image — `role="img"` on the wrapper, `aria-hidden` on
  * the canvas — so it reads as one decorative figure rather than a bare canvas.
@@ -28,11 +29,11 @@ const MAX_SPIN = 320;
 /**
  * Pull `r,g,b` out of a computed colour.
  *
- * The theme's hooks are `light-dark()` pairs, and a custom property's computed
- * value is its token stream — `light-dark(#005d5d, #9ef0f0)` — not the branch
- * that applies. Resolving it means reading a real property instead, which is
- * why the fill and the shade are carried as `color` on two elements. Those
- * resolve to `rgb()` because every hook in the ramp is a hex.
+ * A custom property's computed value is its token stream, not a colour: reading
+ * `--site-figure-lit` back gives whatever text is on the right of the colon.
+ * Resolving it means reading a real property instead, which is why the fill and
+ * the shade are carried as `color` on two elements — those come back as `rgb()`
+ * because every value in the teal ramp is a hex.
  */
 function readRgb(el: Element): [number, number, number] {
   const parts = getComputedStyle(el).color.match(/[\d.]+/g);

@@ -1,58 +1,64 @@
+import { Column, Link } from "@carbon/react";
+import { Grid } from "@/components/ui/grid";
 import { BrandMark } from "@/components/site/brand-mark";
-import { Container, Grid, Col } from "@/components/slds/layout";
-import { Link } from "@/components/slds/link";
-import { List, ListItem } from "@/components/slds/list";
+import { ExternalLink } from "@/components/ui/external-link";
 import { footer } from "@/data/angeronia";
 
 /**
  * The footer.
  *
- * No attribution line: SLDS 2's Terms of Use require none, and naming
- * Salesforce in the product is out of scope (plan §2.9). The legal row is the
- * copyright and nothing else.
+ * Four columns of the 2x grid at `lg` — the lockup at 6, then three link
+ * columns — collapsing to two at `md` and one below it. The legal row is the
+ * copyright and the two policy links, and nothing else.
  */
 export function SiteFooter() {
   return (
     <footer className="site-footer">
-      <Container size="x-large">
-        <Grid wrap gutters>
-          <Col size={12} medium={4} className="slds-m-bottom_large">
-            <BrandMark showSub={false} />
-            <p className="slds-text-body_small slds-text-color_weak slds-m-top_small site-measure">
-              {footer.tagline}
-            </p>
-          </Col>
+      <Grid className="site-container">
+        <Column sm={4} md={8} lg={6} className="site-footer__column">
+          <BrandMark showSub={false} />
+          <p className="site-footer__tagline site-measure">{footer.tagline}</p>
+        </Column>
 
-          {footer.columns.map((column) => (
-            <Col key={column.title} size={6} medium={2} className="slds-m-bottom_large">
-              <h2 className="slds-text-title_caps slds-text-color_weak slds-m-bottom_x-small">
-                {column.title}
-              </h2>
-              <List variant="vertical">
-                {column.links.map((link) => (
-                  <ListItem key={link.label} className="slds-m-bottom_xx-small">
-                    <Link href={link.href} external={"external" in link ? link.external : undefined}>
-                      {link.label}
-                    </Link>
-                  </ListItem>
-                ))}
-              </List>
-            </Col>
-          ))}
-        </Grid>
+        {footer.columns.map((column) => (
+          <Column
+            key={column.title}
+            sm={2}
+            md={2}
+            lg={3}
+            className="site-footer__column"
+          >
+            <h2 className="site-footer__heading">{column.title}</h2>
+            <ul className="site-footer__list">
+              {column.links.map((link) =>
+                "external" in link && link.external ? (
+                  <li key={link.label}>
+                    <ExternalLink href={link.href}>{link.label}</ExternalLink>
+                  </li>
+                ) : (
+                  <li key={link.label}>
+                    <Link href={link.href}>{link.label}</Link>
+                  </li>
+                ),
+              )}
+            </ul>
+          </Column>
+        ))}
 
-        <div className="slds-grid slds-wrap slds-grid_align-spread site-footer__legal">
-          <ul className="site-footer__legal-links">
-            {footer.legal.map((link) => (
-              <li key={link.label}>
-                <Link href={link.href}>{link.label}</Link>
-              </li>
-            ))}
-          </ul>
-          <p className="slds-text-body_small slds-text-color_weak">{footer.copyrightLeft}</p>
-          <p className="slds-text-body_small slds-text-color_weak">{footer.copyrightRight}</p>
-        </div>
-      </Container>
+        <Column sm={4} md={8} lg={16}>
+          <div className="site-footer__legal">
+            <ul className="site-footer__legal-links">
+              {footer.legal.map((link) => (
+                <li key={link.label}>
+                  <Link href={link.href}>{link.label}</Link>
+                </li>
+              ))}
+            </ul>
+            <p>{footer.copyrightLeft}</p>
+            <p>{footer.copyrightRight}</p>
+          </div>
+        </Column>
+      </Grid>
     </footer>
   );
 }

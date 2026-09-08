@@ -2,11 +2,10 @@
 
 import * as React from "react";
 import { Sun, Moon } from "@carbon/icons-react";
+import { IconButton } from "@carbon/react";
 import { useTheme } from "next-themes";
-import { ButtonGroup } from "@/components/slds/button-group";
-import { ButtonIcon } from "@/components/slds/button-icon";
 import { copy } from "@/data/angeronia";
-import { SELECTABLE_COLOR_SCHEMES, type SelectableColorScheme } from "@/lib/slds/scheme";
+import { SELECTABLE_COLOR_SCHEMES, type SelectableColorScheme } from "@/lib/theme";
 
 const ICON = { light: Sun, dark: Moon } as const;
 
@@ -15,8 +14,14 @@ const ICON = { light: Sun, dark: Moon } as const;
  *
  * A choice with a persistent selection is a set of toggles, not a cycling
  * button: `aria-pressed` says which one is on, so the current scheme is
- * announced rather than inferred from an icon (SLDS Button Groups →
- * Accessibility, design rule 10).
+ * announced rather than inferred from an icon (design rule 10). Carbon's
+ * `IconButton` also names the control visibly on hover and focus through its
+ * own tooltip, which the SLDS version could only do with assistive text.
+ *
+ * A plain `role="group"` rather than Carbon's `ButtonSet`: `.cds--btn-set` puts
+ * `inline-size: 100%` on every descendant `.cds--btn`, which is right for a pair
+ * of full-width form actions and wrong for two 32px toggles — and `IconButton`
+ * nests its button inside a tooltip trigger, so the rule reaches it anyway.
  *
  * The pressed state comes from `resolvedTheme`, not `theme`. `system` is still
  * the default scheme — a first visit follows the reader's OS — but it has no
@@ -35,18 +40,24 @@ export function ColorSchemeSwitcher() {
   React.useEffect(() => setMounted(true), []);
 
   return (
-    <ButtonGroup label={copy.colorScheme.label}>
-      {SELECTABLE_COLOR_SCHEMES.map((scheme: SelectableColorScheme) => (
-        <ButtonIcon
-          key={scheme}
-          icon={ICON[scheme]}
-          assistiveText={copy.colorScheme[scheme]}
-          variant="border-filled"
-          size="small"
-          pressed={mounted ? resolvedTheme === scheme : false}
-          onClick={() => setTheme(scheme)}
-        />
-      ))}
-    </ButtonGroup>
+    <div role="group" aria-label={copy.colorScheme.label} className="site-scheme-switch">
+      {SELECTABLE_COLOR_SCHEMES.map((scheme: SelectableColorScheme) => {
+        const Glyph = ICON[scheme];
+        const pressed = mounted ? resolvedTheme === scheme : false;
+        return (
+          <IconButton
+            key={scheme}
+            kind="ghost"
+            size="sm"
+            label={copy.colorScheme[scheme]}
+            aria-pressed={pressed}
+            isSelected={pressed}
+            onClick={() => setTheme(scheme)}
+          >
+            <Glyph size={16} aria-hidden="true" focusable="false" />
+          </IconButton>
+        );
+      })}
+    </div>
   );
 }

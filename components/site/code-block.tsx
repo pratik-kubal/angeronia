@@ -14,9 +14,10 @@ import * as React from "react";
  * Agreeing with the product means matching what Monaco *emits*, not what a theme
  * could colour.
  *
- * The four token classes are painted by `app/site.css` from SLDS palette hooks
- * (ADR-014) — the product's Carbon blue and purple are literals, and rule 3
- * does not allow those here.
+ * The four token classes are painted by `styles/_site.scss` from the same
+ * `@carbon/colors` stops the product's own editor theme uses. On SLDS they had
+ * to be substituted with palette hooks, because a Carbon literal was not
+ * allowed in that build (ADR-014, ADR-015).
  */
 
 const KEYWORDS = new Set([
