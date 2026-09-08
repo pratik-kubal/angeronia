@@ -292,8 +292,15 @@ function reportBody() {
 const body = reportBody();
 const stale = (() => {
   try {
-    // Ignore the generation date when deciding staleness.
-    const strip = (s) => s.replace(/^Generated \d{4}-\d{2}-\d{2} /m, "Generated ");
+    // Ignore the generation date when deciding staleness — and the Result
+    // line, which is derived from this run's own failures. Without that, any
+    // real failure rewrites the line, the committed (passing) report no longer
+    // matches, and CI appends a second "report is stale" failure that sends
+    // the reader chasing the wrong problem.
+    const strip = (s) =>
+      s
+        .replace(/^Generated \d{4}-\d{2}-\d{2} /m, "Generated ")
+        .replace(/^\*\*Result: .*\*\*$/m, "**Result:**");
     return strip(readFileSync(REPORT, "utf8")) !== strip(body);
   } catch {
     return true;

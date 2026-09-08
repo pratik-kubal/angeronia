@@ -41,6 +41,16 @@ export function Modal({ open, onClose, heading, footer, size, className, childre
 
   React.useEffect(() => setMounted(true), []);
 
+  // The open-effect must not depend on `onClose`. Consumers pass an inline
+  // arrow, so its identity changes on every parent render — and a parent that
+  // re-renders while the dialog is open (a controlled field inside it, say)
+  // would tear the effect down and back up on every keystroke, restoring
+  // `body.overflow` and throwing focus back to the opener each time.
+  const onCloseRef = React.useRef(onClose);
+  React.useEffect(() => {
+    onCloseRef.current = onClose;
+  }, [onClose]);
+
   React.useEffect(() => {
     if (!open) return;
 
@@ -55,7 +65,7 @@ export function Modal({ open, onClose, heading, footer, size, className, childre
     const onKeyDown = (event: KeyboardEvent) => {
       if (event.key === "Escape") {
         event.stopPropagation();
-        onClose();
+        onCloseRef.current();
         return;
       }
       if (event.key !== "Tab") return;
@@ -83,7 +93,7 @@ export function Modal({ open, onClose, heading, footer, size, className, childre
       document.body.style.overflow = previousOverflow;
       (openerRef.current as HTMLElement | null)?.focus?.();
     };
-  }, [open, onClose]);
+  }, [open]);
 
   if (!mounted || !open) return null;
 

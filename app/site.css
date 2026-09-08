@@ -962,6 +962,22 @@
 }
 
 /*
+ * `hidden` has to be made to work here.
+ *
+ * SLDS sets `display: inline-block` on `.slds-popover`, and an author-origin
+ * declaration beats the UA stylesheet's `[hidden] { display: none }` — so the
+ * `hidden` attribute on a popover or a tooltip bubble hides it from assistive
+ * tech while leaving it painted on the page. This restores the attribute's
+ * meaning for both (the Tooltip bubble is a `.slds-popover` too).
+ *
+ * Attached to the `site-` class rather than to `.slds-popover`, so it is a rule
+ * beside the design system's and not an override of it (design rule 3).
+ */
+.site-popover__panel[hidden] {
+  display: none;
+}
+
+/*
  * Tooltip and Popover positioning.
  *
  * SLDS's popover CSS draws the panel and its nubbin but takes no position —

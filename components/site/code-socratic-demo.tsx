@@ -270,15 +270,22 @@ export function CodeSocraticDemo() {
               })}
             </div>
 
-            <div
-              role="tabpanel"
-              id={`demo-panel-${active}`}
-              aria-labelledby={`demo-tab-${active}`}
-              tabIndex={0}
-              className="site-demo__panel"
-            >
-              {PANEL[active]}
-            </div>
+            {/* Every panel is rendered, inactive ones hidden. Rendering only
+                the active one left the other three tabs' `aria-controls`
+                pointing at ids that did not exist. */}
+            {TABS.map((tab) => (
+              <div
+                key={tab.id}
+                role="tabpanel"
+                id={`demo-panel-${tab.id}`}
+                aria-labelledby={`demo-tab-${tab.id}`}
+                tabIndex={0}
+                className="site-demo__panel"
+                hidden={tab.id !== active}
+              >
+                {PANEL[tab.id]}
+              </div>
+            ))}
           </section>
         </div>
       </div>

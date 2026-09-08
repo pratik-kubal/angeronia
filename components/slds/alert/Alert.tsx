@@ -63,7 +63,10 @@ export function Alert({ tone = "info", className, children }: AlertProps) {
         </span>
       </div>
       <div className="slds-media__body">
-        <span className="slds-assistive-text">{`${TONE_WORD[tone]}: `}</span>
+        {/* No assistive duplicate of the tone: the visible <strong> already
+            carries the word, so a screen reader would otherwise read
+            "Error: Error — …". The visible word is what satisfies the
+            never-colour-only rule; the icon is decorative. */}
         <strong>{TONE_WORD[tone]}</strong> — {children}
       </div>
     </div>

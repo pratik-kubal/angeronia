@@ -92,15 +92,16 @@ export function ProgressIndicator({
           );
         })}
       </ol>
-      <div
-        className="slds-progress-bar slds-progress-bar_x-small"
-        role="progressbar"
-        aria-label={label}
-        aria-valuemin={0}
-        aria-valuemax={steps.length}
-        aria-valuenow={completed}
-        aria-valuetext={`${completed} of ${steps.length} complete`}
-      >
+      {/*
+        Decorative. The track runs marker-to-marker, so it reaches the marker
+        you are *on* — which is one step ahead of how many are complete. As a
+        `progressbar` it therefore announced "2 of 3 complete" while drawing a
+        full bar, contradicting itself. The list above already announces every
+        step's state ("Label — Complete / In progress / Upcoming"), which is the
+        accurate account; this is the same information drawn, so it is hidden
+        rather than restated.
+      */}
+      <div className="slds-progress-bar slds-progress-bar_x-small" aria-hidden="true">
         <span
           className="slds-progress-bar__value site-progress-bar__value"
           style={{ "--site-progress-bar-value": `${percent}%` } as React.CSSProperties}

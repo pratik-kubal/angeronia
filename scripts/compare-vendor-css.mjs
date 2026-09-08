@@ -13,7 +13,7 @@
 //
 //   node scripts/compare-vendor-css.mjs --url http://localhost:3000
 //
-// Regenerates `vendor/slds2.css` twice and leaves it on `bundled`.
+// Regenerates `vendor/slds2.css` twice and leaves it on the default mode.
 
 import { execFileSync } from "node:child_process";
 import { setTimeout as sleep } from "node:timers/promises";
@@ -151,6 +151,9 @@ try {
   } else {
     console.log(`\n${rows.length} difference(s) out of ${checked} computed values:\n`);
     for (const row of rows) console.log(`  ${row}`);
+    // A parity *check* that always exits 0 is not a check: any wrapper keying
+    // on the exit code would read a real cascade divergence as green.
+    process.exitCode = 1;
   }
 } finally {
   await browser.close();

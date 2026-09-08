@@ -29,7 +29,12 @@ export interface TabsProps {
 }
 
 export function Tabs({ tabs, label, defaultTab, variant = "default", className }: TabsProps) {
-  const [active, setActive] = React.useState(defaultTab ?? tabs[0]?.id);
+  // Validated, not just defaulted: an id that matches no tab would leave every
+  // tab at `tabIndex={-1}`, so the tablist would have no roving tab stop and
+  // could not be reached from the keyboard at all.
+  const [active, setActive] = React.useState(
+    tabs.some((tab) => tab.id === defaultTab) ? defaultTab : tabs[0]?.id,
+  );
   const refs = React.useRef(new Map<string, HTMLAnchorElement>());
 
   const move = (from: number, delta: number) => {

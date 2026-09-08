@@ -48,8 +48,13 @@ export function MobiusFigure() {
   // Bumped on every scheme change. The draw loop re-reads the two probe
   // elements on the next frame rather than calling getComputedStyle 60×/s.
   const dirtyRef = React.useRef(0);
+  // Set once rough.js has landed. Under `prefers-reduced-motion` nothing else
+  // will ever repaint, so a scheme change has to ask for it by hand or the band
+  // keeps the previous scheme's teal.
+  const redrawRef = React.useRef<(() => void) | null>(null);
   React.useEffect(() => {
     dirtyRef.current += 1;
+    redrawRef.current?.();
   }, [resolvedTheme]);
 
   React.useEffect(() => {
@@ -96,7 +101,16 @@ export function MobiusFigure() {
       cv.height = Math.round(cssH * dpr);
     };
     resize();
-    const ro = new ResizeObserver(resize);
+    // Assigning width/height clears the canvas. The rAF loop repaints on the
+    // next frame — but under `prefers-reduced-motion` there is no next frame,
+    // so a resize would leave the hero figure blank. The observer paints for
+    // it. (The synchronous `resize()` above cannot: `draw` and `rc` are both
+    // still in their temporal dead zone here. The observer callback runs after
+    // this effect body, so by then they exist.)
+    const ro = new ResizeObserver(() => {
+      resize();
+      if (reduce) draw();
+    });
     ro.observe(el);
 
     // Fixed camera basis (a pleasing 3/4 angle), origin centred.
@@ -306,6 +320,7 @@ export function MobiusFigure() {
         .then((m) => {
           const rough = (m as { default?: unknown }).default ?? m;
           rc = (rough as { canvas: (c: HTMLCanvasElement) => RoughCanvas }).canvas(cv);
+          redrawRef.current = draw;
           if (reduce) draw();
           else startLoop();
         })
@@ -374,6 +389,7 @@ export function MobiusFigure() {
 
     return () => {
       alive = false;
+      redrawRef.current = null;
       if (raf) cancelAnimationFrame(raf);
       io.disconnect();
       ro.disconnect();

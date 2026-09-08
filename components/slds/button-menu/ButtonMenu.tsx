@@ -61,10 +61,21 @@ export function ButtonMenu({ items, label, align = "left", className }: ButtonMe
   }, [open, close]);
 
   const onMenuKeyDown = (event: React.KeyboardEvent) => {
+    // Every branch below indexes modulo `items.length`; with no items that is
+    // NaN, which would flow into `tabIndex` and the focus effect.
+    if (items.length === 0) return;
+
     switch (event.key) {
       case "Escape":
         event.preventDefault();
         close();
+        break;
+      // A menuitem is an `<a href="#">`, which fires `click` on Enter but not
+      // on Space — Space scrolls the page instead. The ARIA menu pattern
+      // requires both, so Space is routed to the focused item by hand.
+      case " ":
+        event.preventDefault();
+        itemRefs.current[focused]?.click();
         break;
       case "ArrowDown":
         event.preventDefault();
