@@ -4,9 +4,10 @@ import { Meta } from "@storybook/addon-docs/blocks";
 
 # Angeronia Design System
 
-The UI for [angeronia.com](https://angeronia.com), built on **SLDS 2 (Cosmos)**
-with an Angeronia theme layer: IBM Carbon Teal as the brand accent, IBM Plex as
-the typeface, IBM Carbon for icons.
+The UI for [angeronia.com](https://angeronia.com), built on **IBM Carbon v11**
+under the White and Gray 100 themes, with one brand override: Carbon Teal in
+place of Carbon Blue. IBM Plex is the typeface and `@carbon/icons-react` the
+icon set.
 
 This Storybook is the source of truth. A component exists here before it
 appears on a page, and the page itself is a story — so `Pages/Home` and
@@ -17,52 +18,53 @@ appears on a page, and the page itself is a story — so `Pages/Home` and
 The full rules are in [`docs/design-system/DESIGN-RULES.md`](https://github.com/pratik-kubal/angeronia/blob/main/docs/design-system/DESIGN-RULES.md).
 The ones that shape almost every decision:
 
-1. **One design system.** SLDS 2 plus the Angeronia theme layer. No other CSS
-   framework, utility library or icon set.
-2. **The selection ladder.** An existing wrapper in `components/slds/*` → an
-   SLDS 2 blueprint (add the wrapper and its stories, then use it) → SLDS
-   utility classes → custom CSS that consumes `--slds-g-*` hooks with
-   fallbacks. Custom CSS is the last resort and names the guideline it follows.
-3. **Never hard-code, never re-assign.** No literal colours, radii, shadows,
-   font sizes, spacing or durations. `app/theme.angeronia.css` is the only file
-   allowed to *assign* a `--slds-*` hook; everywhere else they are referenced.
-   `.slds-*` selectors are never overridden — a `site-*` class goes beside them.
-4. **Colour by role, in pairs.** Text on a container uses that container's
-   `on-*` hook. Links are `accent-2`, headings `on-surface-3`. Feedback colours
-   are only ever used for feedback. Brand teal reaches the page only through
-   `accent-*` and `brand-base-*`.
+1. **One design system.** Carbon, plus the brand override in
+   `styles/_themes.scss`. No other CSS framework, utility library or icon set.
+2. **The selection ladder.** A `@carbon/react` component → a Carbon token in a
+   `site-*` rule → a `--site-*` value declared at the top of `_site.scss`.
+   Anything below that rung is a decision, not a shortcut, and says which
+   Carbon gap it is filling.
+3. **Never hard-code, never re-assign.** No literal colours, spacing, type sizes
+   or durations. `styles/_themes.scss` is the only file allowed to *assign* a
+   `--cds-*` token; everywhere else they are referenced. `.cds--*` selectors are
+   never overridden — a `site-*` class goes beside them.
+4. **Colour by role, in pairs.** Text on a ground uses that ground's paired ink.
+   Links are `$link-primary`, headings `$text-primary`. The `support-*` family
+   means status and nothing else. Brand teal reaches the page only through the
+   tokens the override reassigns.
 
 ## Adding a component
 
-1. Check `components/slds/` — it may already exist.
-2. Find the SLDS 2 blueprint. The `design-systems-slds-apply` skill in
-   `.claude/skills/` indexes every hook, blueprint, utility and Carbon icon
-   name, so you can confirm an artifact exists before writing markup for it.
-3. Write `components/slds/<name>/<Name>.tsx`. Markup from the blueprint;
-   behaviour, ARIA and keyboard handling are yours — blueprints are style-only.
-4. Write `<Name>.stories.tsx`: Default, every variant and size, states, long
+1. Check `@carbon/react` first — it probably already exists there.
+2. If it does not, ask whether it is a *composition* of Carbon parts (a `Card`
+   is a `Tile` plus three rows) or something Carbon genuinely has no word for
+   (a media object, an avatar, a cluster). Both go in `components/ui/`; nothing
+   else does.
+3. Write `<name>.stories.tsx`: Default, every variant and size, states, long
    content, dark. The dark story is not optional; half the contrast surprises
    only appear there.
-5. Run the gates: `npm run lint:slds`, `npm run check:theme`,
-   `npm run test:storybook`, `npm run typecheck`.
+4. Run the gates: `npm run typecheck`, `npm run check:theme`,
+   `npm run test:storybook`.
 
-A component is **done** when the story exists, a11y is clean, the linter is
-clean, `check:theme` is clean, it has been reviewed in both schemes, and it is
-used on a page.
+A component is **done** when the story exists, a11y is clean, `check:theme` is
+clean, it has been reviewed in both themes, and it is used on a page.
 
 ## Boards
 
-- **Brand** — the teal ramp against Cosmos's blue, the accent pairings, and the
-  live contrast matrix `check:theme` asserts in CI.
-- **Color** — the semantic roles and their `on-*` pairs.
-- **Typography** — families, scale, weights, type styles, measure. Reports
-  whether the real IBM Plex faces loaded, so a board never lies about its own
-  metrics.
-- **Spacing, Shape & Motion** — the 4-pt scale, radius, shadow, duration.
+- **Brand** — the teal ramp against Carbon's blue, where the teal actually
+  lands, and the live contrast matrix `check:theme` asserts in CI.
+- **Color** — the semantic roles, Carbon's layer model, and the ink pairs.
+- **Typography** — families, the type styles in use with their computed sizes,
+  and the measures. Reports whether the real IBM Plex faces loaded, so a board
+  never lies about its own metrics.
+- **Spacing, Shape & Motion** — the spacing scale, the square geometry, the
+  site's own values, and what moves.
 - **Icons** — every glyph the site uses and what it means here.
 
 ## What is deliberately absent
 
-No Salesforce icons, illustrations, product artwork or application chrome, and
-no Salesforce wording in the product (D10). `slds-*` class names and `--slds-*`
-custom properties stay: they are the API of the CSS.
+No radius, no elevation, no density toggle. Carbon 11 is square and has no
+shadow scale, and the site takes both as they come rather than re-skinning them
+back to something rounder — that decision, and the licence decision behind the
+whole migration, are ADR-015 in
+[`DECISIONS.md`](https://github.com/pratik-kubal/angeronia/blob/main/docs/design-system/DECISIONS.md).

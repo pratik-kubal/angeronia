@@ -26,6 +26,19 @@ const config: StorybookConfig = {
     // exactly as written rather than as inferred react-docgen approximations.
     reactDocgen: "react-docgen-typescript",
   },
+  viteFinal: async (viteConfig) => {
+    // Carbon is Sass; Vite picks up sass-embedded automatically. Mute the
+    // deprecation warnings that originate inside node_modules, which we cannot
+    // act on — the same `quietDeps` the Next build sets in `next.config.mjs`.
+    viteConfig.css = {
+      ...viteConfig.css,
+      preprocessorOptions: {
+        ...viteConfig.css?.preprocessorOptions,
+        scss: { ...(viteConfig.css?.preprocessorOptions?.scss ?? {}), quietDeps: true },
+      },
+    };
+    return viteConfig;
+  },
 };
 
 export default config;

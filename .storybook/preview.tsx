@@ -10,26 +10,31 @@ import "@fontsource/ibm-plex-mono/latin-400.css";
 import "./preview.css";
 import "./foundations.css";
 
-// The production stylesheet, unmodified: Cosmos, then the Angeronia theme
-// layer, then site composition. Never a Storybook-only variant (plan §6.1).
-import "../app/slds.css";
+// The production stylesheet, unmodified: Carbon, then the Angeronia theme,
+// then site composition. Never a Storybook-only variant (design rule 11).
+import "../styles/globals.scss";
 
-import { COLOR_SCHEME_CLASS, type ColorScheme } from "../lib/slds/scheme";
+import { COLOR_SCHEME_ATTRIBUTE, type SelectableColorScheme } from "../lib/theme";
 
 /**
- * Puts the chosen `slds-color-scheme_*` class on `<html>`, which is the only
- * thing SLDS 2 needs to switch schemes — every colour token is a `light-dark()`
- * pair resolved by CSS `color-scheme`.
+ * Puts the chosen theme on `<html>`, which is the only thing Carbon needs to
+ * switch schemes — `styles/_themes.scss` emits the White token set under
+ * `:root` and the Gray 100 set under `:root[data-theme="dark"]`.
+ *
+ * `colorScheme` is also set so the browser's own chrome (form controls,
+ * scrollbars) follows, which is what `next-themes` does in production.
  */
 const withColorScheme: Decorator = (Story, context) => {
-  const scheme = (context.globals.colorScheme ?? "light") as ColorScheme;
+  const scheme = (context.globals.colorScheme ?? "light") as SelectableColorScheme;
 
   React.useEffect(() => {
     const root = document.documentElement;
-    const classes = Object.values(COLOR_SCHEME_CLASS);
-    root.classList.remove(...classes);
-    root.classList.add(COLOR_SCHEME_CLASS[scheme]);
-    return () => root.classList.remove(COLOR_SCHEME_CLASS[scheme]);
+    root.setAttribute(COLOR_SCHEME_ATTRIBUTE, scheme);
+    root.style.colorScheme = scheme;
+    return () => {
+      root.removeAttribute(COLOR_SCHEME_ATTRIBUTE);
+      root.style.colorScheme = "";
+    };
   }, [scheme]);
 
   return (
@@ -42,7 +47,7 @@ const withColorScheme: Decorator = (Story, context) => {
 const preview: Preview = {
   parameters: {
     controls: { matchers: { color: /(background|color)$/i, date: /Date$/i } },
-    // Surfaces come from the theme's hooks, so a backgrounds addon would only
+    // Surfaces come from the theme's tokens, so a backgrounds addon would only
     // let a reviewer put a component on a ground the design system never uses.
     backgrounds: { disable: true },
     a11y: { test: "error" },
@@ -64,14 +69,13 @@ const preview: Preview = {
   },
   globalTypes: {
     colorScheme: {
-      description: "SLDS colour scheme",
+      description: "Carbon theme",
       toolbar: {
         title: "Scheme",
         icon: "sun",
         items: [
-          { value: "light", title: "Light", icon: "sun" },
-          { value: "dark", title: "Dark", icon: "moon" },
-          { value: "system", title: "System", icon: "browser" },
+          { value: "light", title: "Light · White", icon: "sun" },
+          { value: "dark", title: "Dark · Gray 100", icon: "moon" },
         ],
         dynamicTitle: true,
       },
