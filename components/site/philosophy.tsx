@@ -7,8 +7,8 @@ import { philosophy } from "@/data/angeronia";
  * Three beats, three cards.
  *
  * Shaded because of where it sits, not because of what it is: the page runs
- * four card sections back to back (clients, product, services, this), and the
- * band alternates across them so no two shaded grounds touch. Move this section
+ * three card sections back to back (product, services, this), and the band
+ * alternates across them so no two shaded grounds touch. Move this section
  * and the `shade` has to move with it — see `services.tsx`, which gave the band
  * up when the two swapped.
  *

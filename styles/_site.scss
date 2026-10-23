@@ -26,7 +26,6 @@
   // Reading measures. `ch` because a measure is counted in characters.
   --site-measure: 60ch;
   --site-measure-heading: 25ch;
-  --site-measure-quote: 35ch;
   // Carbon draws its own borders at 1px and its interactive edges at 2px; it
   // exposes neither as a token.
   --site-border-width: 1px;
@@ -525,30 +524,6 @@
   font-style: italic;
 }
 
-// Clients: what the studio is doing for them, set apart from what they are.
-.site-client__engagement {
-  margin-block-start: $spacing-05;
-  padding-block-start: $spacing-05;
-  border-block-start: var(--site-border-width) solid theme.$border-subtle;
-  color: theme.$text-secondary;
-}
-
-// Low-bono: the promise is the section, so it is set one step below the
-// standalone display treatment — it sits in a half-width card, not across the
-// full measure. Both classes, deliberately: `site-coda` owns the top margin a
-// quote following body copy needs, and in the card the header is already that
-// space.
-.site-coda.site-lowbono__quote {
-  margin-block-start: 0;
-}
-
-.site-lowbono__quote {
-  @include type.type-style('heading-04');
-
-  color: theme.$text-primary;
-  max-inline-size: var(--site-measure-quote);
-}
-
 // Product spotlight. The card body runs long enough to need its own rhythm:
 // headline, lede, the session replica, three benefits, the facts strip.
 .site-product__headline {
@@ -571,11 +546,6 @@
 
   margin-block: $spacing-07 $spacing-04;
   color: theme.$text-primary;
-}
-
-// Low-bono: the offer's body sits clear of the quote above it.
-.site-lowbono__body {
-  margin-block-start: $spacing-07;
 }
 
 // The three "why would I use this" answers, and the facts strip under them.

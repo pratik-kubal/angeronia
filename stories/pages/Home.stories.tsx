@@ -7,7 +7,6 @@ import { Philosophy } from "@/components/site/philosophy";
 import { Services } from "@/components/site/services";
 import { Process } from "@/components/site/process";
 import { ProductSpotlight } from "@/components/site/product-spotlight";
-import { WhoWeBuildFor } from "@/components/site/who-we-build-for";
 import { About } from "@/components/site/about";
 import { Contact } from "@/components/site/contact";
 import { SiteFooter } from "@/components/site/site-footer";
@@ -24,7 +23,6 @@ function Home() {
       <SiteHeader />
       <main id="main">
         <Hero />
-        <WhoWeBuildFor />
         <ProductSpotlight />
         <Services />
         <Philosophy />
@@ -64,7 +62,6 @@ export const Light: Story = {
     await expect(canvasElement.querySelectorAll("h1")).toHaveLength(1);
 
     for (const name of [
-      "Clients and early ventures.",
       "Our Principles",
       "What we take on",
       "How we work",

@@ -4,7 +4,6 @@ import { Philosophy } from "@/components/site/philosophy";
 import { Services } from "@/components/site/services";
 import { Process } from "@/components/site/process";
 import { ProductSpotlight } from "@/components/site/product-spotlight";
-import { WhoWeBuildFor } from "@/components/site/who-we-build-for";
 import { About } from "@/components/site/about";
 import { Contact } from "@/components/site/contact";
 import { SiteFooter } from "@/components/site/site-footer";
@@ -21,7 +20,6 @@ export default function Home() {
       <SiteHeader />
       <main id="main">
         <Hero />
-        <WhoWeBuildFor />
         <ProductSpotlight />
         <Services />
         <Philosophy />

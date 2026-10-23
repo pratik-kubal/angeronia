@@ -20,7 +20,6 @@ const SPACING = [
 const SITE_VALUES = [
   { name: "--site-measure", use: "The prose measure — a paragraph's maximum line." },
   { name: "--site-measure-heading", use: "The heading measure, so a display line breaks well." },
-  { name: "--site-measure-quote", use: "The low-bono quote, one step narrower than a heading." },
   { name: "--site-border-width", use: "Carbon draws its own borders at this width." },
   { name: "--site-border-width-strong", use: "An interactive or accent edge." },
   { name: "--site-figure-min", use: "The hero Möbius, at its smallest." },
