@@ -7,6 +7,10 @@ wins and `CLAUDE.md` is corrected to match.
 Deviating from any rule below requires an entry in [`DECISIONS.md`](DECISIONS.md)
 **before** the code changes.
 
+**Scope.** These rules govern the studio site. The games (`/sudoku`) keep their
+own look and sit outside them; [ADR-019](DECISIONS.md) draws the boundary and
+says which rules still reach them (10, 12 and 14).
+
 > Rewritten 2026-09-08 for IBM Carbon. The version this replaces described SLDS 2
 > and is in the git history; the reasoning for the move is
 > [ADR-015](DECISIONS.md).

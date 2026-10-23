@@ -20,7 +20,8 @@ on a page, and the page itself is a story.
 | Storybook | 10.x with `@storybook/nextjs-vite`, `addon-a11y`, `addon-vitest` |
 
 No CSS framework, no utility library, no second icon set. Carbon's own classes
-and tokens are the whole vocabulary.
+and tokens are the whole vocabulary — for the studio site. The games below are
+the one exception.
 
 ## Develop
 
@@ -44,6 +45,20 @@ npm run test:storybook   # every story in Chromium, axe violations fail
 There is no CSS linter. `slds-linter` was retired with SLDS rather than replaced
 — the axe pass over every story is the gate that catches real problems. See
 [`DECISIONS.md`](docs/design-system/DECISIONS.md) ADR-018.
+
+### The games
+
+[`/sudoku`](docs/games/sudoku.md) is a game, not a page of the studio site. It
+moved here from the founder's portfolio and keeps its own look — its own CSS,
+type, motion and Phosphor icons — outside the design system
+([`DECISIONS.md`](docs/design-system/DECISIONS.md) ADR-019). It is unlisted and
+`noindex`. Its gates are its own:
+
+```bash
+npm test                 # unit tests (Vitest, node)
+npm run test:e2e         # Playwright: desktop Chromium and an iPhone in WebKit
+                         # first run: npx playwright install chromium webkit
+```
 
 ### Generated artifacts
 
@@ -120,6 +135,19 @@ stories/pages/            the whole page, as a story
 docs/design-system/       DESIGN-RULES.md, DECISIONS.md, theme-report.md
 ```
 
+The games sit outside that tree's rules (ADR-019):
+
+```
+app/sudoku/               the page: metadata, the pre-paint look script, its CSS
+components/sudoku/        the screen, sheets, themes and their stylesheets
+components/games/         base.css: the browser defaults the games were built on
+lib/sudoku/               the rules, solver, generator, themes and trophies (pure)
+lib/random.ts             the seeded PRNG they share
+data/sudoku*.ts           the game's copy and its 100 trophies
+e2e/                      Playwright specs
+docs/games/               each game's design and test notes
+```
+
 ## Accessibility
 
 WCAG 2.2 AA in both themes, and it is enforced rather than asserted:
@@ -137,6 +165,8 @@ by colour alone.
   `@carbon/icons-react`, `@carbon/colors`) is Apache-2.0. Glyphs are used
   unmodified. No UI attribution is required; the notices stay in `node_modules`.
 * **IBM Plex** is SIL OFL 1.1, self-hosted through `next/font`.
+* **Phosphor Icons** (`@phosphor-icons/react`, MIT) draw the games' icons, and
+  only theirs.
 
 No IBM trademark, wordmark or product artwork ships in this product, and this
 project is not affiliated with or endorsed by IBM. `cds--*` class names and

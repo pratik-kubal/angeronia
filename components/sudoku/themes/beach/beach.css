@@ -1,0 +1,793 @@
+/* ══════════════════════════════════════════════════════════════════════════
+   BEACH — a page from a picture book about one day at a little cove. By day a
+   butter sun, sea-glass water and warm sand; by night the same cove under a
+   crescent moon, the surf glowing with plankton and the castle's lantern windows
+   lit. The board lies on the sand like a towel; above it a sandcastle drawn in
+   the sand is the board seen from above, and each finished box packs its piece.
+   Colour carries meaning: every digit its own colour, the selection the sea
+   (teal into deep water), the peers a foam wash, a refused digit coral on
+   apricot, a finished unit a sea-glass green sweep.
+   ══════════════════════════════════════════════════════════════════════════ */
+html[data-sdk-theme="beach"]:has(.sdk-shell) {
+  --bg: #d6eef7;
+  /* Before the scene measures the game: roughly the phone's picture (sky, a band of sea, sand). */
+  --backdrop:
+    radial-gradient(46% 20% at 80% 0%, rgb(255 214 107 / 0.55) 0%, rgb(255 214 107 / 0) 70%),
+    linear-gradient(180deg, #cdeaf6 0%, #e4f4f4 8.5%, #9fdbd9 9.3%, #bfe7e1 11%, #f4e6c9 12%, #f0dcb6 60%, #ecd3a6 100%);
+  --surface: #fffaf1;
+  --surface-tint:
+    linear-gradient(160deg, rgb(92 198 201 / 0.1) 0%, rgb(92 198 201 / 0) 40%),
+    linear-gradient(340deg, rgb(255 166 120 / 0.1) 0%, rgb(255 166 120 / 0) 38%);
+  --surface-2: rgb(255 252 244 / 0.74);
+  --sheet: linear-gradient(180deg, rgb(143 211 214 / 0.22) 0%, rgb(143 211 214 / 0) 150px), #fdf6ea;
+  --sheet-solid: #fdf6ea;
+  --card: #ffffff;
+  --glass-edge: rgb(255 255 255 / 0.95);
+  --ink: #15324a;
+  --muted: #4b5f6e;
+  --line: #eee3cf;
+  --line-strong: #bc9a66;
+  --d1: #c22827;
+  --d2: #a05204;
+  --d3: #036f91;
+  --d4: #057466;
+  --d5: #00771d;
+  --d6: #ba2973;
+  --d7: #3c5cd6;
+  --d8: #9e3bad;
+  --d9: #7d4aca;
+  --accent: #0a7c8c;
+  --accent-soft: #dcf1ef;
+  --accent-soft-ink: #08606c;
+  --select: linear-gradient(135deg, #0a7f91 0%, #1f5fa8 100%);
+  --select-ink: #ffffff;
+  --peer: #def1ee;
+  --error: #b0311a;
+  --error-bg: #ffe3d6;
+  --success: #22b88f;
+  --success-ink: #0b7458;
+  --flash-a: color-mix(in srgb, var(--success) 12%, var(--surface));
+  --flash-b: color-mix(in srgb, var(--success) 20%, var(--surface));
+  --flash-c: color-mix(in srgb, var(--success) 28%, var(--surface));
+  --flash-sheen: rgb(255 255 255 / 0.85);
+  --glow: rgb(10 127 145 / 0.34);
+  /* The towel's stripes: sea, sun and coral. */
+  --rim: linear-gradient(135deg, #3fbfc4 0%, #ffcf5c 50%, #ff8a65 100%);
+  --pad-tint: linear-gradient(90deg, rgb(63 191 196 / 0.14) 0%, rgb(255 207 92 / 0.16) 50%, rgb(255 138 101 / 0.14) 100%);
+  --track: rgb(21 50 74 / 0.08);
+  --seg-on: #ffffff;
+  --easy: #0b6b8a;
+  --easy-bg: #dcf0f7;
+  --medium: #8a5300;
+  --medium-bg: #fff0c7;
+  --hard: #b03a2e;
+  --hard-bg: #ffe2da;
+  --common: #4b5f6e;
+  --common-bg: rgb(75 95 110 / 0.08);
+  --uncommon: #0b6b8a;
+  --uncommon-bg: #dcf0f7;
+  --rare: #3b4fc4;
+  --rare-bg: #e6e9ff;
+  --epic: #a32a7a;
+  --epic-bg: #fbe0f0;
+  --legendary: #8a5a00;
+  --legendary-bg: #fff1c9;
+  --gold: linear-gradient(135deg, #ffd35c 0%, #ffa94d 50%, #ff7a8a 100%);
+  --spark-1: #0aa3b5;
+  --spark-2: #ffbe2e;
+  --spark-3: #ff7a59;
+  --spark-4: #22b88f;
+  --shadow: 0 1px 0 rgb(255 255 255 / 0.9) inset, 0 18px 40px -18px rgb(22 74 110 / 0.34), 0 2px 8px rgb(22 74 110 / 0.07);
+  --shadow-key: 0 1px 0 rgb(255 255 255 / 0.95) inset, 0 8px 18px -10px rgb(22 74 110 / 0.3), 0 1px 3px rgb(22 74 110 / 0.07);
+  --scrim: rgb(14 40 60 / 0.3);
+
+  /* The cove by day. */
+  --sdk-beach-sky-top: #c6e7f6;
+  --sdk-beach-sky-low: #e6f5f4;
+  --sdk-beach-sea-top: #5fbfc9;
+  --sdk-beach-sea-mid: #8fd6d6;
+  --sdk-beach-sea-low: #b8e8e1;
+  --sdk-beach-sand-top: #f6e9cf;
+  --sdk-beach-sand-mid: #f1ddb7;
+  --sdk-beach-sand-low: #ebd1a3;
+  --sdk-beach-speck: rgb(160 120 70 / 0.2);
+  --sdk-beach-wet: rgb(214 184 132 / 0.5);
+  --sdk-beach-horizon-line: rgb(255 255 255 / 0.6);
+  --sdk-beach-foam: #ffffff;
+  --sdk-beach-foam-glow: rgb(255 255 255 / 0);
+  --sdk-beach-sun: #ffd35c;
+  --sdk-beach-sun-glow: rgb(255 200 80 / 0.6);
+  --sdk-beach-halo: rgb(255 206 92 / 0.45);
+  --sdk-beach-glint: rgb(255 255 255 / 0.85);
+  --sdk-beach-cloud: #ffffff;
+  --sdk-beach-gull: #34536b;
+  --sdk-beach-gull-body: #ffffff;
+  --sdk-beach-gull-wing: #b9c6ce;
+  --sdk-beach-gull-tip: #2c3e4c;
+  --sdk-beach-beak: #f2a33a;
+  --sdk-beach-star: rgb(255 246 216 / 0);
+  --sdk-beach-plankton: rgb(127 246 234 / 0);
+  --sdk-beach-castle: #ecc98b;
+  --sdk-beach-castle-top: #f7deaa;
+  --sdk-beach-castle-edge: #b88d4f;
+  --sdk-beach-outline: #a8814a;
+  --sdk-beach-window: #b98a50;
+  --sdk-beach-window-glow: rgb(255 180 92 / 0);
+  --sdk-beach-flag: #ff7a59;
+  --sdk-beach-moat: #59c3cc;
+  --sdk-beach-mound: #efd7a6;
+  --sdk-beach-sparkle: #fffbe8;
+  --sdk-beach-crab: #ff7a59;
+  --sdk-beach-crab-mouth: #7a2a1a;
+  --sdk-beach-hole: #c9a66f;
+  --sdk-beach-shell: #ffd2bd;
+  --sdk-beach-shell-edge: #e9a98a;
+  --sdk-beach-stripe-a: #ff7a59;
+  --sdk-beach-stripe-b: #fff6e6;
+  --sdk-beach-towel-a: #3fbfc4;
+  --sdk-beach-towel-b: #fffaf1;
+  --sdk-beach-shade: rgb(150 110 60 / 0.16);
+  --sdk-beach-pole: #8b6b45;
+  --sdk-beach-sail: #ffffff;
+  --sdk-beach-hull: #ff7a59;
+  --sdk-beach-lamp: #fff3c4;
+  --sdk-beach-beam: rgb(255 230 160 / 0);
+  --sdk-beach-rock: #9aa7ad;
+  --sdk-beach-tower: #ffffff;
+  --sdk-beach-tower-stripe: #e8553f;
+  --sdk-beach-bucket: #3fbfc4;
+  --sdk-beach-bucket-rim: #2a9aa0;
+  --sdk-beach-spade: #ff7a59;
+  --sdk-beach-tide: rgb(63 191 196 / 0.55);
+  --sdk-beach-tide-low: rgb(143 214 214 / 0.4);
+  --sdk-beach-splash: rgb(255 255 255 / 0.95);
+  --sdk-beach-ripple: rgb(10 124 140 / 0.6);
+  --sdk-beach-creature-glow: rgb(255 255 255 / 0);
+}
+html[data-sdk-theme="beach"][data-sdk-scheme="dark"]:has(.sdk-shell) {
+  --bg: #061423;
+  --backdrop:
+    radial-gradient(40% 18% at 80% 0%, rgb(240 236 210 / 0.22) 0%, rgb(240 236 210 / 0) 70%),
+    linear-gradient(180deg, #061423 0%, #0a2033 8.5%, #0c3242 9.3%, #11404f 11%, #1d2a38 12%, #182432 60%, #141f2b 100%);
+  --surface: #0b1d2e;
+  --surface-tint:
+    linear-gradient(160deg, rgb(79 240 224 / 0.07) 0%, rgb(79 240 224 / 0) 40%),
+    linear-gradient(340deg, rgb(255 180 92 / 0.06) 0%, rgb(255 180 92 / 0) 36%);
+  --surface-2: rgb(20 48 70 / 0.62);
+  --sheet: linear-gradient(180deg, rgb(79 240 224 / 0.07) 0%, rgb(79 240 224 / 0) 160px), #0e2234;
+  --sheet-solid: #0e2234;
+  --card: rgb(255 255 255 / 0.055);
+  --glass-edge: rgb(170 230 240 / 0.16);
+  --ink: #eef7fb;
+  --muted: #9fb6c4;
+  --line: #183248;
+  --line-strong: #3f6a86;
+  --d1: #fe6459;
+  --d2: #e97904;
+  --d3: #02a3d3;
+  --d4: #01aa96;
+  --d5: #29ae3c;
+  --d6: #f563a5;
+  --d7: #6d91ff;
+  --d8: #d36fe2;
+  --d9: #ac7eff;
+  --accent: #4fe3d6;
+  --accent-soft: rgb(79 227 214 / 0.15);
+  --accent-soft-ink: #7ff0e6;
+  --select: linear-gradient(135deg, #4fe3d6 0%, #8fb8ff 100%);
+  --select-ink: #04121f;
+  --peer: #14304a;
+  --error: #ff8f7a;
+  --error-bg: #42160f;
+  --success: #46f0b0;
+  --success-ink: #46f0b0;
+  --flash-a: color-mix(in srgb, var(--success) 7%, var(--surface));
+  --flash-b: color-mix(in srgb, var(--success) 13%, var(--surface));
+  --flash-c: color-mix(in srgb, var(--success) 18%, var(--surface));
+  --flash-sheen: rgb(120 255 230 / 0.16);
+  --glow: rgb(79 227 214 / 0.42);
+  --rim: linear-gradient(135deg, #4fe3d6 0%, #8fb8ff 50%, #ffb45c 100%);
+  --pad-tint: linear-gradient(90deg, rgb(79 227 214 / 0.1) 0%, rgb(143 184 255 / 0.12) 50%, rgb(255 180 92 / 0.1) 100%);
+  --track: rgb(255 255 255 / 0.08);
+  --seg-on: #24465f;
+  --easy: #8ee6f5;
+  --easy-bg: rgb(56 200 230 / 0.16);
+  --medium: #ffd27a;
+  --medium-bg: rgb(255 190 80 / 0.16);
+  --hard: #ff9f8a;
+  --hard-bg: rgb(255 120 100 / 0.18);
+  --common: #9fb6c4;
+  --common-bg: rgb(255 255 255 / 0.06);
+  --uncommon: #7ff0e6;
+  --uncommon-bg: rgb(79 227 214 / 0.14);
+  --rare: #a9c4ff;
+  --rare-bg: rgb(120 160 255 / 0.2);
+  --epic: #ff9ed8;
+  --epic-bg: rgb(240 100 190 / 0.18);
+  --legendary: #ffd36e;
+  --legendary-bg: rgb(255 190 70 / 0.16);
+  --gold: linear-gradient(135deg, #ffd35c 0%, #ffa94d 50%, #ff7a8a 100%);
+  --spark-1: #4fe3d6;
+  --spark-2: #8fb8ff;
+  --spark-3: #ffb45c;
+  --spark-4: #46f0b0;
+  --shadow: 0 1px 0 rgb(255 255 255 / 0.07) inset, 0 24px 60px -24px rgb(0 0 0 / 0.85), 0 0 50px -18px rgb(79 227 214 / 0.35);
+  --shadow-key: 0 1px 0 rgb(255 255 255 / 0.07) inset, 0 10px 22px -12px rgb(0 0 0 / 0.8);
+  --scrim: rgb(1 6 14 / 0.55);
+
+  /* The cove by night. */
+  --sdk-beach-sky-top: #051221;
+  --sdk-beach-sky-low: #0b2236;
+  --sdk-beach-sea-top: #0a2a3b;
+  --sdk-beach-sea-mid: #0d3646;
+  --sdk-beach-sea-low: #114353;
+  --sdk-beach-sand-top: #26333f;
+  --sdk-beach-sand-mid: #1d2834;
+  --sdk-beach-sand-low: #161f2a;
+  --sdk-beach-speck: rgb(170 200 220 / 0.07);
+  --sdk-beach-wet: rgb(8 26 38 / 0.55);
+  --sdk-beach-horizon-line: rgb(140 200 220 / 0.25);
+  --sdk-beach-foam: #7ff6ea;
+  --sdk-beach-foam-glow: rgb(79 240 224 / 0.4);
+  --sdk-beach-sun: #f2edd6;
+  --sdk-beach-sun-glow: rgb(242 237 214 / 0.3);
+  --sdk-beach-halo: rgb(242 237 214 / 0.16);
+  --sdk-beach-glint: rgb(242 237 214 / 0.55);
+  --sdk-beach-cloud: rgb(150 180 210 / 0.16);
+  --sdk-beach-gull: #9fb6c4;
+  --sdk-beach-gull-body: #dfe6ec;
+  --sdk-beach-gull-wing: #8796a3;
+  --sdk-beach-gull-tip: #2a3542;
+  --sdk-beach-beak: #d9913a;
+  --sdk-beach-star: #fff6d8;
+  --sdk-beach-plankton: #7ff6ea;
+  --sdk-beach-castle: #3d4a5c;
+  --sdk-beach-castle-top: #5b6b80;
+  --sdk-beach-castle-edge: #26313f;
+  --sdk-beach-outline: #7f9bb3;
+  --sdk-beach-window: #ffc46b;
+  --sdk-beach-window-glow: rgb(255 180 92 / 0.7);
+  --sdk-beach-flag: #ffb45c;
+  --sdk-beach-moat: #4fe3d6;
+  --sdk-beach-mound: #243142;
+  --sdk-beach-sparkle: #ffd27a;
+  --sdk-beach-crab: #e8735a;
+  --sdk-beach-crab-mouth: #5a1e14;
+  --sdk-beach-hole: #0e1620;
+  --sdk-beach-shell: #8c9fb3;
+  --sdk-beach-shell-edge: #6a7c90;
+  --sdk-beach-stripe-a: #c25a48;
+  --sdk-beach-stripe-b: #d9cfb8;
+  --sdk-beach-towel-a: #2f8f97;
+  --sdk-beach-towel-b: #cfd8dd;
+  --sdk-beach-shade: rgb(0 0 0 / 0.2);
+  --sdk-beach-pole: #8a96a3;
+  --sdk-beach-sail: #cfd6de;
+  --sdk-beach-hull: #c25a48;
+  --sdk-beach-lamp: #ffd27a;
+  --sdk-beach-beam: rgb(255 230 160 / 0.3);
+  --sdk-beach-rock: #2a3644;
+  --sdk-beach-tower: #c9d2dc;
+  --sdk-beach-tower-stripe: #b8463a;
+  --sdk-beach-bucket: #3d7f86;
+  --sdk-beach-bucket-rim: #2b5c62;
+  --sdk-beach-spade: #c25a48;
+  --sdk-beach-tide: rgb(13 70 84 / 0.62);
+  --sdk-beach-tide-low: rgb(8 40 56 / 0.5);
+  --sdk-beach-splash: rgb(127 246 234 / 0.85);
+  --sdk-beach-ripple: rgb(127 246 234 / 0.8);
+  --sdk-beach-creature-glow: rgb(79 240 224 / 0.75);
+}
+
+/* Day-only and night-only pieces (the hidden ones never run their loops). */
+html[data-sdk-theme="beach"][data-sdk-scheme="dark"] .sdk-beach-day,
+html[data-sdk-theme="beach"]:not([data-sdk-scheme="dark"]) .sdk-beach-night { display: none; }
+
+/* ── the cove: sky, sun, sea, foam and sand ─────────────────────────────── */
+.sdk-beach-scene { position: absolute; inset: 0; overflow: hidden; }
+.sdk-beach-sky { position: absolute; inset: 0; background: linear-gradient(180deg, var(--sdk-beach-sky-top) 0, var(--sdk-beach-sky-low) var(--sdk-beach-at)); }
+
+.sdk-beach-sun { position: absolute; }
+.sdk-beach-halo,
+.sdk-beach-rays,
+.sdk-beach-disc { position: absolute; border-radius: 50%; }
+.sdk-beach-halo { inset: calc(var(--r) * -2.2); background: radial-gradient(circle, var(--sdk-beach-halo) 0%, rgb(255 255 255 / 0) 62%); }
+.sdk-beach-rays {
+  inset: calc(var(--r) * -0.62);
+  background: repeating-conic-gradient(var(--sdk-beach-sun) 0deg 9deg, rgb(255 255 255 / 0) 9deg 30deg);
+  -webkit-mask: radial-gradient(circle, transparent calc(var(--r) * 1.16), #000 calc(var(--r) * 1.2), #000 calc(var(--r) * 1.56), transparent calc(var(--r) * 1.6));
+  mask: radial-gradient(circle, transparent calc(var(--r) * 1.16), #000 calc(var(--r) * 1.2), #000 calc(var(--r) * 1.56), transparent calc(var(--r) * 1.6));
+  opacity: 0.85;
+}
+.sdk-beach-disc { inset: 0; background: var(--sdk-beach-sun); box-shadow: 0 0 calc(var(--r) * 0.8) var(--sdk-beach-sun-glow); }
+/* The crescent: the disc with a bite taken out of its upper left. */
+html[data-sdk-theme="beach"][data-sdk-scheme="dark"] .sdk-beach-disc {
+  -webkit-mask: radial-gradient(circle calc(var(--r) * 0.86) at 24% 32%, transparent 97%, #000 100%);
+  mask: radial-gradient(circle calc(var(--r) * 0.86) at 24% 32%, transparent 97%, #000 100%);
+}
+
+.sdk-beach-sea { position: absolute; left: 0; right: 0; overflow: hidden; background: linear-gradient(180deg, var(--sdk-beach-sea-top) 0%, var(--sdk-beach-sea-mid) 55%, var(--sdk-beach-sea-low) 100%); }
+.sdk-beach-horizon { position: absolute; left: 0; right: 0; height: 2px; background: var(--sdk-beach-horizon-line); }
+/* Glowing plankton: three sparse layers of soft dots on tiles of unrelated sizes, so no lattice shows. */
+.sdk-beach-plankton {
+  position: absolute;
+  inset: 3px 0;
+  opacity: 0.55;
+  background:
+    radial-gradient(circle at 30% 40%, var(--sdk-beach-plankton) 0 0.9px, rgb(0 0 0 / 0) 1.5px) 0 0 / 53px 23px,
+    radial-gradient(circle at 70% 70%, var(--sdk-beach-plankton) 0 0.8px, rgb(0 0 0 / 0) 1.4px) 19px 7px / 71px 31px,
+    radial-gradient(circle at 45% 15%, var(--sdk-beach-plankton) 0 1px, rgb(0 0 0 / 0) 1.6px) 37px 13px / 97px 41px;
+}
+/* The sun's (or moon's) glitter on the water, under it on a desktop. */
+.sdk-beach-path {
+  position: absolute;
+  background: repeating-linear-gradient(180deg, var(--sdk-beach-glint) 0 2px, rgb(255 255 255 / 0) 2px 16px);
+  -webkit-mask: radial-gradient(50% 50% at 50% 30%, #000 30%, transparent 100%);
+  mask: radial-gradient(50% 50% at 50% 30%, #000 30%, transparent 100%);
+}
+.sdk-beach-sand {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background:
+    radial-gradient(circle at 20% 30%, var(--sdk-beach-speck) 0 0.7px, rgb(0 0 0 / 0) 1.3px) 0 0 / 29px 23px,
+    radial-gradient(circle at 70% 60%, var(--sdk-beach-speck) 0 0.9px, rgb(0 0 0 / 0) 1.5px) 11px 7px / 41px 37px,
+    radial-gradient(circle at 40% 80%, var(--sdk-beach-speck) 0 0.6px, rgb(0 0 0 / 0) 1.2px) 23px 17px / 67px 53px,
+    linear-gradient(180deg, var(--sdk-beach-wet) 0, rgb(0 0 0 / 0) 12px),
+    linear-gradient(180deg, var(--sdk-beach-sand-top) 0%, var(--sdk-beach-sand-mid) 40%, var(--sdk-beach-sand-low) 100%);
+}
+/* Two lines of foam scallops at the water's edge; at night a glow under them. */
+.sdk-beach-foam {
+  position: absolute;
+  left: -20px;
+  right: -20px;
+  height: 6px;
+  background: radial-gradient(9.6px 6px at 50% 0, var(--sdk-beach-foam) 62%, rgb(255 255 255 / 0) 66%) 0 0 / 18px 6px repeat-x;
+}
+.sdk-beach-foam[data-line="back"] {
+  height: 4px;
+  opacity: 0.45;
+  background: radial-gradient(6.4px 4px at 50% 0, var(--sdk-beach-foam) 62%, rgb(255 255 255 / 0) 66%) 6px 0 / 12px 4px repeat-x;
+}
+.sdk-beach-foam-glow { position: absolute; left: 0; right: 0; height: 28px; background: linear-gradient(180deg, rgb(0 0 0 / 0) 0%, var(--sdk-beach-foam-glow) 55%, rgb(0 0 0 / 0) 100%); }
+/* A beat's wash: the foam laps a little way up the sand (a row or column), surges for a deal, rolls in for a win. */
+.sdk-beach-wash {
+  --sdk-beach-reach: 4px;
+  position: absolute;
+  left: -20px;
+  right: -20px;
+  height: 14px;
+  opacity: 0;
+  background:
+    radial-gradient(9px 6px at 50% 100%, var(--sdk-beach-foam) 62%, rgb(255 255 255 / 0) 66%) 0 100% / 18px 6px repeat-x,
+    linear-gradient(180deg, rgb(255 255 255 / 0), color-mix(in srgb, var(--sdk-beach-foam) 60%, transparent) 70%, rgb(255 255 255 / 0));
+}
+.sdk-beach-wash[data-kind="surge"] { --sdk-beach-reach: 8px; }
+.sdk-beach-wash[data-kind="tide"] { --sdk-beach-reach: 13px; }
+
+/* ── sky life: clouds and gulls by day, stars by night ───────────────────── */
+.sdk-beach-cloud { position: absolute; }
+.sdk-beach-cloud-art { display: block; width: 100%; height: 100%; overflow: visible; }
+.sdk-beach-cloud-art path { fill: var(--sdk-beach-cloud); opacity: 0.94; }
+.sdk-beach-glide { position: absolute; left: -48px; opacity: 0; }
+.sdk-beach-fargull { display: block; width: 100%; height: 100%; overflow: visible; transform-origin: 50% 70%; }
+.sdk-beach-fargull path { fill: none; stroke: var(--sdk-beach-gull); stroke-width: 1.6; stroke-linecap: round; stroke-linejoin: round; opacity: 0.65; }
+.sdk-beach-stars { position: absolute; inset: 0; }
+.sdk-beach-stars i { position: absolute; border-radius: 1px; rotate: 45deg; background: var(--sdk-beach-star); box-shadow: 0 0 4px var(--sdk-beach-star); }
+.sdk-beach-stars[data-group="0"] { opacity: 0.9; }
+.sdk-beach-stars[data-group="1"] { opacity: 0.7; }
+.sdk-beach-stars[data-group="2"] { opacity: 0.55; }
+.sdk-beach-shooting { position: absolute; height: 1.5px; border-radius: 1px; opacity: 0; rotate: 18deg; transform-origin: 100% 50%; background: linear-gradient(90deg, rgb(255 246 216 / 0), var(--sdk-beach-star)); }
+
+/* ── props: the lighthouse, the boat, the umbrella, the bucket, shells ───── */
+.sdk-beach-prop { position: absolute; }
+.sdk-beach-prop svg { display: block; width: 100%; height: 100%; overflow: visible; }
+.sdk-beach-beam { transform-box: view-box; transform-origin: 30px 17px; }
+.sdk-beach-beam-in { stop-color: var(--sdk-beach-beam); }
+.sdk-beach-beam-out { stop-color: var(--sdk-beach-beam); stop-opacity: 0; }
+.sdk-beach-rock { fill: var(--sdk-beach-rock); }
+.sdk-beach-tower { fill: var(--sdk-beach-tower); }
+.sdk-beach-tower-stripe { fill: var(--sdk-beach-tower-stripe); }
+.sdk-beach-lamp { fill: var(--sdk-beach-lamp); stroke: var(--sdk-beach-tower-stripe); stroke-width: 1.5; }
+.sdk-beach-boat { transform-origin: 50% 90%; }
+.sdk-beach-sail { fill: var(--sdk-beach-sail); }
+.sdk-beach-hull { fill: var(--sdk-beach-hull); }
+.sdk-beach-masthead { fill: rgb(255 196 107 / 0.35); }
+.sdk-beach-lamp-dot { fill: #ffc46b; }
+.sdk-beach-shade { fill: var(--sdk-beach-shade); }
+.sdk-beach-towel { fill: var(--sdk-beach-towel-b); stroke: color-mix(in srgb, var(--sdk-beach-towel-b) 80%, #000); stroke-width: 1; }
+.sdk-beach-towel-stripe { fill: var(--sdk-beach-towel-a); }
+.sdk-beach-pole { stroke: var(--sdk-beach-pole); stroke-width: 3; stroke-linecap: round; }
+.sdk-beach-stripe-a { fill: var(--sdk-beach-stripe-a); }
+.sdk-beach-stripe-b { fill: var(--sdk-beach-stripe-b); }
+.sdk-beach-cone { position: absolute; display: grid; place-items: center; line-height: 1; rotate: -16deg; }
+.sdk-beach-bucket-body { fill: var(--sdk-beach-bucket); }
+.sdk-beach-bucket-rim { fill: var(--sdk-beach-bucket-rim); }
+.sdk-beach-handle { fill: none; stroke: var(--sdk-beach-outline); stroke-width: 1.5; }
+.sdk-beach-spade-handle { stroke: var(--sdk-beach-spade); stroke-width: 3; stroke-linecap: round; }
+.sdk-beach-spade { fill: var(--sdk-beach-spade); }
+.sdk-beach-shell-art path:first-child,
+.sdk-beach-starfish-art path { fill: var(--sdk-beach-shell); stroke: var(--sdk-beach-shell-edge); stroke-width: 1.1; stroke-linejoin: round; }
+.sdk-beach-ribs { fill: none; stroke: var(--sdk-beach-shell-edge); stroke-width: 0.8; }
+
+/* ── the castle ──────────────────────────────────────────────────────────── */
+.sdk-beach-castle { position: absolute; transform-origin: 50% 100%; }
+.sdk-beach-castle svg { display: block; width: 100%; height: 100%; overflow: visible; }
+.sdk-beach-mound-in { stop-color: var(--sdk-beach-mound); }
+.sdk-beach-mound-out { stop-color: var(--sdk-beach-mound); stop-opacity: 0; }
+.sdk-beach-plan {
+  fill: none;
+  stroke: var(--sdk-beach-outline);
+  stroke-width: 1.15px;
+  stroke-dasharray: 3 2.4;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  vector-effect: non-scaling-stroke;
+  opacity: 0.8;
+}
+.sdk-beach-body { fill: var(--sdk-beach-castle); stroke: var(--sdk-beach-castle-edge); stroke-width: 0.7; stroke-linejoin: round; }
+.sdk-beach-top { fill: var(--sdk-beach-castle-top); stroke: var(--sdk-beach-castle-edge); stroke-width: 0.5; }
+.sdk-beach-merlon { fill: var(--sdk-beach-castle); stroke: var(--sdk-beach-castle-edge); stroke-width: 0.5; }
+.sdk-beach-ridge { fill: none; stroke: var(--sdk-beach-castle-edge); stroke-width: 0.6; opacity: 0.7; }
+.sdk-beach-top-line { stroke: var(--sdk-beach-castle-top); stroke-width: 2.4; }
+.sdk-beach-window { fill: var(--sdk-beach-window); }
+.sdk-beach-flagpole { stroke: var(--sdk-beach-castle-edge); stroke-width: 1.2; }
+/* A lantern's glow: soft, round the window (it flares about its own centre for Four Towers). */
+.sdk-beach-glow { fill: url(#sdk-beach-lantern); transform-box: fill-box; transform-origin: 50% 50%; }
+.sdk-beach-lantern-in { stop-color: var(--sdk-beach-window-glow); }
+.sdk-beach-lantern-out { stop-color: var(--sdk-beach-window-glow); stop-opacity: 0; }
+.sdk-beach-castle[data-size="s"] .sdk-beach-ridge { display: none; }
+.sdk-beach-piece[data-pat] { transform-box: fill-box; transform-origin: 50% 100%; }
+.sdk-beach-flag { fill: var(--sdk-beach-flag); transform-box: view-box; transform-origin: 60px 5px; }
+.sdk-beach-moat { transform-box: fill-box; transform-origin: 50% 50%; }
+.sdk-beach-moat-water { fill: none; stroke: var(--sdk-beach-moat); stroke-width: 3.2; opacity: 0.9; }
+.sdk-beach-moat-glow { fill: none; stroke: var(--sdk-beach-moat); stroke-width: 10; opacity: 0.22; }
+/* Four Towers: pennants on the corners, a gull on the keep, a burst of sand. */
+.sdk-beach-pennant { transform-box: view-box; }
+.sdk-beach-pennant-pole { stroke: var(--sdk-beach-castle-edge); stroke-width: 1; }
+/* At night the castle's edge melts into the dark sea, so its poles take the umbrella's pole colour. */
+html[data-sdk-theme="beach"][data-sdk-scheme="dark"] :is(.sdk-beach-flagpole, .sdk-beach-pennant-pole) { stroke: var(--sdk-beach-pole); }
+.sdk-beach-pennant-flag { fill: var(--sdk-beach-flag); transform-box: fill-box; transform-origin: 0 50%; }
+.sdk-beach-perch-bird { fill: none; stroke: var(--sdk-beach-gull); stroke-width: 2.4; stroke-linecap: round; stroke-linejoin: round; transform-box: fill-box; transform-origin: 50% 80%; }
+.sdk-beach-speck { fill: var(--sdk-beach-sparkle); opacity: 0; }
+
+/* ── the crab ────────────────────────────────────────────────────────────── */
+.sdk-beach-crab { position: absolute; }
+.sdk-beach-crab-pop,
+.sdk-beach-crab-act { width: 100%; height: 100%; transform-origin: 50% 90%; }
+.sdk-beach-crab-art { display: block; width: 100%; height: 100%; overflow: visible; }
+.sdk-beach-hole { fill: var(--sdk-beach-hole); opacity: 0.8; }
+.sdk-beach-legs { fill: none; stroke: var(--sdk-beach-crab); stroke-width: 1.3; stroke-linecap: round; }
+.sdk-beach-claw path { fill: var(--sdk-beach-crab); stroke: var(--sdk-beach-crab); stroke-width: 1.4; stroke-linecap: round; stroke-linejoin: round; }
+.sdk-beach-claw { transform-box: fill-box; }
+.sdk-beach-claw[data-side="left"] { transform-origin: 100% 100%; }
+.sdk-beach-claw[data-side="right"] { transform-origin: 0 100%; }
+.sdk-beach-crab-body { fill: var(--sdk-beach-crab); }
+.sdk-beach-crab-stalk { stroke: var(--sdk-beach-crab); stroke-width: 1.2; }
+.sdk-beach-crab-mouth { fill: none; stroke: var(--sdk-beach-crab-mouth); stroke-width: 0.8; stroke-linecap: round; }
+.sdk-beach-eyes { transform-box: fill-box; transform-origin: 50% 50%; }
+
+/* ── Seven Seas: rings from the shell, seven creatures leaping ───────────── */
+.sdk-beach-seas { position: absolute; inset: 0; }
+.sdk-beach-ripple { position: absolute; width: 26px; height: 26px; margin: -13px 0 0 -13px; border-radius: 50%; border: 1.5px solid var(--sdk-beach-ripple); opacity: 0; }
+.sdk-beach-leap { position: absolute; width: 0; height: 0; line-height: 1; }
+/* Still (reduced motion): the seven in a row, mid-leap. */
+.sdk-beach-creature { position: absolute; left: 0; top: 0; translate: -50% calc(-50% + var(--sdk-beach-leap)); text-shadow: 0 0 8px var(--sdk-beach-creature-glow); }
+.sdk-beach-splash { position: absolute; left: -0.7em; top: -0.18em; width: 1.4em; height: 0.36em; border-radius: 50%; border: 1.5px solid var(--sdk-beach-splash); opacity: 0; }
+
+/* ── the Overlay: the season's tide, and the Fry Thief ───────────────────── */
+/* Its left edge and top come from the layout. */
+.sdk-beach-tide {
+  position: absolute;
+  right: 0;
+  bottom: 0;
+  translate: 0 60%;
+  border-top: 3px solid var(--sdk-beach-foam);
+  background: linear-gradient(180deg, var(--sdk-beach-tide) 0%, var(--sdk-beach-tide-low) 100%);
+}
+html[data-sdk-theme="beach"][data-sdk-scheme="dark"] .sdk-beach-tide::after {
+  content: "";
+  position: absolute;
+  inset: 8px 0 0;
+  opacity: 0.55;
+  background:
+    radial-gradient(circle at 30% 40%, var(--sdk-beach-plankton) 0 1px, rgb(0 0 0 / 0) 1.6px) 0 0 / 71px 43px,
+    radial-gradient(circle at 70% 20%, var(--sdk-beach-plankton) 0 0.8px, rgb(0 0 0 / 0) 1.4px) 17px 9px / 53px 31px,
+    radial-gradient(circle at 50% 70%, var(--sdk-beach-plankton) 0 0.9px, rgb(0 0 0 / 0) 1.5px) 31px 19px / 97px 59px;
+}
+.sdk-beach-tide-crest {
+  position: absolute;
+  left: -20px;
+  right: -20px;
+  top: -11px;
+  height: 9px;
+  background: radial-gradient(10px 9px at 50% 100%, var(--sdk-beach-foam) 62%, rgb(255 255 255 / 0) 67%) 0 0 / 20px 9px repeat-x;
+}
+/* Up one column only (a phone on its side), the water's left edge rounds off and the crest stops there. */
+.sdk-beach-tide[data-edge] { border-top-left-radius: 22px 14px; }
+.sdk-beach-tide[data-edge] .sdk-beach-tide-crest { left: 8px; }
+.sdk-beach-tide-glow { position: absolute; left: 0; right: 0; top: -34px; height: 50px; background: radial-gradient(70% 50% at 50% 60%, var(--sdk-beach-foam-glow), rgb(0 0 0 / 0) 72%); }
+.sdk-beach-tide-rider { position: absolute; left: 84%; top: -34px; width: 40px; height: 40px; translate: -50% 0; }
+.sdk-beach-cornerflag { position: absolute; width: 2px; border-radius: 1px; background: var(--sdk-beach-pole); transform-origin: 50% 100%; }
+.sdk-beach-cornerflag b { position: absolute; top: 0; width: var(--sdk-beach-pennant); height: 9px; background: var(--sdk-beach-flag); transform-origin: 0 50%; }
+.sdk-beach-cornerflag[data-side="right"] b { left: 2px; clip-path: polygon(0 0, 100% 50%, 0 100%); }
+.sdk-beach-cornerflag[data-side="left"] b { right: 2px; clip-path: polygon(100% 0, 0 50%, 100% 100%); transform-origin: 100% 50%; }
+.sdk-beach-swoop { position: absolute; width: 0; height: 0; }
+.sdk-beach-fry { position: absolute; left: 0; top: 0; translate: -50% -50%; rotate: -24deg; line-height: 1; }
+.sdk-beach-swoop-x { position: absolute; left: 0; top: 0; }
+/* Still (reduced motion): the gull hovering over the fry. */
+.sdk-beach-swoop-y {
+  position: absolute;
+  left: calc(var(--sdk-beach-g) * -0.03);
+  top: calc(var(--sdk-beach-g) * -0.31);
+  width: var(--sdk-beach-g);
+  height: calc(var(--sdk-beach-g) * 0.577);
+  translate: 0 calc(var(--sdk-beach-g) * -0.5);
+}
+.sdk-beach-swoopgull { display: block; width: 100%; height: 100%; overflow: visible; }
+.sdk-beach-gull-body { fill: var(--sdk-beach-gull-body); stroke: var(--sdk-beach-gull-wing); stroke-width: 0.6; }
+.sdk-beach-wing { fill: var(--sdk-beach-gull-wing); transform-box: view-box; transform-origin: 24px 15px; }
+.sdk-beach-wing-far { fill: color-mix(in srgb, var(--sdk-beach-gull-wing) 75%, var(--sdk-beach-gull-tip)); }
+.sdk-beach-wing-tip { fill: var(--sdk-beach-gull-tip); }
+.sdk-beach-gull-beak { fill: var(--sdk-beach-beak); }
+.sdk-beach-gull-eye { fill: var(--sdk-beach-gull-tip); }
+.sdk-beach-beakfry { position: absolute; left: 1%; top: 56%; translate: -60% -50%; rotate: 76deg; font-size: calc(var(--sdk-beach-g) * 0.34); line-height: 1; opacity: 0; }
+.sdk-beach-feather { position: absolute; left: -5px; top: -14px; width: 10px; height: 16px; opacity: 0; }
+.sdk-beach-feather-art { display: block; width: 100%; height: 100%; }
+.sdk-beach-feather-art path:first-child { fill: var(--sdk-beach-gull-body); stroke: var(--sdk-beach-gull-wing); stroke-width: 0.6; }
+.sdk-beach-quill { fill: none; stroke: var(--sdk-beach-gull-wing); stroke-width: 0.6; }
+
+/* ── motion: slow loops, short reactions, the surprises. Transform and opacity only. ── */
+@media (prefers-reduced-motion: no-preference) {
+  .sdk-beach-sun { transition: translate 1.6s cubic-bezier(0.3, 0.7, 0.3, 1); }
+  .sdk-beach-halo { animation: sdkBeachBreathe 6s ease-in-out infinite alternate; }
+  .sdk-beach-rays { animation: sdkBeachSpin 90s linear infinite; }
+  .sdk-beach-disc[data-wink] { animation: sdkBeachWink 0.5s ease-in-out; }
+  .sdk-beach-foam[data-line="front"] { animation: sdkBeachSlide 9s ease-in-out infinite alternate; }
+  .sdk-beach-foam[data-line="back"] { animation: sdkBeachSlide 11s ease-in-out infinite alternate-reverse; }
+  .sdk-beach-plankton { animation: sdkBeachPulse 6s ease-in-out infinite alternate; }
+  html[data-sdk-theme="beach"][data-sdk-scheme="dark"] .sdk-beach-path { animation: sdkBeachPulse 5s ease-in-out infinite alternate; }
+  .sdk-beach-wash[data-kind="lap"] { animation: sdkBeachLap 0.6s ease-out both; }
+  .sdk-beach-wash[data-kind="surge"] { animation: sdkBeachLap 0.9s ease-out both; }
+  .sdk-beach-wash[data-kind="tide"] { animation: sdkBeachLap 1.4s ease-in-out 0.2s both; }
+  .sdk-beach-cloud { animation: sdkBeachDrift 52s ease-in-out calc(var(--i) * -17s) infinite alternate; }
+  .sdk-beach-glide { animation: sdkBeachGlide 46s linear infinite; }
+  .sdk-beach-fargull { animation: sdkBeachFlap 0.9s ease-in-out infinite alternate; }
+  .sdk-beach-stars[data-group="0"] { animation: sdkBeachTwinkle 3.4s ease-in-out infinite alternate; }
+  .sdk-beach-stars[data-group="1"] { animation: sdkBeachTwinkle 4.6s ease-in-out -1.5s infinite alternate; }
+  .sdk-beach-stars[data-group="2"] { animation: sdkBeachTwinkle 5.8s ease-in-out -3s infinite alternate; }
+  .sdk-beach-shooting { animation: sdkBeachShoot 37s linear 6s infinite; }
+  .sdk-beach-beam { animation: sdkBeachBeam 9s ease-in-out infinite alternate; }
+  .sdk-beach-boat { animation: sdkBeachBob 7s ease-in-out infinite alternate; }
+  .sdk-beach-eyes { animation: sdkBeachBlink 9s ease-in-out infinite; }
+
+  /* The castle: a finished box pats its piece into shape; a deal sketches the plan in; a win
+     unfurls the flag and fills the moat; Four Towers hops it and raises pennants. */
+  .sdk-beach-piece[data-pat] { animation: sdkBeachPat 0.42s cubic-bezier(0.2, 0.8, 0.2, 1.3) both; }
+  .sdk-beach-castle svg[data-deal] .sdk-beach-piece { animation: sdkBeachSketch 0.5s ease-out calc(var(--i) * 50ms) both; }
+  .sdk-beach-castle[data-complete] .sdk-beach-flag { animation: sdkBeachWave 1.6s ease-in-out infinite; }
+  .sdk-beach-castle[data-won] .sdk-beach-flag { animation: sdkBeachUnfurl 0.5s cubic-bezier(0.2, 0.8, 0.2, 1.2) 0.3s both, sdkBeachWave 1.6s ease-in-out 0.8s infinite; }
+  .sdk-beach-castle[data-won] .sdk-beach-moat { animation: sdkBeachMoat 0.8s ease-out 0.15s both; }
+  .sdk-beach-castle[data-towers] { animation: sdkBeachHop 0.7s cubic-bezier(0.2, 0.8, 0.2, 1.3); }
+  .sdk-beach-pennant { animation: sdkBeachPennant 2.2s ease-out calc(var(--i) * 80ms) both; }
+  .sdk-beach-pennant-flag { animation: sdkBeachFlutter 0.36s ease-in-out infinite alternate; }
+  .sdk-beach-perch { animation: sdkBeachPerch 2.2s ease-in-out both; }
+  .sdk-beach-perch-bird { animation: sdkBeachPerchFlap 2.2s linear both; }
+  .sdk-beach-speck { animation: sdkBeachSpeck 1.1s ease-out calc(100ms + var(--i) * 30ms) both; }
+  .sdk-beach-castle[data-towers] .sdk-beach-glow[data-corner] { animation: sdkBeachFlare 0.45s ease-in-out 4 alternate; }
+
+  /* The crab: blinks, cheers a box, huffs at the gull, dances at a win. */
+  .sdk-beach-crab-pop[data-cheer] { animation: sdkBeachCheer 0.7s cubic-bezier(0.2, 0.8, 0.2, 1.2); }
+  .sdk-beach-crab-pop[data-cheer] .sdk-beach-claw[data-side="left"] { animation: sdkBeachClawLeft 0.7s ease-in-out; }
+  .sdk-beach-crab-pop[data-cheer] .sdk-beach-claw[data-side="right"] { animation: sdkBeachClawRightCheer 0.7s ease-in-out; }
+  .sdk-beach-crab-act[data-huff] { animation: sdkBeachHuff 1s ease-in-out 1.1s both; }
+  .sdk-beach-crab-act[data-huff] .sdk-beach-claw[data-side="right"] { animation: sdkBeachClawRight 0.25s ease-in-out 1.1s 4 alternate both; }
+  .sdk-beach-crab-act[data-dance] { animation: sdkBeachDance 1.4s ease-in-out 0.5s both; }
+
+  /* Seven Seas. */
+  .sdk-beach-ripple { animation: sdkBeachRipple 0.9s ease-out calc(var(--i) * 150ms) both; }
+  .sdk-beach-creature { animation: sdkBeachLeap 0.8s calc(300ms + var(--i) * 150ms) both; }
+  .sdk-beach-splash { animation: sdkBeachSplash 0.45s ease-out calc(950ms + var(--i) * 150ms) both; }
+
+  .sdk-beach-cornerflag { animation: sdkBeachPennant 2.2s ease-out calc(var(--i) * 80ms) both; }
+  .sdk-beach-cornerflag b { animation: sdkBeachFlutter 0.36s ease-in-out infinite alternate; }
+
+  /* The season's tide. */
+  .sdk-beach-tide { animation: sdkBeachTide 2.3s both; }
+  .sdk-beach-tide-rider { animation: sdkBeachRide 0.8s ease-in-out infinite alternate; }
+  .sdk-beach-tide-rider .sdk-beach-claw[data-side="right"] { animation: sdkBeachClawRight 0.3s ease-in-out infinite alternate; }
+
+  /* The Fry Thief. */
+  .sdk-beach-fry { animation: sdkBeachFryTaken 2.4s linear both; }
+  .sdk-beach-swoop-x { animation: sdkBeachAcross 2.4s linear both; }
+  .sdk-beach-swoop-y { animation: sdkBeachDive 2.4s both; }
+  .sdk-beach-swoopgull .sdk-beach-wing { animation: sdkBeachWing 0.24s ease-in-out infinite alternate; }
+  .sdk-beach-beakfry { animation: sdkBeachFryCarried 2.4s linear both; }
+  /* On a desktop the fry is the towel's own: it leaves the towel as it appears in the beak. */
+  .sdk-beach-scene[data-swoop] .sdk-beach-cone { animation: sdkBeachFryCarried 2.4s linear reverse both; }
+  .sdk-beach-feather[data-k="0"] { animation: sdkBeachFeatherLeft 1.1s ease-in 1.2s both; }
+  .sdk-beach-feather[data-k="1"] { animation: sdkBeachFeatherRight 1.1s ease-in 1.32s both; }
+}
+
+@keyframes sdkBeachBreathe {
+  from { opacity: 0.8; scale: 0.94; }
+  to { opacity: 1; scale: 1.06; }
+}
+@keyframes sdkBeachSpin { to { rotate: 360deg; } }
+@keyframes sdkBeachWink { 50% { scale: 1.15; } }
+@keyframes sdkBeachSlide {
+  from { translate: -8px 0; }
+  to { translate: 8px 0; }
+}
+@keyframes sdkBeachPulse {
+  from { opacity: 0.35; }
+  to { opacity: 0.75; }
+}
+@keyframes sdkBeachLap {
+  0% { opacity: 0; translate: 0 0; }
+  35% { opacity: 0.95; translate: 0 var(--sdk-beach-reach); }
+  100% { opacity: 0; translate: 0 0; }
+}
+@keyframes sdkBeachDrift {
+  from { translate: -12px 0; }
+  to { translate: 12px 0; }
+}
+@keyframes sdkBeachGlide {
+  0% { opacity: 1; translate: 0 0; }
+  55% { opacity: 1; translate: var(--sdk-beach-travel) -6px; }
+  55.1%, 100% { opacity: 0; translate: var(--sdk-beach-travel) -6px; }
+}
+@keyframes sdkBeachFlap {
+  from { scale: 1 1; }
+  to { scale: 1 0.45; }
+}
+@keyframes sdkBeachTwinkle { to { opacity: 0.25; } }
+@keyframes sdkBeachShoot {
+  0%, 95% { opacity: 0; translate: 0 0; }
+  96% { opacity: 1; translate: 0 0; }
+  98.5% { opacity: 0; translate: 64px 21px; }
+  100% { opacity: 0; translate: 64px 21px; }
+}
+@keyframes sdkBeachBeam {
+  from { rotate: -8deg; }
+  to { rotate: 8deg; }
+}
+@keyframes sdkBeachBob {
+  from { rotate: -3deg; translate: 0 -2px; }
+  to { rotate: 3deg; translate: 0 2px; }
+}
+@keyframes sdkBeachBlink {
+  0%, 95%, 100% { scale: 1 1; }
+  96.5% { scale: 1 0.1; }
+}
+@keyframes sdkBeachPat {
+  0% { scale: 0.7; opacity: 0.4; }
+  60% { scale: 1.06; opacity: 1; }
+  100% { scale: 1; }
+}
+@keyframes sdkBeachSketch { from { opacity: 0; } }
+@keyframes sdkBeachWave {
+  0%, 100% { transform: none; }
+  50% { transform: scaleX(0.92) skewY(7deg); }
+}
+@keyframes sdkBeachUnfurl { from { scale: 0 1; } }
+@keyframes sdkBeachMoat { from { opacity: 0; scale: 0.9; } }
+@keyframes sdkBeachHop {
+  0%, 100% { translate: 0 0; scale: 1; }
+  40% { translate: 0 -6%; scale: 1.06; }
+}
+@keyframes sdkBeachPennant {
+  0% { scale: 1 0; }
+  16% { scale: 1 1.12; }
+  24%, 82% { scale: 1 1; }
+  100% { scale: 1 0; }
+}
+@keyframes sdkBeachFlutter {
+  from { transform: skewY(-8deg); }
+  to { transform: skewY(8deg); }
+}
+@keyframes sdkBeachPerch {
+  0% { opacity: 0; translate: 70px -40px; }
+  8% { opacity: 1; }
+  40%, 70% { translate: 0 0; }
+  92% { opacity: 1; }
+  100% { opacity: 0; translate: -90px -50px; }
+}
+@keyframes sdkBeachPerchFlap {
+  0%, 12%, 24%, 76%, 88%, 100% { scale: 1 1; }
+  6%, 18%, 82%, 94% { scale: 1 0.3; }
+  30%, 70% { scale: 1 0.45; }
+}
+@keyframes sdkBeachSpeck {
+  0% { opacity: 0; translate: 0 0; }
+  1% { opacity: 1; translate: 0 0; }
+  100% { opacity: 0; translate: var(--gx) var(--gy); }
+}
+@keyframes sdkBeachFlare {
+  from { opacity: 0.7; }
+  to { opacity: 1; scale: 1.3; }
+}
+@keyframes sdkBeachCheer {
+  0%, 100% { translate: 0 0; }
+  40% { translate: 0 -4px; }
+}
+@keyframes sdkBeachClawLeft { 40% { rotate: 28deg; } }
+/* The cheer's right claw, the left's mirror: raised, then eased back down. The loops (huff, tide rider) hold it up. */
+@keyframes sdkBeachClawRightCheer { 40% { rotate: -28deg; } }
+@keyframes sdkBeachClawRight { 40%, 100% { rotate: -28deg; } }
+@keyframes sdkBeachHuff {
+  0%, 100% { rotate: 0deg; }
+  20%, 60% { rotate: -9deg; }
+  40%, 80% { rotate: 9deg; }
+}
+@keyframes sdkBeachDance {
+  0%, 100% { translate: 0 0; rotate: 0deg; }
+  15% { translate: -3px -4px; rotate: -8deg; }
+  30% { translate: 0 0; rotate: 0deg; }
+  45% { translate: 3px -4px; rotate: 8deg; }
+  60% { translate: 0 0; rotate: 0deg; }
+  80% { translate: 0 -6px; }
+}
+@keyframes sdkBeachRipple {
+  0% { opacity: 0; scale: 0.3; }
+  1% { opacity: 0.9; scale: 0.3; }
+  100% { opacity: 0; scale: 2.6; }
+}
+@keyframes sdkBeachLeap {
+  0% { opacity: 0; translate: calc(-50% + 14px) -50%; rotate: 40deg; animation-timing-function: cubic-bezier(0.25, 0.6, 0.45, 1); }
+  12% { opacity: 1; }
+  50% { translate: -50% calc(-50% + var(--sdk-beach-leap)); rotate: 0deg; animation-timing-function: cubic-bezier(0.55, 0, 0.75, 0.4); }
+  88% { opacity: 1; }
+  100% { opacity: 0; translate: calc(-50% - 14px) -50%; rotate: -40deg; }
+}
+@keyframes sdkBeachSplash {
+  0% { opacity: 0; scale: 0.3; }
+  1% { opacity: 1; scale: 0.3; }
+  100% { opacity: 0; scale: 1.5; }
+}
+@keyframes sdkBeachTide {
+  0% { translate: 0 calc(100% + 60px); animation-timing-function: cubic-bezier(0.2, 0.7, 0.3, 1); }
+  38%, 62% { translate: 0 0; animation-timing-function: cubic-bezier(0.6, 0, 0.8, 0.5); }
+  100% { translate: 0 calc(100% + 60px); }
+}
+@keyframes sdkBeachRide {
+  from { translate: -50% 0; rotate: -6deg; }
+  to { translate: -50% -4px; rotate: 6deg; }
+}
+@keyframes sdkBeachFryTaken {
+  0% { opacity: 0; }
+  6%, 49% { opacity: 1; }
+  50%, 100% { opacity: 0; }
+}
+@keyframes sdkBeachFryCarried {
+  0%, 49% { opacity: 0; }
+  50%, 100% { opacity: 1; }
+}
+@keyframes sdkBeachAcross {
+  from { translate: var(--sdk-beach-span) 0; }
+  to { translate: calc(var(--sdk-beach-span) * -1) 0; }
+}
+@keyframes sdkBeachDive {
+  0% { translate: 0 var(--sdk-beach-rise); rotate: -24deg; animation-timing-function: cubic-bezier(0.35, 0.35, 0.5, 1); }
+  50% { translate: 0 0; rotate: 0deg; animation-timing-function: cubic-bezier(0.5, 0, 0.65, 0.65); }
+  100% { translate: 0 var(--sdk-beach-rise); rotate: 24deg; }
+}
+@keyframes sdkBeachWing {
+  from { scale: 1 1; }
+  to { scale: 1 0.5; }
+}
+@keyframes sdkBeachFeatherLeft {
+  0% { opacity: 0; translate: 0 0; rotate: 0deg; }
+  4% { opacity: 1; }
+  35% { translate: -10px 14px; rotate: -40deg; }
+  70% { translate: 4px 30px; rotate: 30deg; }
+  100% { opacity: 0; translate: -6px 46px; rotate: -20deg; }
+}
+@keyframes sdkBeachFeatherRight {
+  0% { opacity: 0; translate: 0 0; rotate: 0deg; }
+  4% { opacity: 1; }
+  35% { translate: 10px 12px; rotate: 40deg; }
+  70% { translate: -3px 28px; rotate: -30deg; }
+  100% { opacity: 0; translate: 8px 44px; rotate: 20deg; }
+}
