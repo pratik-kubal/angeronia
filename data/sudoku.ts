@@ -1,5 +1,5 @@
-// Sudoku (/sudoku) copy: the difficulties, how to play, the rarities, the result sheet and the
-// theme picker. The 100 trophies live in data/sudoku-trophies.ts; each theme's own words (its
+// Sudoku (/sudoku) copy: the difficulties, how to play, the rarities, the result sheet, Settings and
+// the theme picker. The 100 trophies live in data/sudoku-trophies.ts; each theme's own words (its
 // name, blurb, result heading and secrets) live with its definition in lib/sudoku/themes/.
 
 import type { Difficulty } from "@/lib/sudoku/generate";
@@ -30,6 +30,11 @@ export const RARITY_COPY: Record<Rarity, string> = {
 };
 
 export const RESULT_COPY = { next: "New game", newFind: "New find", again: "Found again" };
+
+export const SETTINGS_COPY = {
+  /** Under the settings: a page can't read Silent Mode, and Web Audio on an iPhone or iPad follows it. */
+  silentNote: "On an iPhone or iPad, Silent Mode mutes the game's sounds.",
+};
 
 export const THEME_COPY = {
   /** The settings row and the picker's title. */

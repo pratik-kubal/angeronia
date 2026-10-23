@@ -1,12 +1,36 @@
 // Sound and touch, with no files to load. Sound is a tiny Web Audio synth: iOS starts an
-// AudioContext only from a gesture, so unlockAudio() runs on every tap (cheap once it's running)
-// and the notes played later from timers (a chime, the win) sound once it has. Each theme may
+// AudioContext only from a gesture, so unlockAudio() runs on every tap (cheap once it's running).
+// WebKit starts it suspended in that tap and running a moment later, so the notes asked for in
+// between (the tap's own pop, a first game's deal) wait for it instead of being lost, and the notes
+// played later from timers (a chime, the win) sound once it runs. On an iPhone or iPad, Web Audio
+// is ambient sound, so Silent Mode mutes it, as Apple asks of games (Settings says so). Each theme may
 // bring its own voice (setVoice), built from tone() and the scale helpers here. Haptics use
 // navigator.vibrate where it exists (Android); iOS Safari has none, but since iOS 18 toggling an
 // <input type="checkbox" switch> plays the system tick, so a hidden one stands in.
 
 type Ctx = { ctx: AudioContext; out: GainNode };
 let audio: Ctx | null = null;
+
+/**
+ * Notes asked for while the context starts (or comes back from an interruption), oldest first,
+ * each played `offset` seconds later than asked.
+ */
+let waiting: { at: number; play: (offset: number) => void }[] = [];
+/** How long a note may wait and still play: the tap's own sound, never a backlog. */
+const WAIT_MS = 300;
+/**
+ * At most this many wait, so a context that never runs holds no more: every theme's phrases fit
+ * (the longest, Beach's win, is 37 notes), with room for a pop and a chime asked for with one.
+ */
+const WAIT_MAX = 64;
+
+/** The waiting notes that are still fresh, played now that the context runs, as far apart as they were asked for. */
+function playWaiting() {
+  const now = performance.now();
+  const due = waiting.filter((w) => now - w.at <= WAIT_MS);
+  waiting = [];
+  due.forEach((w) => w.play((w.at - due[0].at) / 1000));
+}
 
 export function unlockAudio() {
   if (!audio) {
@@ -16,14 +40,31 @@ export function unlockAudio() {
     const out = ctx.createGain();
     out.gain.value = 0.22;
     out.connect(ctx.destination);
+    ctx.addEventListener("statechange", () => {
+      if (ctx.state === "running") playWaiting();
+    });
     audio = { ctx, out };
   }
-  if (audio.ctx.state !== "running") void audio.ctx.resume();
+  // resume() rejects only for a closed context or audio output that won't start; one WebKit won't
+  // allow yet (no gesture, a call) just waits. Either way the next tap tries again.
+  if (audio.ctx.state !== "running") audio.ctx.resume().catch(() => {});
 }
 
 /** One note: `freq` Hz (gliding to `glideTo` when given) starting `delay` s from now. */
 export function tone(freq: number, glideTo: number | null, delay: number, dur: number, type: OscillatorType, gain: number) {
-  if (!audio || audio.ctx.state !== "running") return;
+  if (!audio) return;
+  const play = (offset: number) => start(freq, glideTo, delay + offset, dur, type, gain);
+  if (audio.ctx.state === "running" && waiting.length === 0) return play(0);
+  const now = performance.now();
+  waiting = waiting.filter((w) => now - w.at <= WAIT_MS);
+  waiting.push({ at: now, play });
+  if (waiting.length > WAIT_MAX) waiting.shift();
+  // Running already, with its statechange still to come: the waiting notes go first, in step.
+  if (audio.ctx.state === "running") playWaiting();
+}
+
+function start(freq: number, glideTo: number | null, delay: number, dur: number, type: OscillatorType, gain: number) {
+  if (!audio) return;
   const { ctx, out } = audio;
   const t = ctx.currentTime + delay;
   const osc = ctx.createOscillator();
