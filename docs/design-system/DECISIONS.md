@@ -11,6 +11,9 @@ The log spans two migrations, in order:
   ([`carbon-migration-plan.md`](../plans/carbon-migration-plan.md)), landed
   2026-09-08.
 
+ADR-019 (2026-10-23) is later: the games that moved here from `../portfolio`
+keep their own look, outside the design system.
+
 **Read ADR-015 first if you want the current state.** It supersedes D1, D2, D3,
 D7, D8 and ADR-004 / 006 / 008 / 011, and it says what the site is built on
 today. Everything above it is the record of how it got there, not a description
@@ -668,6 +671,81 @@ out of the emitted CSS, following `var()` chains. Nothing is duplicated in
 JavaScript, so the thing being checked cannot drift from the thing that ships —
 and `scripts/build-logos.mjs` draws the OG rasters from the same resolver, which
 is how the logo's teal stays the page's teal.
+
+---
+
+### ADR-019 — The games keep their own look, outside the design system
+
+**Recorded 2026-10-23, before the code that deviates, per the rule at the top of
+this file.**
+
+Sudoku moves here from `../portfolio`, where it shipped (portfolio #36 and #38),
+and Solitaire follows it. They are games, not pages of the studio site, and each
+was designed and tested as an app of its own: Sudoku's six themes, each in
+light and dark, with their scenes, sounds and secrets; Solitaire's felt, card art
+and win shows. Rebuilding either on Carbon would be a redesign, not a move. So
+they keep their own look, and the design rules do not govern them.
+
+**What is carved out.** `app/sudoku/`, `components/sudoku/`, `lib/sudoku/`,
+`data/sudoku.ts`, `data/sudoku-trophies.ts`, `components/games/`, `lib/random.ts`
+and `e2e/`; Solitaire's equivalents when it lands. Inside them, rules 1–9, 11 and
+13 do not apply:
+
+* **Their own stylesheets, in plain CSS.** Each game's `.css` is imported by its
+  page alone, so none of it reaches the studio's stylesheet (checked against the
+  build: the home page's CSS holds no `sdk-` rule), and every rule is scoped to
+  the route (`html:has(.sdk-shell)`, `.sdk-*`). Literal colours, radii, shadows,
+  type sizes and durations are the games' design, not a breach of it.
+* **Their own icons:** `@phosphor-icons/react`, imported only under the games'
+  folders. Rule 1's "Carbon icons only" still holds for the site.
+* **Their own type:** the iOS system font stack, through each game's `--font`.
+* **Their own motion:** deal-ins, fireworks, theme scenes and win shows play on
+  their own; reduced motion turns them off.
+* **No stories.** Their gates are their own: unit tests (`npm test`, the Vitest
+  `unit` project in node) and Playwright specs (`npm run test:e2e`, desktop
+  Chromium and an iPhone in WebKit).
+* **Their own copy files,** not `data/angeronia.ts`.
+
+**What still applies.** Rule 10's accessibility bar (semantic HTML, focus
+management for the sheets, labelled icons; the e2e specs play the games by
+keyboard), rule 12's TypeScript and strict-build gates, and rule 14.
+
+**The boundary runs both ways.** Nothing in the studio site imports from the
+games' folders, and the games import nothing from `components/site/`,
+`components/ui/` or `styles/`. They stay unlisted (not in the header, the footer
+or `sitemap.ts`, and `noindex`), so the site never links to them.
+
+**What the root layout still gives them, and the base that undoes it.** The
+games render under `app/layout.tsx`, so Carbon's global stylesheet, the Plex
+variables, `next-themes` and the skip link reach them. Carbon's reset and default
+type are not what the games were written against (the portfolio loaded Tailwind
+v4's preflight on every page), and the difference is visible: an `h1` at
+heading-06's line height, buttons at the browser's 13.33px with its padding, an
+underlined home link, SVGs on the baseline, the grey tap flash back on iOS. One
+difference breaks a feature: Carbon ships `[data-hidden]:not([data-fixed]) {
+display: none }` globally, which hid every secret not yet found in Sudoku's theme
+picker. So:
+
+* `components/games/base.css` puts back the parts of the preflight the games
+  rely on, scoped to a game's shell. `html body` then a `:where()` gives it
+  specificity 0,0,2: above Carbon's bare-element rules (0,0,1), below every game
+  rule (all carry a class). Element lists go in `:where()`, never `:is()`, because
+  the build prefixes `:is()` as `:-webkit-any()`, which counts as a class.
+* Sudoku's locked secrets are marked `data-locked`, not `data-hidden`.
+* The game's container is a `<main id="main">`, so the skip link lands on it.
+
+The base was checked by measurement, not by eye: every element's computed style
+on the game screen and its four sheets, in every theme and scheme, on an iPhone
+and a desktop, compared against the portfolio running the same saved game. Inside
+the game nothing differs; outside it only `<html>` and `<body>` do, and the games
+paint over both.
+
+**What it costs.** The games load Carbon's global stylesheet, which they do not
+use (about 100 KB gzipped, the stylesheet every studio page loads), and a second
+icon package ships, on their routes only. A route group with its own root layout would avoid both, but
+would move the studio pages under `app/(site)/` and give the app two root layouts
+to keep in step; not worth it for two unlisted pages. Revisit if a game is ever
+listed on the site.
 
 ---
 
