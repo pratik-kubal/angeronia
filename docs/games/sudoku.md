@@ -1,10 +1,12 @@
-# Sudoku (`/sudoku`)
+# Sudoku (`/games/sudoku`)
 
 Moved here from `../portfolio` on 2026-10-23, as it stood at `0e53c81` (portfolio #36 and #38). It keeps its own
 look and sits outside the design system: see [ADR-019](../design-system/DECISIONS.md). This is the game's section of
 the portfolio's `CLAUDE.md`, carried over; read it before touching `components/sudoku/` or `lib/sudoku/`.
 
-Unlisted: not in the header, the footer or `sitemap.ts`, and `noindex`.
+On the `/games` launcher and the home page's Games section, both of which show this game's `apple-icon.png`
+([ADR-020, ADR-021](../design-system/DECISIONS.md)); its old path redirects here. Not in the header, the footer or
+`sitemap.ts`, and `noindex`. Saved to a home screen there is no back button, so the game keeps its own link to `/games`.
 
 ## The game
 
@@ -95,13 +97,13 @@ your own digit by weight (700 against 500; Candy's tiles 900 against 700).
   defines, under `html[data-sdk-theme="<id>"]:has(.sdk-shell)` and the same plus `[data-sdk-scheme="dark"]`
   (Aurora's folder has none: its tokens are sudoku.css's, and its `aurora.css` holds only its surprises);
   then its scene styles, every selector scoped to the theme, keyframes `sdk<Id>…`, motion only under
-  `prefers-reduced-motion: no-preference`; imported by `app/sudoku/page.tsx`), `index.ts` (its skin) and its
+  `prefers-reduced-motion: no-preference`; imported by `app/games/sudoku/page.tsx`), `index.ts` (its skin) and its
   scene and voice files. Copy in `data/sudoku.ts`; the 100 trophies
   (id, name, one Emoji 13.0-or-older emoji, rarity, blurb; 50 / 25 / 15 / 7 / 3) in `data/sudoku-trophies.ts`.
 - **iOS:** `viewport-fit=cover` and safe-area padding, `100dvh` without rubber-banding, `touch-action:
   manipulation`, a landscape layout for phones on their side (the controls only as wide as full-size keys need, the
   board takes the rest), and an `apple-touch-icon`
-  (`app/sudoku/apple-icon.png`) with the web-app meta, so Add to Home Screen opens it full screen.
+  (`app/games/sudoku/apple-icon.png`) with the web-app meta, so Add to Home Screen opens it full screen.
 
 ## Tests
 

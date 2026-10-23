@@ -48,12 +48,13 @@ There is no CSS linter. `slds-linter` was retired with SLDS rather than replaced
 
 ### The games
 
-[`/sudoku`](docs/games/sudoku.md) and [`/solitaire`](docs/games/solitaire.md)
-are games, not pages of the studio site. They moved here from the founder's
+[`/games/sudoku`](docs/games/sudoku.md) and [`/games/solitaire`](docs/games/solitaire.md),
+and the `/games` launcher of their icons (ADR-021), are games, not pages of the studio site. They moved here from the founder's
 portfolio and keep their own look — their own CSS, type, motion and Phosphor
 icons — outside the design system
-([`DECISIONS.md`](docs/design-system/DECISIONS.md) ADR-019). They are unlisted
-and `noindex`. Their gates are their own:
+([`DECISIONS.md`](docs/design-system/DECISIONS.md) ADR-019). The home page
+links to them (ADR-020); they stay out of the nav and the sitemap, and
+`noindex`. Their gates are their own:
 
 ```bash
 npm test                 # unit tests (Vitest, node)
@@ -141,11 +142,12 @@ docs/design-system/       DESIGN-RULES.md, DECISIONS.md, theme-report.md
 The games sit outside that tree's rules (ADR-019):
 
 ```
-app/sudoku/               the page: metadata, the pre-paint look script, its CSS
+app/games/page.tsx        the /games launcher (its CSS: components/games/launcher.css)
+app/games/sudoku/         the page: metadata, the pre-paint look script, its CSS
 components/sudoku/        the screen, sheets, themes and their stylesheets
 lib/sudoku/               the rules, solver, generator, themes and trophies (pure)
 data/sudoku*.ts           the game's copy and its 100 trophies
-app/solitaire/            the page, its suit symbols, its CSS
+app/games/solitaire/      the page, its suit symbols, its CSS
 components/solitaire/     the table, its animator and gestures, sheets, win shows
 lib/solitaire/            the rules, solver, hints and the bank of winnable deals (pure)
 data/solitaire.ts         the game's copy

@@ -36,7 +36,6 @@ export const LINKS = {
   codeSocratic: "https://code-socratic.angeronia.com/",
   linkedin: "https://www.linkedin.com/company/angeronia",
   github: "https://github.com/pratik-kubal",
-  ntcsf: "https://ntcsf.info/",
   calendar: "mailto:pratik-kubal@outlook.com?subject=Project%20inquiry%20%E2%80%94%20Angeronia%20Labs",
 } as const;
 
@@ -303,39 +302,6 @@ def test_sample_2():
   staticNote: "A replica of the real workspace. The tabs work; nothing else here runs.",
 } as const;
 
-// ── Clients ───────────────────────────────────────────────────────────────────
-export interface Client {
-  name: string;
-  /** What the organisation is, in its own terms. */
-  what: string;
-  /** What the studio is doing for them. */
-  engagement: string;
-  /** Present tense while the work is live. */
-  status: string;
-  href: string;
-  hrefText: string;
-}
-
-export const clientsLabel = "Who we build for";
-export const clientsHeading = "Clients and early ventures.";
-export const clients: Client[] = [
-  {
-    name: "National Tax Credit Scholarship Fund",
-    what: "A 501(c)(3) in Richmond, Virginia, and a participant in the Federal Scholarship Tax Credit program — it channels tax-credit eligible donations to public school students.",
-    engagement: "Technical implementation: we are building out the platform that carries donations from donor to school division.",
-    status: "In progress",
-    href: LINKS.ntcsf,
-    hrefText: "ntcsf.info",
-  },
-];
-
-// ── Low-bono work and startups ────────────────────────────────────────────────
-export const lowBono = {
-  heading: "Low-bono work and startups",
-  quote: "No revenue for me, until you make revenue.",
-  body: "We know how thin the cash is when you are still building the thing. For early ventures we take the work on now and settle the money later — not the week you find your feet, but once you are running.",
-} as const;
-
 // ── About (condensed + coverage strip) ────────────────────────────────────────
 export const aboutLabel = "Who you work with";
 export const aboutHeading = "Right Now, One Person Team";
@@ -343,6 +309,41 @@ export const aboutLead =
   "Angeronia Labs is Pratik Kubal — five years of FinTech document-AI on AWS, a Master's in Machine Learning, and a habit of shipping under incomplete requirements.";
 export const aboutRange = ["Backend", "Frontend", "Cloud / DevOps", "AI / LLM", "Product & funding"];
 export const aboutCoda = "When quality slips, we revive it. When the spec is fuzzy, we make it concrete.";
+
+// ── Games ─────────────────────────────────────────────────────────────────────
+/**
+ * One game, as both launchers show it: the home page's section (ADR-020) and
+ * the /games home screen (ADR-021). A new game is one more entry here, plus its
+ * route at `app/games/<slug>/` with its `apple-icon.png`.
+ */
+export interface Game {
+  name: string;
+  /** One short line, under the name. Kept to a phrase so a tile stays a tile. */
+  line: string;
+  href: string;
+  /**
+   * The game's own Add to Home Screen icon, `app/games/<slug>/apple-icon.png`
+   * (180 × 180, full-bleed), served by Next at this URL.
+   */
+  icon: string;
+}
+
+export const gamesLabel = "Off the clock";
+export const gamesHeading = "Games for a break";
+export const games: Game[] = [
+  {
+    name: "Sudoku",
+    line: "Calm and colourful. No losing.",
+    href: "/games/sudoku",
+    icon: "/games/sudoku/apple-icon.png",
+  },
+  {
+    name: "Solitaire",
+    line: "Klondike. Every deal can be won.",
+    href: "/games/solitaire",
+    icon: "/games/solitaire/apple-icon.png",
+  },
+];
 
 // ── Contact CTA ───────────────────────────────────────────────────────────────
 export const contact = {
@@ -467,7 +468,7 @@ export const termsOfService: LegalDocument = {
     {
       heading: "Nothing here is an offer or a contract",
       paragraphs: [
-        "Descriptions of services, process, availability and commercial terms on this site — including anything said about low-bono or deferred-fee work for early ventures — are a description of how we generally like to work. They are not an offer, they do not bind either of us, and they create no obligation until there is a written agreement signed by both parties. That agreement, not this site, sets the scope, the fees and the terms of any engagement.",
+        "Descriptions of services, process, availability and commercial terms on this site are a description of how we generally like to work. They are not an offer, they do not bind either of us, and they create no obligation until there is a written agreement signed by both parties. That agreement, not this site, sets the scope, the fees and the terms of any engagement.",
       ],
     },
     {

@@ -555,7 +555,7 @@ export function SudokuGame() {
             )}
             {title}
           </h1>
-          <a href="/" className="sdk-round" aria-label="Back to angeronia.com">
+          <a href="/games" className="sdk-round" aria-label="All games">
             <HouseSimpleIcon size={20} weight="bold" />
           </a>
         </header>

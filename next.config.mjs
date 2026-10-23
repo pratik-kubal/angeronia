@@ -3,11 +3,21 @@ const nextConfig = {
   images: {
     unoptimized: true,
   },
-  // Solitaire lives at /solitaire; /Solitaire (any casing) is served the same page. Not a redirect:
-  // custom routes match case-insensitively, so one from /Solitaire would also catch /solitaire and
-  // loop, while a rewrite (checked after the filesystem) only sees paths no page answers.
+  // The games live under /games (DECISIONS.md ADR-021). Their old paths redirect for good, so a
+  // shared link or a game already saved to a home screen still opens; custom routes match
+  // case-insensitively, so /solitaire covers /Solitaire. Exact paths only: the card faces stay
+  // at /solitaire/cards/.
+  async redirects() {
+    return [
+      { source: "/sudoku", destination: "/games/sudoku", permanent: true },
+      { source: "/solitaire", destination: "/games/solitaire", permanent: true },
+    ];
+  },
+  // /games/Solitaire (any casing) is served the same page. Not a redirect: one from
+  // /games/Solitaire would also catch /games/solitaire and loop, while a rewrite (checked after
+  // the filesystem) only sees paths no page answers.
   async rewrites() {
-    return [{ source: "/Solitaire", destination: "/solitaire" }];
+    return [{ source: "/games/Solitaire", destination: "/games/solitaire" }];
   },
   async headers() {
     return [

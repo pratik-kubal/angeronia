@@ -7,10 +7,11 @@ import { Philosophy } from "@/components/site/philosophy";
 import { Services } from "@/components/site/services";
 import { Process } from "@/components/site/process";
 import { ProductSpotlight } from "@/components/site/product-spotlight";
-import { WhoWeBuildFor } from "@/components/site/who-we-build-for";
 import { About } from "@/components/site/about";
+import { Games } from "@/components/site/games";
 import { Contact } from "@/components/site/contact";
 import { SiteFooter } from "@/components/site/site-footer";
+import { games } from "@/data/angeronia";
 
 /**
  * The whole page, in the same order `app/page.tsx` composes it — the two lists
@@ -24,12 +25,12 @@ function Home() {
       <SiteHeader />
       <main id="main">
         <Hero />
-        <WhoWeBuildFor />
         <ProductSpotlight />
         <Services />
         <Philosophy />
         <Process />
         <About />
+        <Games games={games} />
         <Contact />
       </main>
       <SiteFooter />
@@ -64,11 +65,11 @@ export const Light: Story = {
     await expect(canvasElement.querySelectorAll("h1")).toHaveLength(1);
 
     for (const name of [
-      "Clients and early ventures.",
       "Our Principles",
       "What we take on",
       "How we work",
       "Right Now, One Person Team",
+      "Games for a break",
     ]) {
       await expect(canvas.getByRole("heading", { level: 2, name })).toBeInTheDocument();
     }

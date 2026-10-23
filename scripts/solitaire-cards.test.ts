@@ -35,7 +35,7 @@ describe("Solitaire card faces", () => {
   });
 
   it("has an opaque 180 × 180 home-screen icon", async () => {
-    const meta = await sharp("app/solitaire/apple-icon.png").metadata();
+    const meta = await sharp("app/games/solitaire/apple-icon.png").metadata();
     expect([meta.width, meta.height]).toEqual([180, 180]);
     expect(meta.hasAlpha).toBe(false);
   });

@@ -5,7 +5,7 @@ import { parseSaved, replay, toSaved, type GameState } from "../lib/solitaire/ga
 import { solve } from "../lib/solitaire/solver";
 import { bestTarget } from "../lib/solitaire/targets";
 
-// Solitaire (/solitaire, and /Solitaire). Runs on desktop Chromium, on an iPhone upright and on its
+// Solitaire (/games/solitaire, and /games/Solitaire). Runs on desktop Chromium, on an iPhone upright and on its
 // side and on an iPad in WebKit (playwright.config.ts). The game lives in localStorage
 // ("solitaire:game": its seed and moves), so the specs set positions up from the domain code
 // (lib/solitaire) and read the moves back.
@@ -28,7 +28,7 @@ const card = (page: Page, id: number) => page.locator(`[data-card="${id}"]`);
  * Opens the game at a position. Storage is written from a same-origin page without the game (the
  * game saves itself as it unloads, which would overwrite it).
  */
-async function open(page: Page, state?: GameState, extra: Record<string, string> = {}, path = "/solitaire") {
+async function open(page: Page, state?: GameState, extra: Record<string, string> = {}, path = "/games/solitaire") {
   await page.goto("/solitaire/cards/v1/AS.webp");
   await page.evaluate(
     ([game, more]) => {
@@ -63,12 +63,12 @@ test.beforeEach(async ({ page }) => {
 });
 
 test.describe("Solitaire", () => {
-  test("serves /solitaire and /Solitaire, unlisted, on one screen", async ({ page }) => {
-    const lower = await page.goto("/solitaire");
+  test("serves /games/solitaire and /games/Solitaire, noindex, on one screen", async ({ page }) => {
+    const lower = await page.goto("/games/solitaire");
     expect(lower?.status()).toBe(200);
-    const upper = await page.goto("/Solitaire");
+    const upper = await page.goto("/games/Solitaire");
     expect(upper?.status()).toBe(200);
-    expect(new URL(page.url()).pathname).toBe("/Solitaire");
+    expect(new URL(page.url()).pathname).toBe("/games/Solitaire");
     await expect(page.locator("meta[name='robots']")).toHaveAttribute("content", /noindex/);
     await page.waitForSelector(".sol-table[data-ready]");
     await settled(page);
@@ -219,7 +219,7 @@ test.describe("Solitaire", () => {
   test("two tabs: the one in use owns the game, and the other follows it", async ({ page, context }) => {
     await open(page);
     const other = await context.newPage();
-    await other.goto("/solitaire");
+    await other.goto("/games/solitaire");
     await other.waitForSelector(".sol-table[data-ready]");
     await settled(other);
     await other.locator('[data-slot="s"]').click({ force: true, position: { x: 12, y: 12 } });
@@ -237,7 +237,7 @@ test.describe("Solitaire", () => {
     await page.locator("canvas.sol-fx").click({ position: { x: 40, y: 24 } });
     await expect(page.getByRole("dialog", { name: "Result" })).toBeVisible();
     const other = await context.newPage();
-    await other.goto("/solitaire");
+    await other.goto("/games/solitaire");
     await other.waitForSelector(".sol-table[data-ready]");
     await expect(other.getByRole("dialog", { name: "Result" })).toBeVisible();
     await page.getByRole("dialog", { name: "Result" }).getByRole("button", { name: "New game" }).click();

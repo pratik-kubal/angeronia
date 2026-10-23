@@ -26,7 +26,6 @@
   // Reading measures. `ch` because a measure is counted in characters.
   --site-measure: 60ch;
   --site-measure-heading: 25ch;
-  --site-measure-quote: 35ch;
   // Carbon draws its own borders at 1px and its interactive edges at 2px; it
   // exposes neither as a token.
   --site-border-width: 1px;
@@ -38,6 +37,11 @@
   // The page's own cap. Carbon's grid stops at 99rem, which is a data-dense
   // application width; marketing copy wants a shorter line than that.
   --site-container-max: 82rem;
+  // The games launcher (ADR-020): an icon at the size its 180px artwork stays
+  // sharp on a 2x screen, and the narrowest a tile gets before the grid drops a
+  // column, so the line beside the icon keeps to two lines or fewer.
+  --site-game-icon: 5rem;
+  --site-game-tile: 18rem;
 }
 
 // ── Page frame ───────────────────────────────────────────────────────────────
@@ -525,30 +529,6 @@
   font-style: italic;
 }
 
-// Clients: what the studio is doing for them, set apart from what they are.
-.site-client__engagement {
-  margin-block-start: $spacing-05;
-  padding-block-start: $spacing-05;
-  border-block-start: var(--site-border-width) solid theme.$border-subtle;
-  color: theme.$text-secondary;
-}
-
-// Low-bono: the promise is the section, so it is set one step below the
-// standalone display treatment — it sits in a half-width card, not across the
-// full measure. Both classes, deliberately: `site-coda` owns the top margin a
-// quote following body copy needs, and in the card the header is already that
-// space.
-.site-coda.site-lowbono__quote {
-  margin-block-start: 0;
-}
-
-.site-lowbono__quote {
-  @include type.type-style('heading-04');
-
-  color: theme.$text-primary;
-  max-inline-size: var(--site-measure-quote);
-}
-
 // Product spotlight. The card body runs long enough to need its own rhythm:
 // headline, lede, the session replica, three benefits, the facts strip.
 .site-product__headline {
@@ -571,11 +551,6 @@
 
   margin-block: $spacing-07 $spacing-04;
   color: theme.$text-primary;
-}
-
-// Low-bono: the offer's body sits clear of the quote above it.
-.site-lowbono__body {
-  margin-block-start: $spacing-07;
 }
 
 // The three "why would I use this" answers, and the facts strip under them.
@@ -641,6 +616,67 @@
 // About: the coverage tags sit clear of the lead paragraph above them.
 .site-about__range {
   margin-block-start: $spacing-07;
+}
+
+// Games (ADR-020): a launcher, one tile per game, in a grid that wraps to fit
+// however many games there are. Carbon has no launcher or app-tile pattern, so
+// the grid and the tile are the site's. Columns fill from the start, so a short
+// row keeps its tiles on the grid rather than stretching them across it.
+.site-games {
+  display: grid;
+  gap: $spacing-07;
+  grid-template-columns: repeat(auto-fill, minmax(var(--site-game-tile), 1fr));
+  list-style: none;
+}
+
+// A tile: the icon, and the name over its line beside it. The tile is the
+// positioning context for the stretched link below.
+.site-game {
+  position: relative;
+  display: grid;
+  grid-template-columns: var(--site-game-icon) 1fr;
+  grid-template-rows: auto auto;
+  align-content: center;
+  column-gap: $spacing-05;
+  row-gap: $spacing-02;
+}
+
+// Square, as Carbon is: each icon is the game's own full-bleed artwork and
+// carries its own ground, so it needs no edge.
+.site-game__icon {
+  display: block;
+  grid-row: 1 / span 2;
+  inline-size: var(--site-game-icon);
+  block-size: var(--site-game-icon);
+  align-self: center;
+}
+
+.site-game__link {
+  align-self: end;
+  justify-self: start;
+}
+
+.site-game__line {
+  @include type.type-style('body-01');
+
+  align-self: start;
+  color: theme.$text-secondary;
+  text-wrap: pretty;
+}
+
+// The one link covers the whole tile, so the icon opens the game too without
+// being a second tab stop. Carbon's link is unpositioned and draws nothing in
+// `::after`, so the overlay measures against `.site-game`.
+.site-game__link::after {
+  position: absolute;
+  inset: 0;
+  content: "";
+}
+
+// Anywhere on the tile counts as hovering the link, so the link says so.
+.site-game:hover .site-game__link {
+  color: theme.$link-primary-hover;
+  text-decoration: underline;
 }
 
 // ── Footer ───────────────────────────────────────────────────────────────────

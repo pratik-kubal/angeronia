@@ -1,7 +1,7 @@
 "use client";
 
-import { ArrowClockwiseIcon, CardsIcon, ChartBarIcon, PlayIcon, QuestionIcon } from "@phosphor-icons/react/dist/ssr";
-import { HOW_TO_PLAY, STATS_COPY, WIN_HEADING, WIN_HEADINGS } from "@/data/solitaire";
+import { ArrowClockwiseIcon, CardsIcon, ChartBarIcon, PlayIcon, QuestionIcon, SquaresFourIcon } from "@phosphor-icons/react/dist/ssr";
+import { ALL_GAMES, HOW_TO_PLAY, STATS_COPY, WIN_HEADING, WIN_HEADINGS } from "@/data/solitaire";
 import type { Stats } from "./storage";
 import type { FxKind } from "./win";
 
@@ -45,6 +45,11 @@ export function MenuPanel({ deal, canRestart, onNew, onRestart, onStats, onHelp 
           <QuestionIcon size={20} weight="duotone" aria-hidden />
           <span>How to play</span>
         </button>
+        {/* The way back to the /games launcher: saved to a home screen, the app has no back button (ADR-021). */}
+        <a className="sol-menu-item" href={ALL_GAMES.href}>
+          <SquaresFourIcon size={20} weight="duotone" aria-hidden />
+          <span>{ALL_GAMES.label}</span>
+        </a>
       </div>
     </>
   );

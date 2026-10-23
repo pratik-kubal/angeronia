@@ -20,13 +20,14 @@ const SPACING = [
 const SITE_VALUES = [
   { name: "--site-measure", use: "The prose measure — a paragraph's maximum line." },
   { name: "--site-measure-heading", use: "The heading measure, so a display line breaks well." },
-  { name: "--site-measure-quote", use: "The low-bono quote, one step narrower than a heading." },
   { name: "--site-border-width", use: "Carbon draws its own borders at this width." },
   { name: "--site-border-width-strong", use: "An interactive or accent edge." },
   { name: "--site-figure-min", use: "The hero Möbius, at its smallest." },
   { name: "--site-figure-max", use: "The hero Möbius, at its largest." },
   { name: "--site-pane-max", use: "How tall a pane in the session replica scrolls within." },
   { name: "--site-container-max", use: "The page's own width cap, shorter than Carbon's 99rem." },
+  { name: "--site-game-icon", use: "A game's icon in the games launcher." },
+  { name: "--site-game-tile", use: "The narrowest a games-launcher tile gets before a column drops." },
 ];
 
 /**

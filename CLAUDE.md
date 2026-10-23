@@ -69,11 +69,21 @@ For the studio site. The games are outside it; see **Games** below.
 
 ## Games (outside the design system)
 
-`/sudoku` and `/solitaire` moved here from `../portfolio` (2026-10-23). They
-keep their own look — their own CSS, tokens, type, motion and Phosphor icons —
-and the contract above does not govern them: **ADR-019** draws the line (rules
-10, 12 and 14 still apply). They are unlisted: not in the header, the footer or
-`sitemap.ts`, and `noindex`.
+Sudoku and Solitaire moved here from `../portfolio` (2026-10-23) and live under
+`/games` (**ADR-021**): `/games/sudoku`, `/games/solitaire`, and `/games`
+itself, a launcher of their icons meant to be saved to an iPhone's home screen.
+The old `/sudoku`, `/solitaire` and `/Solitaire` redirect (308). They keep their
+own look — their own CSS, tokens, type, motion and Phosphor icons — and the
+contract above does not govern them: **ADR-019** draws the line (rules 10, 12
+and 14 still apply), and the launcher sits on their side of it. The home page's
+Games section links to them too (**ADR-020**); nothing else does. They are not
+in the header, the footer or `sitemap.ts`, and they are `noindex`.
+
+* **A new game** goes at `app/games/<slug>/` with its own `apple-icon.png`
+  (180 × 180, opaque), plus one entry in `games` in `data/angeronia.ts`; both
+  launchers read that list. Then `npm run games:icon` to redraw the launcher's
+  own icon, and give the game a link back to `/games` (there is no back button
+  in a saved web app).
 
 * Read `docs/games/sudoku.md` or `docs/games/solitaire.md` before touching a
   game's `components/` or `lib/` folder; they are the games' design and test
@@ -121,6 +131,7 @@ npm test               # the games' unit tests (Vitest, node)
 npm run test:e2e       # the games end to end (Playwright: Chromium + iPhone/iPad WebKit)
 npm run solitaire:cards  # Solitaire's card faces, from the Vector Playing Cards pack
 npm run solitaire:deals  # re-prove Solitaire's bank of winnable deals (~5 min)
+npm run games:icon     # redraw the /games launcher's home-screen icon from the games' icons
 
 npm run build:favicon  # re-tint app/icon.svg onto the teal ramp
 npm run build:logos    # regenerate the OG/social lockups

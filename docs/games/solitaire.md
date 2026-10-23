@@ -1,4 +1,4 @@
-# Solitaire (`/solitaire`)
+# Solitaire (`/games/solitaire`)
 
 Moved here from `../portfolio` on 2026-10-23, where it was an open pull request (portfolio #37). Like Sudoku it keeps
 its own look and sits outside the design system: see [ADR-019](../design-system/DECISIONS.md). This is the game's
@@ -6,7 +6,9 @@ section of the portfolio's `CLAUDE.md`, carried over; read it before touching `c
 `lib/solitaire/`. It shares `components/games/base.css` with Sudoku (the browser defaults both were built on), and
 its sheets are Sudoku's `components/sudoku/sheet.tsx`.
 
-Unlisted: not in the header, the footer or `sitemap.ts`, and `noindex`.
+On the `/games` launcher and the home page's Games section, both of which show this game's `apple-icon.png`
+([ADR-020, ADR-021](../design-system/DECISIONS.md)); its old path redirects here. Not in the header, the footer or
+`sitemap.ts`, and `noindex`. Saved to a home screen there is no back button, so the game keeps its own link to `/games`.
 
 ```bash
 npm run solitaire:cards  # Rasterize the card faces from the Vector Playing Cards pack (see Assets)
@@ -73,10 +75,11 @@ own look (`solitaire.css`, every rule under `html:has(.sol-shell)` / `.sol-*`), 
   sheet.tsx` with `prefix="sol"` (a required prop; Sudoku passes `"sdk"`). Copy in `data/solitaire.ts`.
 - **Assets:** `npm run solitaire:cards` (`scripts/build-solitaire-cards.ts`) renders the pack's SVGs (the court cards
   are 400–600 KB each) to 320 px WebP in `public/solitaire/cards/v1/` (716 KB in all) and writes
-  `app/solitaire/apple-icon.png`; all committed. The pack lives outside the repo at `../Vector-Playing-Cards/
+  `app/games/solitaire/apple-icon.png`; all committed. The pack lives outside the repo at `../Vector-Playing-Cards/
   cards-svg` (github.com/notpeter/Vector-Playing-Cards; override with `CARDS_SVG_DIR`). `next.config.mjs` serves
-  the faces as `immutable` (bump the `v1` folder and `CARD_DIR` with new art) and rewrites `/Solitaire` to
-  `/solitaire` (a redirect would loop: custom routes match case-insensitively).
+  the faces as `immutable` (bump the `v1` folder and `CARD_DIR` with new art) and rewrites `/games/Solitaire` to
+  `/games/solitaire` (a redirect would loop: custom routes match case-insensitively). The old `/solitaire` and
+  `/Solitaire` redirect there (ADR-021).
 - **iOS and Chrome:** `viewport-fit=cover` with the felt under the notch and safe-area padding, `100dvh`,
   `overscroll-behavior: none` (no rubber-banding or Chrome's pull to refresh), `touch-action: none` on the stage,
   no callouts or image drags, cards 10 px clear of the screen's edges, suits as SVG symbols (text suits can turn
@@ -86,7 +89,8 @@ own look (`solitaire.css`, every rule under `html:has(.sol-shell)` / `.sol-*`), 
 
 Unit tests run in node through the Vitest `unit` project (`npm test`), co-located with the code:
 
-- `next.config.test.ts` — /Solitaire is a rewrite (never a redirect) and the card faces are cached as immutable
+- `next.config.test.ts` — /games/Solitaire is a rewrite (never a redirect), the old paths redirect, and the card faces
+  are cached as immutable
 - `lib/solitaire/cards.test.ts`, `deal.test.ts`, `game.test.ts`, `talon.test.ts` — the cards; seed 1's deal pinned
   (a change voids the bank); the rules (turn three, a short stock, recycling keeps the order, the fan, alternating
   colours, Kings on empty columns, fixed-suit foundations, one legal count per move, auto-flip, every Windows

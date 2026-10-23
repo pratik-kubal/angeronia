@@ -4,7 +4,7 @@ import { newGame, type GameState } from "../lib/sudoku/game";
 import { THEMES, THEME_LIST, type SecretDef, type ThemeId } from "../lib/sudoku/themes";
 import { keypad } from "../lib/sudoku/themes/keypad";
 
-// Sudoku (/sudoku). Runs on desktop Chromium and on an iPhone in WebKit (the `iphone` project in
+// Sudoku (/games/sudoku). Runs on desktop Chromium and on an iPhone in WebKit (the `iphone` project in
 // playwright.config.ts). The game lives in localStorage ("sudoku:game"), so the specs read the
 // solution from there and play it.
 
@@ -26,7 +26,7 @@ async function place(page: Page, i: number, digit: number) {
 
 /** Opens /sudoku fresh and starts a game of the difficulty. */
 async function deal(page: Page, difficulty: "Easy" | "Medium" | "Hard") {
-  await page.goto("/sudoku");
+  await page.goto("/games/sudoku");
   await page.getByRole("button", { name: new RegExp(`^${difficulty}`) }).click();
   await expect(page.getByRole("dialog", { name: "New game" })).toBeHidden();
   return saved(page);
@@ -45,7 +45,7 @@ test.beforeEach(async ({ page }) => {
 
 test.describe("Sudoku", () => {
   test("a first visit picks a difficulty, and the board fits one screen", async ({ page }) => {
-    await page.goto("/sudoku");
+    await page.goto("/games/sudoku");
     const menu = page.getByRole("dialog", { name: "New game" });
     await expect(menu.getByRole("heading", { name: "New game" })).toBeVisible();
     // No game yet, so the New game sheet can't be closed.
@@ -314,7 +314,7 @@ test.describe("Sudoku", () => {
 
   test("the first-visit New game sheet survives repeated Escapes", async ({ page, isMobile }) => {
     test.skip(isMobile, "Escape is a keyboard key");
-    await page.goto("/sudoku");
+    await page.goto("/games/sudoku");
     const menu = page.getByRole("dialog", { name: "New game" });
     await expect(menu).toBeVisible();
     for (let k = 0; k < 3; k++) await page.keyboard.press("Escape");
@@ -324,7 +324,7 @@ test.describe("Sudoku", () => {
   });
 
   test("a first visit reaches Settings from the New game sheet, which comes back after", async ({ page, isMobile }) => {
-    await page.goto("/sudoku");
+    await page.goto("/games/sudoku");
     const menu = page.getByRole("dialog", { name: "New game" });
     const row = menu.getByRole("button", { name: "Settings" });
     await row.click();
@@ -369,7 +369,7 @@ test.describe("Sudoku", () => {
     const game = await deal(page, "Easy");
     const [a] = empties(game);
     const other = await context.newPage();
-    await other.goto("/sudoku");
+    await other.goto("/games/sudoku");
     await expect(other.getByRole("dialog", { name: "New game" })).toBeHidden();
     await place(other, a, game.solution[a]);
     // The first tab takes the move from the storage event, and doesn't save over it.
@@ -381,7 +381,7 @@ test.describe("Sudoku", () => {
   test("one win draws one trophy, even with a second tab open", async ({ page, context }) => {
     const game = await deal(page, "Easy");
     const other = await context.newPage();
-    await other.goto("/sudoku");
+    await other.goto("/games/sudoku");
     await expect(other.getByRole("dialog", { name: "New game" })).toBeHidden();
     for (const i of empties(game)) await place(page, i, game.solution[i]);
     await expect(page.getByRole("dialog", { name: "Result" }).getByRole("heading", { name: "Solved" })).toBeVisible({ timeout: 15_000 });
@@ -476,7 +476,7 @@ test.describe("Sudoku themes", () => {
       const game = newGame("easy", 777);
       await themed(page, theme);
       await page.addInitScript((game) => localStorage.setItem("sudoku:game", JSON.stringify(game)), game);
-      await page.goto("/sudoku");
+      await page.goto("/games/sudoku");
       await expect(page.getByRole("dialog", { name: "New game" })).toBeHidden();
       const used = new Set<number>();
       for (const digit of keypad(word)) {

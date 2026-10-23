@@ -12,7 +12,9 @@ The log spans two migrations, in order:
   2026-09-08.
 
 ADR-019 (2026-10-23) is later: the games that moved here from `../portfolio`
-keep their own look, outside the design system.
+keep their own look, outside the design system. ADR-020 (the same day) links
+them from the home page, and ADR-021 moves them under `/games`, behind a
+launcher.
 
 **Read ADR-015 first if you want the current state.** It supersedes D1, D2, D3,
 D7, D8 and ADR-004 / 006 / 008 / 011, and it says what the site is built on
@@ -686,7 +688,8 @@ light and dark, with their scenes, sounds and secrets; Solitaire's felt, card ar
 and win shows. Rebuilding either on Carbon would be a redesign, not a move. So
 they keep their own look, and the design rules do not govern them.
 
-**What is carved out.** `app/sudoku/`, `components/sudoku/`, `lib/sudoku/`,
+**What is carved out.** `app/sudoku/` *(now `app/games/sudoku/`, with the
+launcher at `app/games/page.tsx`; ADR-021)*, `components/sudoku/`, `lib/sudoku/`,
 `data/sudoku.ts`, `data/sudoku-trophies.ts`, `components/games/`, `lib/random.ts`
 and `e2e/`; Solitaire's equivalents when it lands. Inside them, rules 1–9, 11 and
 13 do not apply:
@@ -713,7 +716,8 @@ keyboard), rule 12's TypeScript and strict-build gates, and rule 14.
 **The boundary runs both ways.** Nothing in the studio site imports from the
 games' folders, and the games import nothing from `components/site/`,
 `components/ui/` or `styles/`. They stay unlisted (not in the header, the footer
-or `sitemap.ts`, and `noindex`), so the site never links to them.
+or `sitemap.ts`, and `noindex`), so the site never links to them. *(Amended by
+ADR-020: the home page links to them. The rest of this sentence holds.)*
 
 **What the root layout still gives them, and the base that undoes it.** The
 games render under `app/layout.tsx`, so Carbon's global stylesheet, the Plex
@@ -746,6 +750,129 @@ icon package ships, on their routes only. A route group with its own root layout
 would move the studio pages under `app/(site)/` and give the app two root layouts
 to keep in step; not worth it for two unlisted pages. Revisit if a game is ever
 listed on the site.
+
+### ADR-020 — The home page links to the games, through one launcher
+
+**Recorded 2026-10-23, before the code that deviates, per the rule at the top of
+this file.** Amends one sentence of ADR-019: "they stay unlisted … so the site
+never links to them". The rest of ADR-019 stands.
+
+**What changes.** The home page gets one Games section, between About and
+Contact: a launcher, one tile per game, each its icon, its name and one line.
+There are two games now and there will be more, so the section is built to grow.
+The tiles come from the `games` list in `data/angeronia.ts`, and the grid wraps
+(`repeat(auto-fill, minmax(--site-game-tile, 1fr))`), so a new game is one more
+entry and nothing else. The heading names no number ("Games for a break") for
+the same reason.
+
+Nothing else lists them. The header, the footer and `sitemap.ts` stay as they
+are, and every game stays `noindex`. A visitor can find the games from the home
+page; search engines are still told to leave them out. Indexing them is a
+separate decision: each page's `robots` metadata and one sitemap entry each.
+
+**Where it sits, and why not higher.** The page argues for the studio: its
+product, its services, how it works, who you work with. The games are not part
+of that argument. They are things the studio made, and they come after it and
+before the closing call to action. Unshaded, like About above it: the icons are
+small, and a band for one row of tiles would be the heaviest thing in the
+section.
+
+**The icon is the game's own Add to Home Screen icon, by URL.** Every game
+already ships one at `app/games/<slug>/apple-icon.png` (180 × 180, full-bleed,
+square) and Next serves it at `/games/<slug>/apple-icon.png` (paths as of ADR-021). The tile points at that URL:
+
+* An `href` is not an import, so ADR-019's boundary holds both ways. No game
+  code or CSS reaches the site, and the site imports nothing from a game.
+* No second copy to drift. When a game changes its icon, the launcher follows.
+* Rule 3 is untouched: the games' colours are inside their artwork, not in a
+  stylesheet. Rule 7 is untouched: the icons are square, as Carbon is, and iOS
+  rounds them only on a home screen. Rule 9 is untouched: an icon is the game's
+  mark, not the page's illustration; the hero Möbius still is.
+* The icon repeats the name beside it, so it is `alt=""`.
+* Storybook serves only `public/`, so `.storybook/main.ts` lists `app/games/`
+  and serves every `apple-icon.png` it finds at the same URL. A new game needs no
+  entry there either.
+
+A new game listed here therefore needs its `apple-icon.png`, which it needs
+anyway for Add to Home Screen.
+
+**One link per tile, stretched over it.** The game's name is the link, and its
+`::after` covers the tile, so a click on the icon opens the game too, keyboard
+users get one tab stop per game, and the whole tile is a large touch target
+(rule 10). The tiles are a `<ul>`, because a launcher is a list of links.
+
+**The list is a prop.** Every other section reads its copy straight from
+`data/angeronia.ts`. `Games` takes `games` instead, and the page passes the real
+list, so Storybook can show the launcher with twelve tiles (`ManyGames`) before
+there are twelve games.
+
+**ADR-019's "revisit if a game is ever listed".** Revisited. That cost is
+Carbon's stylesheet loading on the game routes. A link from the home page does
+not change which routes load what, and a route group would still move every
+studio page under `app/(site)/`. Still not worth it.
+
+### ADR-021 — The games move under `/games`, behind a launcher saved as a web app
+
+**Recorded 2026-10-23, before the code, per the rule at the top of this file.**
+Extends ADR-019's carve-out to one more page and moves the games' routes. The
+home page's launcher (ADR-020) stays; its tiles point at the new paths.
+
+**The paths.**
+
+| Path | What |
+|---|---|
+| `/games` | The launcher: the games' icons and names, nothing else. |
+| `/games/sudoku` | Sudoku (was `/sudoku`). |
+| `/games/solitaire` | Solitaire (was `/solitaire`). `/games/Solitaire`, in any casing, serves it too, as `/Solitaire` did. |
+| `/sudoku`, `/solitaire`, `/Solitaire` | Permanent redirects (308) to the new paths, so a shared link or a game already saved to a home screen still opens. |
+
+A new game goes at `app/games/<slug>/`, with its own `apple-icon.png`, and one
+entry in `games` in `data/angeronia.ts`. Both launchers read that list.
+
+**The old `/Solitaire` rule no longer applies.** It was a rewrite because a
+redirect from `/Solitaire` would also catch `/solitaire` (custom routes ignore
+case) and loop. The game no longer lives at either, so both now redirect to
+`/games/solitaire`, and `/games/Solitaire` takes over the rewrite, for the same
+reason as before.
+
+The card faces stay at `/solitaire/cards/v1/`. They are versioned, cached for a
+year, and the redirect matches `/solitaire` exactly, not what is under it.
+
+**The launcher is a games page, not a studio page.** It is meant to be saved to
+an iPhone's home screen from Safari or Chrome. It then opens full screen as
+"Games", and every game opens inside that one app. That makes it the games'
+home screen, so it takes the games' side of ADR-019:
+
+* Its own look, in `components/games/launcher.css` and scoped to `.gml-*`. It is
+  laid out like a home screen: square artwork rounded the way iOS rounds an icon,
+  the name under each icon, the system font, and the system's grouped ground in
+  light and dark. It follows the device's colour scheme, not the site's
+  `data-theme`, as the games do. Carbon's square rule does not reach it.
+* `components/games/base.css` covers its shell as it covers the games'.
+* The skip link lands on its `<main id="main">`, and its heading is a visually
+  hidden `h1`. "Just the icons" is a visual brief, not a reason to leave the
+  page without a title.
+* `noindex`, like the games, and not in the sitemap.
+
+It reads the game list from `data/angeronia.ts`, which is plain data. ADR-019
+keeps the games' own copy out of that file and keeps the games from importing
+`components/site/`, `components/ui/` and `styles/`. Neither changes: the list is
+the studio's, and one list means a new game is still one entry.
+
+**Its own icon.** `app/games/apple-icon.png` is generated by
+`npm run games:icon` (`scripts/build-games-icon.ts`, sharp): the games' own
+icons, small, on a dark ground, like an iOS folder. Re-run it when a game is
+added.
+
+**Inside the saved app there is no back button**, so each game needs a way back
+to the launcher. Sudoku's home button, which pointed at `/`, now points at
+`/games`. Solitaire had no way out; its Menu gets an "All games" row. Both
+appear in the game's own look.
+
+**Status bar.** The launcher saves with `statusBarStyle: "default"`, so every
+page in the app starts below the status bar, and each page's `theme-color`
+tints it. `black-translucent` would put Solitaire's felt under the clock, but
+it would also put white status text over Sudoku's light aurora.
 
 ---
 
