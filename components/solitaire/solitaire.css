@@ -1,0 +1,379 @@
+/* ══════════════════════════════════════════════════════════════════════════
+   SOLITAIRE (/solitaire) — the classic: green felt, red lattice backs, white
+   cards. Imported by app/solitaire/page.tsx only, so none of it reaches the home
+   page's CSS; every rule is scoped to the route (html:has(.sol-shell), .sol-*).
+   Cards are placed by components/solitaire/animator.ts (transform and z-index
+   inline); this sheet sizes and draws them from --card-w / --card-h, which the
+   table sets from its layout.
+   ══════════════════════════════════════════════════════════════════════════ */
+html:has(.sol-shell) {
+  --felt: #1b7430;
+  --felt-deep: #145a22;
+  --felt-line: rgb(255 255 255 / 0.3);
+  --ink: #ffffff;
+  --muted: rgb(255 255 255 / 0.74);
+  --card-red: #d0102b;
+  --card-black: #121212;
+  --back-red: #c8102e;
+  --hint: #ffd84a;
+  --sheet: #fbfaf5;
+  --sheet-ink: #1b2a1e;
+  --sheet-muted: #56665a;
+  --sheet-tile: #edf0e7;
+  --green: #17702b;
+  --font: -apple-system, BlinkMacSystemFont, "SF Pro Text", system-ui, sans-serif;
+  /* A crosshatch of fine light lines on the back's red, like the classic deck. */
+  --lattice: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='10' viewBox='0 0 10 10'%3E%3Cpath d='M0 0L10 10M10 0L0 10' stroke='%23ffe4e4' stroke-width='1.05' stroke-opacity='.9'/%3E%3C/svg%3E");
+  /* Felt grain: a small tile of soft noise. */
+  --grain: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 0  0 0 0 0 0  0 0 0 0 0  0 0 0 .6 0'/%3E%3C/filter%3E%3Crect width='160' height='160' filter='url(%23n)' opacity='.3'/%3E%3C/svg%3E");
+
+  background: var(--felt-deep);
+  /* !important: next-themes writes the portfolio's color-scheme inline on <html>. */
+  color-scheme: dark !important;
+}
+
+/* The felt fills the whole screen (under the notch and the home bar too); the page never scrolls,
+   rubber-bands or pulls to refresh (Chrome on iOS), and never swipes back on a trackpad. */
+html:has(.sol-shell),
+html:has(.sol-shell) body {
+  height: 100%;
+  overflow: hidden;
+  overscroll-behavior: none;
+}
+html:has(.sol-shell) body {
+  background:
+    var(--grain),
+    radial-gradient(130% 95% at 50% 30%, #23822f 0%, var(--felt) 48%, var(--felt-deep) 100%);
+  background-color: var(--felt);
+}
+
+.sol-shell {
+  position: relative;
+  height: 100vh;
+  height: 100dvh;
+  display: flex;
+  padding: env(safe-area-inset-top) env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left);
+  color: var(--ink);
+  font-family: var(--font);
+  -webkit-font-smoothing: antialiased;
+  /* A game, not a document: no double-tap zoom, text selection or long-press callouts. */
+  touch-action: manipulation;
+  user-select: none;
+  -webkit-user-select: none;
+  -webkit-touch-callout: none;
+  -webkit-tap-highlight-color: transparent;
+}
+.sol-shell :is(button, a):focus-visible { outline: 2px solid var(--hint); outline-offset: 2px; }
+.sol-sr {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+}
+
+.sol-game { flex: 1 1 auto; display: flex; min-width: 0; min-height: 0; }
+/* Touches on the table are the game's alone: no panning or pinching (sheets scroll on their own). */
+.sol-stage { position: relative; flex: 1 1 auto; min-width: 0; min-height: 0; overflow: hidden; touch-action: none; }
+.sol-table { position: absolute; inset: 0; z-index: 0; }
+
+/* ── cards ───────────────────────────────────────────────────────────────── */
+.sol-card { position: absolute; left: 0; top: 0; width: var(--card-w); height: var(--card-h); }
+.sol-card[role="button"] { cursor: grab; }
+.sol-card[role="button"]:active { cursor: grabbing; }
+/* Hidden until the layout is known and the faces have decoded, and under a win animation. */
+.sol-table:not([data-ready]) .sol-card,
+.sol-table[data-fx] .sol-card { visibility: hidden; }
+.sol-card-in {
+  position: absolute;
+  inset: 0;
+  border-radius: calc(var(--card-w) * 0.065);
+  background: #fff;
+  box-shadow: 0 0 0 0.5px rgb(0 0 0 / 0.5), 0 1px 2px rgb(0 0 0 / 0.3);
+}
+.sol-card:focus-visible { outline: none; }
+.sol-card:focus-visible .sol-card-in { outline: 3px solid var(--hint); outline-offset: 1px; }
+.sol-face {
+  position: absolute;
+  inset: 0;
+  display: block;
+  width: 100%;
+  height: 100%;
+  border-radius: inherit;
+  pointer-events: none;
+  -webkit-user-drag: none;
+}
+/* The back: white rim, red lattice. Shown over the (always painted) face while data-up isn't "1". */
+.sol-back { position: absolute; inset: 0; display: none; border-radius: inherit; background: #fff; }
+.sol-card:not([data-up="1"]) .sol-back { display: block; }
+.sol-back::after {
+  content: "";
+  position: absolute;
+  inset: calc(var(--card-w) * 0.06);
+  border-radius: calc(var(--card-w) * 0.035);
+  background: var(--lattice) center / calc(var(--card-w) * 0.13) repeat, var(--back-red);
+  box-shadow: inset 0 0 0 1px rgb(110 0 18 / 0.55);
+}
+/* Small cards: a big corner index over the art's own, which is too small to read. */
+.sol-index {
+  position: absolute;
+  top: 0;
+  left: 0;
+  display: none;
+  align-items: flex-start;
+  gap: 1px;
+  /* Tall enough to cover the art's own index, the small suit under its rank included. */
+  min-height: calc(var(--card-w) * 0.4);
+  padding: calc(var(--card-w) * 0.035) calc(var(--card-w) * 0.05) calc(var(--card-w) * 0.03) calc(var(--card-w) * 0.045);
+  border-radius: calc(var(--card-w) * 0.065) 0 calc(var(--card-w) * 0.06) 0;
+  background: #fff;
+  color: var(--card-black);
+  font: 800 calc(var(--card-w) * 0.27) / 1 var(--font);
+  letter-spacing: -0.05em;
+  /* Its right edge fades out, so the pip it overlaps isn't cut off hard. */
+  -webkit-mask-image: linear-gradient(to right, #000 calc(100% - var(--card-w) * 0.06), transparent);
+  mask-image: linear-gradient(to right, #000 calc(100% - var(--card-w) * 0.06), transparent);
+}
+.sol-index[data-red] { color: var(--card-red); }
+.sol-index svg { width: 0.82em; height: 0.82em; fill: currentColor; }
+.sol-table[data-big] .sol-index { display: flex; }
+
+/* A hinted card or pile: a soft gold ring (pulsing, motion allowing). */
+.sol-card[data-hint] .sol-card-in::after,
+.sol-slot[data-hint]::after,
+.sol-slot[data-over]::after {
+  content: "";
+  position: absolute;
+  inset: -3px;
+  border-radius: calc(var(--card-w) * 0.08);
+  box-shadow: 0 0 0 2.5px var(--hint), 0 0 16px 3px rgb(255 214 60 / 0.6);
+  pointer-events: none;
+}
+@media (prefers-reduced-motion: no-preference) {
+  .sol-card[data-hint] .sol-card-in::after,
+  .sol-slot[data-hint]::after { animation: solPulse 0.8s ease-in-out infinite alternate; }
+}
+@keyframes solPulse {
+  from { opacity: 1; }
+  to { opacity: 0.35; }
+}
+
+/* ── slots ───────────────────────────────────────────────────────────────── */
+.sol-slot {
+  position: absolute;
+  top: 0;
+  left: 0;
+  display: grid;
+  place-items: center;
+  width: var(--card-w);
+  height: var(--card-h);
+  padding: 0;
+  border: 0;
+  border-radius: calc(var(--card-w) * 0.065);
+  background: rgb(0 0 0 / 0.07);
+  box-shadow: inset 0 0 0 1.5px var(--felt-line);
+  color: inherit;
+}
+.sol-slot svg { width: 46%; height: 46%; }
+.sol-slot[data-slot^="f"] svg { fill: currentColor; opacity: 0.85; }
+.sol-slot[data-slot="f0"],
+.sol-slot[data-slot="f2"] { color: #b40d27; }
+.sol-slot[data-slot="f1"],
+.sol-slot[data-slot="f3"] { color: #0b1a0e; }
+.sol-slot[data-slot="w"] { background: none; box-shadow: none; }
+.sol-slot[data-slot^="t"] { background: rgb(0 0 0 / 0.05); box-shadow: inset 0 0 0 1px rgb(255 255 255 / 0.16); }
+/* The stock: under its cards; empty, a ring to turn the waste back over (Windows' green O). */
+.sol-slot[data-slot="s"] { appearance: none; cursor: pointer; }
+.sol-slot[data-slot="s"] svg { fill: none; stroke: rgb(255 255 255 / 0.6); stroke-width: 2.2; opacity: 0; }
+.sol-slot[data-slot="s"][data-empty] svg { opacity: 1; }
+.sol-slot[data-slot="s"][data-spent] svg { opacity: 0.22; }
+
+/* ── controls ────────────────────────────────────────────────────────────── */
+.sol-controls { position: absolute; z-index: 10; display: flex; align-items: center; gap: 6px; pointer-events: none; }
+.sol-controls > * { pointer-events: auto; }
+.sol-bar { justify-content: space-between; padding: 0 10px; }
+.sol-bar .sol-status { flex: 1 1 auto; justify-content: center; }
+.sol-rail { flex-direction: column; justify-content: flex-start; padding-top: 4px; }
+.sol-rail[data-side="left"] { flex-flow: row wrap; align-content: flex-start; justify-content: center; }
+.sol-tool {
+  appearance: none;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  min-width: 42px;
+  height: 38px;
+  padding: 0 10px;
+  border: 0;
+  border-radius: 12px;
+  background: rgb(0 0 0 / 0.24);
+  box-shadow: inset 0 0 0 1px rgb(255 255 255 / 0.15);
+  color: #fff;
+  font: 650 14px/1 var(--font);
+  cursor: pointer;
+  transition: transform 0.12s cubic-bezier(0.2, 0.8, 0.2, 1), background 0.12s;
+}
+.sol-tool:disabled { opacity: 0.38; cursor: default; }
+.sol-tool:not(:disabled):active { transform: scale(0.93); background: rgb(0 0 0 / 0.36); }
+.sol-finish { background: var(--hint); box-shadow: none; color: #23300f; }
+.sol-finish:not(:disabled):active { background: #f1c62c; }
+.sol-rail .sol-tool { min-width: 0; width: 34px; height: 34px; padding: 0; border-radius: 10px; }
+.sol-rail .sol-finish { width: auto; flex: 1 0 100%; padding: 0 8px; font-size: 13px; }
+.sol-status {
+  display: flex;
+  align-items: baseline;
+  gap: 12px;
+  min-width: 0;
+  overflow: hidden;
+  color: var(--muted);
+  font: 500 12.5px/1.2 var(--font);
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}
+.sol-status b { color: #fff; font-weight: 700; }
+.sol-rail .sol-status { flex-direction: column; align-items: center; gap: 2px; font-size: 11.5px; }
+@media (max-width: 400px) {
+  .sol-bar .sol-deal { display: none; }
+  .sol-status { gap: 9px; }
+}
+
+/* ── the win show, toasts ────────────────────────────────────────────────── */
+.sol-fx { position: absolute; inset: 0; z-index: 20; width: 100%; height: 100%; cursor: pointer; }
+.sol-skip {
+  position: absolute;
+  z-index: 21;
+  left: 50%;
+  bottom: 8px;
+  margin: 0;
+  translate: -50% 0;
+  color: rgb(255 255 255 / 0.7);
+  font: 600 12px/1 var(--font);
+  pointer-events: none;
+}
+.sol-toast {
+  position: absolute;
+  z-index: 30;
+  top: 10px;
+  left: 50%;
+  max-width: calc(100% - 32px);
+  margin: 0;
+  padding: 10px 14px;
+  translate: -50% 0;
+  border-radius: 12px;
+  background: rgb(8 28 12 / 0.9);
+  box-shadow: 0 8px 24px rgb(0 0 0 / 0.35);
+  color: #fff;
+  font: 600 13.5px/1.3 var(--font);
+  text-align: center;
+  pointer-events: none;
+}
+@media (prefers-reduced-motion: no-preference) {
+  .sol-toast { animation: solToast 0.25s cubic-bezier(0.2, 0.8, 0.2, 1); }
+}
+@keyframes solToast {
+  from { opacity: 0; transform: translateY(-8px); }
+}
+
+/* ── sheets: a bottom sheet on phones held upright, a card elsewhere ─────── */
+.sol-sheet {
+  width: 100%;
+  max-width: 480px;
+  max-height: calc(100dvh - env(safe-area-inset-top) - 24px);
+  margin: auto auto 0;
+  padding: 0;
+  border: 0;
+  border-radius: 22px 22px 0 0;
+  background: var(--sheet);
+  color: var(--sheet-ink);
+  font-family: var(--font);
+  box-shadow: 0 -20px 50px -20px rgb(0 0 0 / 0.5);
+  overflow: hidden;
+}
+.sol-sheet[open] { display: flex; flex-direction: column; }
+@media (min-width: 601px), (orientation: landscape) {
+  .sol-sheet { width: min(440px, calc(100vw - 32px)); max-height: calc(100dvh - 24px); margin: auto; border-radius: 22px; }
+}
+.sol-sheet:focus { outline: none; }
+.sol-sheet::backdrop { background: rgb(0 18 5 / 0.5); }
+.sol-sheet :is(button):focus-visible { outline: 2px solid var(--green); outline-offset: 2px; }
+.sol-sheet-body { position: relative; display: flex; flex-direction: column; flex: 1 1 auto; min-height: 0; }
+.sol-sheet-scroll {
+  flex: 1 1 auto;
+  min-height: 0;
+  overflow: auto;
+  overscroll-behavior: contain;
+  touch-action: pan-y;
+  padding: 0 18px calc(env(safe-area-inset-bottom) + 18px);
+}
+.sol-grab { flex: none; display: grid; place-items: center; height: 20px; touch-action: none; cursor: grab; }
+.sol-grab span { width: 36px; height: 5px; border-radius: 3px; background: var(--sheet-ink); opacity: 0.2; }
+.sol-sheet-x {
+  position: absolute;
+  top: 18px;
+  right: 14px;
+  z-index: 3;
+  appearance: none;
+  display: grid;
+  place-items: center;
+  width: 30px;
+  height: 30px;
+  border: 0;
+  border-radius: 50%;
+  background: var(--sheet-tile);
+  color: var(--sheet-muted);
+  cursor: pointer;
+}
+.sol-sheet-title { margin: 6px 40px 2px 0; font: 760 21px/1.2 var(--font); }
+.sol-sheet-sub { margin: 0 0 14px; color: var(--sheet-muted); font-size: 13.5px; }
+.sol-menu { display: grid; gap: 8px; }
+.sol-menu-item {
+  appearance: none;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 13px 14px;
+  border: 0;
+  border-radius: 14px;
+  background: var(--sheet-tile);
+  color: inherit;
+  font: 620 15.5px/1.2 var(--font);
+  text-align: left;
+  cursor: pointer;
+}
+.sol-menu-item svg { color: var(--green); }
+.sol-menu-item:disabled { opacity: 0.45; cursor: default; }
+.sol-stats { display: grid; grid-template-columns: repeat(auto-fill, minmax(118px, 1fr)); gap: 8px; margin: 0; }
+.sol-stats div { padding: 10px 12px; border-radius: 12px; background: var(--sheet-tile); }
+.sol-stats dt { color: var(--sheet-muted); font-size: 12px; }
+.sol-stats dd { margin: 2px 0 0; font: 700 18px/1.2 var(--font); font-variant-numeric: tabular-nums; }
+.sol-help { display: grid; gap: 10px; margin: 0; padding-left: 18px; font-size: 14.5px; line-height: 1.45; }
+.sol-result { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; margin-bottom: 12px; }
+.sol-result div {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 12px 6px;
+  border-radius: 14px;
+  background: linear-gradient(#21843a, #14612a);
+  color: #fff;
+}
+.sol-result span { font: 800 22px/1.15 var(--font); font-variant-numeric: tabular-nums; }
+.sol-result small { font-size: 12px; opacity: 0.82; }
+.sol-actions { display: flex; gap: 8px; margin-top: 14px; }
+.sol-button {
+  appearance: none;
+  flex: 1;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  height: 46px;
+  border: 0;
+  border-radius: 14px;
+  background: var(--green);
+  color: #fff;
+  font: 700 15.5px/1 var(--font);
+  cursor: pointer;
+}
+.sol-button[data-quiet] { background: var(--sheet-tile); color: var(--sheet-ink); }

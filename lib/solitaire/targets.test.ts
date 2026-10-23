@@ -1,7 +1,8 @@
 import { describe, expect, it } from "vitest";
 import { CARDS, cardCode, type Card } from "./cards";
-import type { Table } from "./deal";
-import { bestTarget, runAt } from "./targets";
+import { deal, type Table } from "./deal";
+import { PILE_IDS, pileCards } from "./game";
+import { bestTarget, locate, runAt } from "./targets";
 
 const CODES = new Map(CARDS.map((c) => [cardCode(c), c]));
 const cards = (codes: string): Card[] => (codes ? codes.split(" ").map((c) => CODES.get(c)!) : []);
@@ -58,5 +59,12 @@ describe("bestTarget", () => {
   it("returns null when nothing fits", () => {
     const t = table("5D", ["", "", "", ""], [["", "9S"]]);
     expect(bestTarget(t, "w", 1)).toBeNull();
+  });
+});
+
+describe("locate", () => {
+  it("finds every card's pile and place", () => {
+    const t = deal(8);
+    for (const pile of PILE_IDS) pileCards(t, pile).forEach((card, index) => expect(locate(t, card)).toEqual({ pile, index }));
   });
 });

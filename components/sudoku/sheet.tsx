@@ -10,6 +10,8 @@ type Props = {
   dismissible: boolean;
   onClose: () => void;
   children: ReactNode;
+  /** The class prefix its styles use ("sdk" for Sudoku's, "sol" for Solitaire's). */
+  prefix?: string;
 };
 
 /** How far down (px) a drag on the grabber must pull the sheet to dismiss it. */
@@ -23,7 +25,7 @@ const DISMISS_DRAG = 90;
  * collection or New game over the result): one that comes back puts focus where it was, and when
  * the last one closes focus returns to the page control that opened them.
  */
-export function Sheet({ open, label, dismissible, onClose, children }: Props) {
+export function Sheet({ open, label, dismissible, onClose, children, prefix = "sdk" }: Props) {
   const ref = useRef<HTMLDialogElement>(null);
   const drag = useRef<{ y: number; dy: number } | null>(null);
   /** The page control that opened this sheet. */
@@ -49,7 +51,7 @@ export function Sheet({ open, label, dismissible, onClose, children }: Props) {
       within.current = active && active !== dialog && dialog.contains(active) ? active : null;
       dialog.close();
       requestAnimationFrame(() => {
-        if (document.querySelector("dialog.sdk-sheet[open]")) return;
+        if (document.querySelector("dialog[data-sheet][open]")) return;
         within.current = null;
         if (opener.current?.isConnected) opener.current.focus();
       });
@@ -77,7 +79,8 @@ export function Sheet({ open, label, dismissible, onClose, children }: Props) {
   return (
     <dialog
       ref={ref}
-      className="sdk-sheet"
+      className={`${prefix}-sheet`}
+      data-sheet=""
       aria-label={label}
       onCancel={(e) => {
         e.preventDefault();
@@ -96,9 +99,9 @@ export function Sheet({ open, label, dismissible, onClose, children }: Props) {
       }}
     >
       {/* The body fills the dialog, so a click whose target is the dialog itself is on the backdrop. */}
-      <div className="sdk-sheet-body">
+      <div className={`${prefix}-sheet-body`}>
         <div
-          className="sdk-grab"
+          className={`${prefix}-grab`}
           aria-hidden
           onPointerDown={onGrab}
           onPointerMove={onDrag}
@@ -108,11 +111,11 @@ export function Sheet({ open, label, dismissible, onClose, children }: Props) {
           <span />
         </div>
         {dismissible && (
-          <button type="button" className="sdk-sheet-x" aria-label="Close" onClick={onClose}>
+          <button type="button" className={`${prefix}-sheet-x`} aria-label="Close" onClick={onClose}>
             <XIcon size={13} weight="bold" />
           </button>
         )}
-        <div className="sdk-sheet-scroll">{children}</div>
+        <div className={`${prefix}-sheet-scroll`}>{children}</div>
       </div>
     </dialog>
   );

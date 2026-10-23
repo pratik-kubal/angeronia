@@ -38,3 +38,13 @@ export function bestTarget(table: Table, from: PileId, count: number): PileId | 
   const uncovers = from === "w" || table.tableau[Number(from[1])].down.length > 0;
   return uncovers ? empty : null;
 }
+
+/** Which pile a card is in, and where (bottom first, face-down cards included). */
+export function locate(table: Table, card: number): { pile: PileId; index: number } | null {
+  const piles: PileId[] = ["s", "w", ...FOUNDATION_IDS, ...TABLEAU_IDS];
+  for (const pile of piles) {
+    const index = pileCards(table, pile).indexOf(card);
+    if (index >= 0) return { pile, index };
+  }
+  return null;
+}
