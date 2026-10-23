@@ -31,6 +31,11 @@ jobs:
       - name: TypeScript
         run: npx tsc --noEmit
 
+      # The games' own gate (DECISIONS.md ADR-019): Vitest in node. Their
+      # Playwright specs need WebKit and a dev server, and run locally.
+      - name: Unit tests
+        run: npm test
+
       # Compiles the production stylesheet, checks that every token the brand
       # override assigns is one Carbon defines, and asserts WCAG AA across every
       # pairing the override creates in both themes — plus the favicon against

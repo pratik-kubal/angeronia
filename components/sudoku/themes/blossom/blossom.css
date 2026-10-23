@@ -1,0 +1,685 @@
+/* ══════════════════════════════════════════════════════════════════════════
+   BLOSSOM — a picture-book spring garden. Light is an April morning (sky blue,
+   a butter sun, bark and cherry blossom over a green meadow); dark is the same
+   garden at night (yozakura: blossoms glowing under a crescent moon, a plum sky,
+   a deep teal meadow). Every digit has its own colour; the selection is a
+   cherry pill, a finished unit sweeps leaf green and a refused digit is a drop
+   of spring rain.
+   ══════════════════════════════════════════════════════════════════════════ */
+html[data-sdk-theme="blossom"]:has(.sdk-shell) {
+  --bg: #fdf5f3;
+  --backdrop:
+    radial-gradient(90% 34% at 50% -4%, #d8ecff 0%, rgb(216 236 255 / 0) 74%),
+    radial-gradient(42% 26% at 102% 2%, #fff0b8 0%, rgb(255 240 184 / 0) 72%),
+    radial-gradient(64% 36% at -4% 34%, #ffd2e1 0%, rgb(255 210 225 / 0) 72%),
+    radial-gradient(70% 34% at 104% 70%, #ffe0ea 0%, rgb(255 224 234 / 0) 72%),
+    radial-gradient(100% 30% at 50% 106%, #d3edbd 0%, rgb(211 237 189 / 0) 74%);
+  --surface: #fffbfa;
+  --surface-tint:
+    linear-gradient(135deg, rgb(255 140 185 / 0.08) 0%, rgb(255 140 185 / 0) 44%),
+    linear-gradient(315deg, rgb(130 200 100 / 0.11) 0%, rgb(130 200 100 / 0) 40%),
+    linear-gradient(225deg, rgb(255 214 110 / 0.09) 0%, rgb(255 214 110 / 0) 36%);
+  --surface-2: rgb(255 255 255 / 0.72);
+  --sheet: linear-gradient(180deg, rgb(255 200 220 / 0.26) 0%, rgb(255 200 220 / 0) 150px), #fff7f6;
+  --sheet-solid: #fff7f6;
+  --card: #ffffff;
+  --glass-edge: rgb(255 255 255 / 0.95);
+  --ink: #3a1d2c;
+  --muted: #6b4a5a;
+  --line: #f1dfe4;
+  --line-strong: #b97a94;
+  --d1: #c32928;
+  --d2: #a25201;
+  --d3: #047091;
+  --d4: #067566;
+  --d5: #02781e;
+  --d6: #bb2a74;
+  --d7: #3d5dd7;
+  --d8: #9e3cae;
+  --d9: #7e4bcb;
+  --accent: #d63a7a;
+  --accent-soft: #fde3ee;
+  --accent-soft-ink: #a41f5c;
+  --select: linear-gradient(135deg, #b02a72 0%, #c4405c 100%);
+  --select-ink: #ffffff;
+  --peer: #fce4ec;
+  --error: #2f5d9a;
+  --error-bg: #e2eefb;
+  --success: #6cc76a;
+  --success-ink: #2b7a34;
+  --flash-a: color-mix(in srgb, var(--success) 12%, var(--surface));
+  --flash-b: color-mix(in srgb, var(--success) 20%, var(--surface));
+  --flash-c: color-mix(in srgb, var(--success) 28%, var(--surface));
+  --flash-sheen: rgb(255 255 255 / 0.85);
+  --glow: rgb(200 50 110 / 0.34);
+  --rim: linear-gradient(135deg, #f27ba8 0%, #f6b08a 52%, #8fcf6a 100%);
+  --pad-tint: linear-gradient(90deg, rgb(242 123 168 / 0.13) 0%, rgb(246 176 138 / 0.12) 50%, rgb(143 207 106 / 0.15) 100%);
+  --track: rgb(58 29 44 / 0.08);
+  --seg-on: #ffffff;
+  --easy: #2a7034;
+  --easy-bg: #e1f3d8;
+  --medium: #b0306a;
+  --medium-bg: #fde3ee;
+  --hard: #5a3aa8;
+  --hard-bg: #ebe4fb;
+  --common: #6b4a5a;
+  --common-bg: rgb(107 74 90 / 0.08);
+  --uncommon: #2a7034;
+  --uncommon-bg: #e1f3d8;
+  --rare: #2f5d9a;
+  --rare-bg: #e2eefb;
+  --epic: #8a2fa0;
+  --epic-bg: #f5e3fa;
+  --legendary: #8a5a00;
+  --legendary-bg: #fff1c9;
+  --gold: linear-gradient(135deg, #ffd66b 0%, #ffab5e 50%, #f27ba8 100%);
+  --spark-1: #e2457f;
+  --spark-2: #f29b38;
+  --spark-3: #4caf50;
+  --spark-4: #4a90d9;
+  --shadow: 0 1px 0 rgb(255 255 255 / 0.9) inset, 0 18px 40px -18px rgb(150 40 90 / 0.32), 0 2px 8px rgb(150 40 90 / 0.07);
+  --shadow-key: 0 1px 0 rgb(255 255 255 / 0.95) inset, 0 8px 18px -10px rgb(150 40 90 / 0.3), 0 1px 3px rgb(150 40 90 / 0.07);
+  --scrim: rgb(60 20 40 / 0.28);
+
+  /* The garden. */
+  --sdk-blossom-bark: #8a6355;
+  --sdk-blossom-bark-hi: #a77c6b;
+  --sdk-blossom-petal-1: #f7a8c4;
+  --sdk-blossom-petal-2: #fbc6d8;
+  --sdk-blossom-petal-3: #f48fb1;
+  --sdk-blossom-eye: #d9578a;
+  --sdk-blossom-stem: #5aa35a;
+  --sdk-blossom-leaf: #74b862;
+  --sdk-blossom-bud: #9ccc7a;
+  --sdk-blossom-bud-tip: #f3a6c0;
+  --sdk-blossom-daisy: #ffffff;
+  --sdk-blossom-daisy-edge: rgb(170 100 130 / 0.3);
+  --sdk-blossom-daisy-eye: #f6c443;
+  --sdk-blossom-tulip-1: #ef6f9a;
+  --sdk-blossom-tulip-2: #f7c548;
+  --sdk-blossom-tulip-3: #b48ae8;
+  --sdk-blossom-glow: rgb(255 170 210 / 0);
+  --sdk-blossom-haze: rgb(255 196 218 / 0.8);
+  --sdk-blossom-hill-1: #cfe8b4;
+  --sdk-blossom-hill-2: #b3dc98;
+  --sdk-blossom-soil: #d9b99a;
+  --sdk-blossom-soil-dark: #c49f7f;
+  --sdk-blossom-wood: #c8956a;
+  --sdk-blossom-wood-dark: #a7764e;
+  --sdk-blossom-orb: #fff3b0;
+  --sdk-blossom-orb-glow: rgb(255 236 150 / 0.55);
+  --sdk-blossom-cloud: rgb(255 255 255 / 0.9);
+  --sdk-blossom-star: #fff6d8;
+  --sdk-blossom-rain: #7fb0e8;
+  --sdk-blossom-bee: #ffcf3f;
+  --sdk-blossom-bee-stripe: #3a1d2c;
+  --sdk-blossom-wing: rgb(255 255 255 / 0.85);
+  --sdk-blossom-fly-a: #ffd25a;
+  --sdk-blossom-fly-b: #8fc4ff;
+  --sdk-blossom-firefly: rgb(255 240 150 / 0);
+  --sdk-blossom-bird: #2b3560;
+  --sdk-blossom-bird-belly: #f6efe6;
+  --sdk-blossom-bird-throat: #d9643a;
+  --sdk-blossom-hive: #e2b45c;
+  --sdk-blossom-hive-line: #b9873a;
+  --sdk-blossom-bow-1: #ff8f8f;
+  --sdk-blossom-bow-2: #ffb46b;
+  --sdk-blossom-bow-3: #ffe17a;
+  --sdk-blossom-bow-4: #9fdc8a;
+  --sdk-blossom-bow-5: #8ecff5;
+  --sdk-blossom-bow-6: #93a8f0;
+  --sdk-blossom-bow-7: #c59ff0;
+  --sdk-blossom-bow-alpha: 0.5;
+}
+html[data-sdk-theme="blossom"][data-sdk-scheme="dark"]:has(.sdk-shell) {
+  --bg: #140d1c;
+  --backdrop:
+    radial-gradient(46% 28% at 100% 0%, rgb(255 236 200 / 0.18) 0%, rgb(255 236 200 / 0) 70%),
+    radial-gradient(70% 40% at -6% 22%, rgb(232 96 160 / 0.3) 0%, rgb(232 96 160 / 0) 72%),
+    radial-gradient(64% 36% at 106% 64%, rgb(120 96 230 / 0.24) 0%, rgb(120 96 230 / 0) 72%),
+    radial-gradient(100% 34% at 50% 108%, rgb(48 140 104 / 0.36) 0%, rgb(48 140 104 / 0) 74%);
+  --surface: #1c1426;
+  --surface-tint:
+    linear-gradient(135deg, rgb(255 140 190 / 0.07) 0%, rgb(255 140 190 / 0) 40%),
+    linear-gradient(315deg, rgb(110 210 150 / 0.06) 0%, rgb(110 210 150 / 0) 40%),
+    linear-gradient(225deg, rgb(255 236 200 / 0.05) 0%, rgb(255 236 200 / 0) 34%);
+  --surface-2: rgb(46 30 60 / 0.62);
+  --sheet: linear-gradient(180deg, rgb(255 150 200 / 0.08) 0%, rgb(255 150 200 / 0) 160px), #20172b;
+  --sheet-solid: #20172b;
+  --card: rgb(255 255 255 / 0.055);
+  --glass-edge: rgb(255 200 225 / 0.16);
+  --ink: #fbeef3;
+  --muted: #c4a9b8;
+  --line: #2f2338;
+  --line-strong: #8f6585;
+  --d1: #f45b52;
+  --d2: #dd7202;
+  --d3: #059ac7;
+  --d4: #07a08d;
+  --d5: #16a431;
+  --d6: #ec5a9d;
+  --d7: #6489fe;
+  --d8: #cc69dc;
+  --d9: #a676fa;
+  --accent: #ff8fbf;
+  --accent-soft: rgb(255 143 191 / 0.15);
+  --accent-soft-ink: #ffb3d4;
+  --select: linear-gradient(135deg, #ffa8cb 0%, #ffd2a6 100%);
+  --select-ink: #2a1020;
+  --peer: #2c1f38;
+  --error: #9cc6ff;
+  --error-bg: #172640;
+  --success: #7fe0a0;
+  --success-ink: #8fe6a8;
+  --flash-a: color-mix(in srgb, var(--success) 7%, var(--surface));
+  --flash-b: color-mix(in srgb, var(--success) 13%, var(--surface));
+  --flash-c: color-mix(in srgb, var(--success) 18%, var(--surface));
+  --flash-sheen: rgb(200 255 220 / 0.16);
+  --glow: rgb(255 143 191 / 0.42);
+  --rim: linear-gradient(135deg, #ff9ec6 0%, #ffd2a6 50%, #8fe6a8 100%);
+  --pad-tint: linear-gradient(90deg, rgb(255 158 198 / 0.1) 0%, rgb(255 210 166 / 0.08) 50%, rgb(143 230 168 / 0.1) 100%);
+  --track: rgb(255 255 255 / 0.08);
+  --seg-on: #43304f;
+  --easy: #a8e6a0;
+  --easy-bg: rgb(120 220 140 / 0.16);
+  --medium: #ffadd0;
+  --medium-bg: rgb(255 143 191 / 0.18);
+  --hard: #c9b6ff;
+  --hard-bg: rgb(150 120 255 / 0.2);
+  --common: #c4a9b8;
+  --common-bg: rgb(255 255 255 / 0.06);
+  --uncommon: #a8e6a0;
+  --uncommon-bg: rgb(120 220 140 / 0.16);
+  --rare: #9cc6ff;
+  --rare-bg: rgb(100 160 255 / 0.18);
+  --epic: #e0a8ff;
+  --epic-bg: rgb(200 120 255 / 0.2);
+  --legendary: #ffd37a;
+  --legendary-bg: rgb(255 190 70 / 0.16);
+  --gold: linear-gradient(135deg, #ffd37a 0%, #ffab5e 50%, #ff8fbf 100%);
+  --spark-1: #ff9ec6;
+  --spark-2: #ffd37a;
+  --spark-3: #8fe6a8;
+  --spark-4: #9cc6ff;
+  --shadow: 0 1px 0 rgb(255 255 255 / 0.07) inset, 0 24px 60px -24px rgb(0 0 0 / 0.85), 0 0 50px -18px rgb(255 120 180 / 0.32);
+  --shadow-key: 0 1px 0 rgb(255 255 255 / 0.07) inset, 0 10px 22px -12px rgb(0 0 0 / 0.8);
+  --scrim: rgb(6 2 10 / 0.55);
+
+  --sdk-blossom-bark: #5a3d4e;
+  --sdk-blossom-bark-hi: #6f4d61;
+  --sdk-blossom-petal-1: #f6c3d6;
+  --sdk-blossom-petal-2: #f9d6e3;
+  --sdk-blossom-petal-3: #ee9fc0;
+  --sdk-blossom-eye: #ff7fb0;
+  --sdk-blossom-stem: #3f8a64;
+  --sdk-blossom-leaf: #4a9a70;
+  --sdk-blossom-bud: #3f7a52;
+  --sdk-blossom-bud-tip: #e88bb0;
+  --sdk-blossom-daisy: #f3ecff;
+  --sdk-blossom-daisy-edge: rgb(255 255 255 / 0.15);
+  --sdk-blossom-daisy-eye: #ffd36e;
+  --sdk-blossom-tulip-1: #ff8fb8;
+  --sdk-blossom-tulip-2: #ffd77a;
+  --sdk-blossom-tulip-3: #c9a6ff;
+  --sdk-blossom-glow: rgb(255 170 210 / 0.45);
+  --sdk-blossom-haze: rgb(255 150 200 / 0.3);
+  --sdk-blossom-hill-1: #1b3530;
+  --sdk-blossom-hill-2: #15291f;
+  --sdk-blossom-soil: #2a2030;
+  --sdk-blossom-soil-dark: #221a28;
+  --sdk-blossom-wood: #4d3646;
+  --sdk-blossom-wood-dark: #3b2836;
+  --sdk-blossom-orb: #fff2d6;
+  --sdk-blossom-orb-glow: rgb(255 240 210 / 0.3);
+  --sdk-blossom-cloud: rgb(200 190 230 / 0.12);
+  --sdk-blossom-star: #fff6d8;
+  --sdk-blossom-rain: #9cc6ff;
+  --sdk-blossom-bee: #ffd25a;
+  --sdk-blossom-bee-stripe: #2a1020;
+  --sdk-blossom-wing: rgb(220 230 255 / 0.6);
+  --sdk-blossom-fly-a: #ffe9a0;
+  --sdk-blossom-fly-b: #b8dcff;
+  --sdk-blossom-firefly: rgb(255 240 150 / 0.95);
+  --sdk-blossom-bird: #e9e1f2;
+  --sdk-blossom-bird-belly: #ffffff;
+  --sdk-blossom-bird-throat: #ffb08a;
+  --sdk-blossom-hive: #8a6a3a;
+  --sdk-blossom-hive-line: #6a4e28;
+  --sdk-blossom-bow-1: #ffb3c1;
+  --sdk-blossom-bow-2: #ffd0a0;
+  --sdk-blossom-bow-3: #fff0b0;
+  --sdk-blossom-bow-4: #c4f0b4;
+  --sdk-blossom-bow-5: #b8e2ff;
+  --sdk-blossom-bow-6: #c0c8ff;
+  --sdk-blossom-bow-7: #e0c4ff;
+  --sdk-blossom-bow-alpha: 0.42;
+}
+
+/* ── the garden (backdrop.tsx), behind the game ───────────────────────────── */
+.sdk-blossom-scene { position: absolute; inset: 0; overflow: hidden; }
+.sdk-blossom-art { display: block; width: 100%; height: 100%; overflow: visible; }
+
+/* Colours, the same drawings by day and by night. */
+.sdk-blossom-p1 { fill: var(--sdk-blossom-petal-1); }
+.sdk-blossom-p2 { fill: var(--sdk-blossom-petal-2); }
+.sdk-blossom-p3 { fill: var(--sdk-blossom-petal-3); }
+.sdk-blossom-eye { fill: var(--sdk-blossom-eye); }
+.sdk-blossom-stem { fill: none; stroke: var(--sdk-blossom-stem); stroke-width: 1.8; stroke-linecap: round; }
+.sdk-blossom-leaf { fill: var(--sdk-blossom-leaf); }
+.sdk-blossom-bud-body { fill: var(--sdk-blossom-bud); }
+.sdk-blossom-bud-tip { fill: var(--sdk-blossom-bud-tip); }
+.sdk-blossom-daisy { fill: var(--sdk-blossom-daisy); stroke: var(--sdk-blossom-daisy-edge); stroke-width: 0.5; }
+.sdk-blossom-daisy-eye { fill: var(--sdk-blossom-daisy-eye); }
+.sdk-blossom-tulip-1 { fill: var(--sdk-blossom-tulip-1); }
+.sdk-blossom-tulip-2 { fill: var(--sdk-blossom-tulip-2); }
+.sdk-blossom-tulip-3 { fill: var(--sdk-blossom-tulip-3); }
+.sdk-blossom-sheen { fill: #ffffff; opacity: 0.26; }
+.sdk-blossom-bark { fill: var(--sdk-blossom-bark); }
+.sdk-blossom-bark-hi { fill: none; stroke: var(--sdk-blossom-bark-hi); stroke-width: 1.4; stroke-linecap: round; opacity: 0.8; }
+.sdk-blossom-twig { fill: none; stroke: var(--sdk-blossom-bark); stroke-width: 1.7; stroke-linecap: round; }
+.sdk-blossom-limb { fill: none; stroke: var(--sdk-blossom-bark); stroke-width: calc(var(--wide) * 1px); stroke-linecap: round; stroke-linejoin: round; }
+.sdk-blossom-haze-in { stop-color: var(--sdk-blossom-haze); }
+.sdk-blossom-haze-out { stop-color: var(--sdk-blossom-haze); stop-opacity: 0; }
+.sdk-blossom-hill-back { fill: var(--sdk-blossom-hill-1); }
+.sdk-blossom-hill-front { fill: var(--sdk-blossom-hill-2); }
+.sdk-blossom-soil { fill: var(--sdk-blossom-soil); stroke: var(--sdk-blossom-wood); stroke-width: 6; stroke-linejoin: round; }
+.sdk-blossom-plank { fill: var(--sdk-blossom-wood-dark); stroke: var(--sdk-blossom-wood-dark); stroke-width: 6; stroke-linejoin: round; }
+.sdk-blossom-mound { fill: var(--sdk-blossom-soil-dark); }
+.sdk-blossom-skep { fill: var(--sdk-blossom-hive); }
+.sdk-blossom-hive-line { fill: none; stroke: var(--sdk-blossom-hive-line); stroke-width: 1.6; stroke-linecap: round; }
+.sdk-blossom-star-path { fill: var(--sdk-blossom-star); }
+.sdk-blossom-bee-body { fill: var(--sdk-blossom-bee); }
+.sdk-blossom-bee-band { fill: none; stroke: var(--sdk-blossom-bee-stripe); stroke-width: 2; }
+.sdk-blossom-bee-stripe { fill: var(--sdk-blossom-bee-stripe); }
+.sdk-blossom-bee-wing { fill: var(--sdk-blossom-wing); stroke: var(--sdk-blossom-bee-stripe); stroke-width: 0.5; stroke-opacity: 0.35; }
+.sdk-blossom-wings[data-tone="a"] { --sdk-blossom-fly: var(--sdk-blossom-fly-a); }
+.sdk-blossom-wings[data-tone="b"] { --sdk-blossom-fly: var(--sdk-blossom-fly-b); }
+.sdk-blossom-wing-up { fill: var(--sdk-blossom-fly); }
+.sdk-blossom-wing-down { fill: var(--sdk-blossom-fly); opacity: 0.78; }
+.sdk-blossom-wing-spot { fill: #ffffff; opacity: 0.7; }
+.sdk-blossom-antenna { fill: none; stroke: var(--sdk-blossom-bee-stripe); stroke-width: 0.7; stroke-linecap: round; }
+.sdk-blossom-bird,
+.sdk-blossom-beat { fill: var(--sdk-blossom-bird); }
+.sdk-blossom-bird-belly { fill: var(--sdk-blossom-bird-belly); }
+.sdk-blossom-bird-throat { fill: var(--sdk-blossom-bird-throat); }
+
+/* Day or night: the sun, the clouds and the butterflies by day; the moon, the stars, the
+   fireflies and the blossoms' glow by night. */
+html:not([data-sdk-scheme="dark"]) :is(.sdk-blossom-moon, .sdk-blossom-star, .sdk-blossom-firefly, .sdk-blossom-halo, .sdk-blossom-moonbow) { display: none; }
+html[data-sdk-scheme="dark"] :is(.sdk-blossom-sun, .sdk-blossom-cloud, .sdk-blossom-butterfly) { display: none; }
+
+/* ── the sky ── */
+.sdk-blossom-sun,
+.sdk-blossom-moon { position: absolute; left: var(--x); top: var(--y); width: var(--size); aspect-ratio: 1; translate: -50% -50%; border-radius: 50%; }
+.sdk-blossom-sun { background: radial-gradient(circle, var(--sdk-blossom-orb) 0 34%, var(--sdk-blossom-orb-glow) 40%, rgb(255 236 150 / 0) 70%); }
+.sdk-blossom-moon::before {
+  content: "";
+  position: absolute;
+  inset: -150%;
+  border-radius: 50%;
+  background: radial-gradient(circle, var(--sdk-blossom-orb-glow) 0%, rgb(255 240 210 / 0) 62%);
+}
+.sdk-blossom-crescent { position: absolute; inset: 0; border-radius: 50%; box-shadow: inset calc(var(--size) * -0.3) calc(var(--size) * 0.12) 0 0 var(--sdk-blossom-orb); }
+.sdk-blossom-glint { position: absolute; left: 50%; top: 50%; width: 72%; aspect-ratio: 1; translate: -50% -50%; border-radius: 50%; border: 2px solid var(--sdk-blossom-orb); opacity: 0; }
+/* The moon's is a multiple of its size, smaller where the header leaves it little room (garden.ts). */
+.sdk-blossom-moon .sdk-blossom-glint { width: calc(var(--glint) * 100%); }
+.sdk-blossom-star { position: absolute; left: var(--x); top: var(--y); width: 8px; height: 8px; translate: -50% -50%; opacity: 0.85; }
+.sdk-blossom-cloud {
+  position: absolute;
+  left: var(--x);
+  top: var(--y);
+  width: calc(116px * var(--s));
+  height: calc(30px * var(--s));
+  margin: calc(-15px * var(--s)) 0 0 calc(-58px * var(--s));
+  border-radius: 99px;
+  background: var(--sdk-blossom-cloud);
+}
+.sdk-blossom-cloud::before,
+.sdk-blossom-cloud::after { content: ""; position: absolute; border-radius: 50%; background: inherit; }
+.sdk-blossom-cloud::before { left: 16%; bottom: 36%; width: 42%; aspect-ratio: 1; }
+.sdk-blossom-cloud::after { left: 48%; bottom: 30%; width: 32%; aspect-ratio: 1; }
+.sdk-blossom-hills { position: absolute; inset: 0; width: 100%; height: 100%; }
+
+/* ── the branch, or the tree ── */
+.sdk-blossom-branch { --sdk-blossom-amp: 3; position: absolute; left: var(--x); top: var(--y); width: var(--w); height: var(--h); transform-origin: 0 22%; }
+.sdk-blossom-branch[data-kind="hang"] { transform-origin: 50% 0; }
+.sdk-blossom-branch[data-kind="tree"] { --sdk-blossom-amp: 1; transform-origin: 46% 100%; }
+.sdk-blossom-shake { width: 100%; height: 100%; transform-origin: inherit; }
+.sdk-blossom-cluster :is(.sdk-blossom-bloom, .sdk-blossom-buds) { transform-box: fill-box; transform-origin: center; }
+.sdk-blossom-cluster .sdk-blossom-bloom { opacity: 0; scale: 0.3; }
+.sdk-blossom-cluster[data-open] .sdk-blossom-bloom { opacity: 1; scale: 1; }
+.sdk-blossom-scene[data-full] .sdk-blossom-cluster[data-open] .sdk-blossom-bloom { scale: 1.14; }
+.sdk-blossom-cluster[data-open] .sdk-blossom-buds { opacity: 0; }
+
+/* ── the nine flowers ── */
+.sdk-blossom-plant { position: absolute; left: var(--x); top: var(--y); width: var(--w); height: var(--h); }
+/* A flower growing from behind the divider: everything under the line is cut away, so it peeks over. */
+.sdk-blossom-plant[data-cut] { clip-path: inset(-120px -120px var(--below) -120px); }
+.sdk-blossom-sway,
+.sdk-blossom-nod { position: absolute; inset: 0; transform-origin: 50% 100%; }
+.sdk-blossom-flower { position: absolute; inset: 0; width: 100%; height: 100%; overflow: visible; }
+.sdk-blossom-head { transform-box: fill-box; transform-origin: 50% 50%; }
+.sdk-blossom-bud { transform-box: fill-box; transform-origin: 50% 100%; }
+/* Night: a lantern glow behind every open flower (a gradient, never a filter). */
+.sdk-blossom-halo {
+  position: absolute;
+  left: var(--hx);
+  top: var(--hy);
+  width: calc(var(--r) * 4.6);
+  aspect-ratio: 1;
+  translate: -50% -50%;
+  border-radius: 50%;
+  background: radial-gradient(circle, var(--sdk-blossom-glow) 0%, rgb(255 170 210 / 0) 68%);
+}
+.sdk-blossom-scene[data-full] .sdk-blossom-halo { width: calc(var(--r) * 5.6); }
+.sdk-blossom-puff { position: absolute; left: var(--hx); top: var(--hy); }
+.sdk-blossom-puff i { position: absolute; left: -3.5px; top: -4px; width: 7px; height: 8px; opacity: 0; }
+.sdk-blossom-drop {
+  position: absolute;
+  left: var(--hx);
+  top: calc(var(--hy) - var(--r) - 26px);
+  width: 7px;
+  height: 10px;
+  margin-left: -3.5px;
+  border-radius: 50% 50% 50% 50% / 64% 64% 36% 36%;
+  background: var(--sdk-blossom-rain);
+  opacity: 0;
+}
+.sdk-blossom-hive { position: absolute; left: var(--x); top: var(--y); width: var(--size); height: var(--size); translate: -50% -100%; }
+
+/* ── petals on the air ── */
+.sdk-blossom-fall { position: absolute; left: var(--x); top: 0; width: 10px; height: 12px; }
+.sdk-blossom-fall i { position: absolute; inset: 0; translate: 0 var(--rest); rotate: 30deg; opacity: 0.85; }
+html[data-sdk-scheme="dark"] .sdk-blossom-fall i { opacity: 0.7; }
+.sdk-blossom-fall[data-off] { opacity: 0; }
+.sdk-blossom-let-go { position: absolute; left: var(--x); top: var(--y); width: 9px; height: 11px; opacity: 0; }
+
+/* ── a solved board: butterflies by day, fireflies by night ── */
+.sdk-blossom-butterfly {
+  position: absolute;
+  left: var(--x);
+  top: var(--y);
+  width: var(--size);
+  height: var(--size);
+  margin: calc(var(--size) / -2) 0 0 calc(var(--size) / -2);
+  translate: var(--px) var(--py);
+}
+.sdk-blossom-butterfly i { position: absolute; inset: 0; }
+.sdk-blossom-wings { transform-box: fill-box; transform-origin: 50% 50%; }
+.sdk-blossom-firefly {
+  position: absolute;
+  left: var(--x);
+  top: var(--y);
+  width: 16px;
+  height: 16px;
+  margin: -8px 0 0 -8px;
+  border-radius: 50%;
+  background: radial-gradient(circle, #fffbe6 0 14%, var(--sdk-blossom-firefly) 24%, rgb(255 240 150 / 0) 68%);
+}
+
+/* ── surprises (overlay.tsx), over the game ── */
+.sdk-blossom-fx { position: absolute; inset: 0; }
+.sdk-blossom-swallow { position: absolute; left: 0; top: 0; width: var(--size); height: calc(var(--size) * 22 / 34); offset-rotate: auto; offset-distance: 0%; }
+.sdk-blossom-beat { transform-box: fill-box; transform-origin: 92% 96%; }
+.sdk-blossom-release { position: absolute; left: var(--x); top: var(--y); width: 9px; height: 11px; opacity: 0; }
+/* Translucent enough to read a digit through as they cross the board. */
+.sdk-blossom-shower { position: absolute; left: var(--x); top: 0; width: var(--size); height: calc(var(--size) * 1.2); translate: 0 var(--rest); rotate: 40deg; opacity: 0.74; }
+.sdk-blossom-bow { position: absolute; inset: 0; width: 100%; height: 100%; overflow: visible; }
+.sdk-blossom-band { fill: none; stroke-dasharray: 1; stroke-dashoffset: 0; opacity: var(--sdk-blossom-bow-alpha); }
+.sdk-blossom-moonbow { fill: none; stroke: #fff4fb; stroke-dasharray: 1; opacity: 0.07; }
+.sdk-blossom-mote {
+  position: absolute;
+  left: var(--x);
+  top: var(--y);
+  width: 10px;
+  height: 10px;
+  margin: -5px 0 0 -5px;
+  border-radius: 50%;
+  box-shadow: 0 0 0 2px rgb(255 255 255 / 0.45);
+  opacity: 0;
+}
+.sdk-blossom-ride { position: absolute; left: var(--x); top: var(--y); width: 0; height: 0; opacity: 0; }
+.sdk-blossom-ride i { position: absolute; left: calc(var(--r) * -1); top: 0; width: 16px; height: 16px; margin: -8px 0 0 -8px; }
+.sdk-blossom-ride .sdk-blossom-star-path { fill: #ffffff; }
+.sdk-blossom-trail { position: absolute; inset: 0; width: 100%; height: 100%; overflow: visible; }
+.sdk-blossom-trail path { fill: none; stroke: var(--sdk-blossom-bee-stripe); stroke-width: 1.4; stroke-dasharray: 2 4; stroke-linecap: round; opacity: 0.3; }
+html[data-sdk-scheme="dark"] .sdk-blossom-trail path { stroke: var(--sdk-blossom-bee); }
+.sdk-blossom-bee { position: absolute; left: 0; top: 0; width: var(--size); height: calc(var(--size) * 20 / 24); offset-rotate: 0deg; offset-distance: 0%; }
+.sdk-blossom-buzz { transform-box: fill-box; transform-origin: 50% 100%; }
+
+/* A browser without motion paths would park the bee and the swallow in a corner: they stay home. */
+@supports not (offset-path: path("M0 0")) {
+  .sdk-blossom-fx :is(.sdk-blossom-bee, .sdk-blossom-swallow) { display: none; }
+}
+
+/* Reduced motion: a still picture (four petals rest in the gutters), surprises a single frame. */
+@media (prefers-reduced-motion: reduce) {
+  .sdk-blossom-fall:not([data-still]) { display: none; }
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .sdk-blossom-cluster :is(.sdk-blossom-bloom, .sdk-blossom-buds) { transition: opacity 0.5s ease-out, scale 0.6s cubic-bezier(0.2, 0.8, 0.2, 1.3); }
+  .sdk-blossom-fall { transition: opacity 1.2s ease; }
+  .sdk-blossom-branch { animation: sdkBlossomBreeze 11s ease-in-out infinite alternate; }
+  .sdk-blossom-branch[data-kind="tree"] { animation-duration: 14s; }
+  .sdk-blossom-shake[data-shake="petal-shower"] { animation: sdkBlossomShake 0.7s ease-in-out both; }
+  .sdk-blossom-shake[data-shake="arrive"] { animation: sdkBlossomBough 0.6s ease-in-out 0.6s both; }
+  .sdk-blossom-plant[data-open] .sdk-blossom-sway { animation: sdkBlossomSway calc(4.6s + var(--i) * 0.2s) ease-in-out calc(var(--i) * -0.7s) infinite alternate; }
+  .sdk-blossom-head[data-grow] { animation: sdkBlossomPop 0.6s cubic-bezier(0.2, 0.8, 0.2, 1.2) both; }
+  .sdk-blossom-bud[data-grow] { animation: sdkBlossomSprout 0.5s cubic-bezier(0.2, 0.8, 0.2, 1.2) var(--sprout) both; }
+  .sdk-blossom-nod[data-nod="nod"],
+  .sdk-blossom-nod[data-nod="wave"] { animation: sdkBlossomNod 0.7s ease-in-out var(--d) both; }
+  .sdk-blossom-nod[data-nod="cheer"] { animation: sdkBlossomCheer 0.8s ease-in-out var(--d) both; }
+  .sdk-blossom-nod[data-nod="dip"] { animation: sdkBlossomDip 0.45s ease-in-out var(--d) both; }
+  .sdk-blossom-nod[data-nod="bob"] { animation: sdkBlossomBob 0.5s ease-out var(--d) both; }
+  .sdk-blossom-nod[data-nod="nod"][data-flip],
+  .sdk-blossom-nod[data-nod="wave"][data-flip] { animation-name: sdkBlossomNodTwin; }
+  .sdk-blossom-nod[data-nod="cheer"][data-flip] { animation-name: sdkBlossomCheerTwin; }
+  .sdk-blossom-nod[data-nod="dip"][data-flip] { animation-name: sdkBlossomDipTwin; }
+  .sdk-blossom-nod[data-nod="bob"][data-flip] { animation-name: sdkBlossomBobTwin; }
+  .sdk-blossom-puff i { animation: sdkBlossomPuff 0.7s ease-out 0.12s both; }
+  .sdk-blossom-drop { animation: sdkBlossomRain 0.65s cubic-bezier(0.5, 0, 0.8, 0.6) both; }
+  /* Hidden until it plays (the rainbow's waits for the arc to rise). */
+  .sdk-blossom-glint { animation: sdkBlossomGlint 0.8s ease-out var(--d) forwards; }
+  .sdk-blossom-star { animation: sdkBlossomTwinkle var(--dur) ease-in-out var(--delay) infinite alternate; }
+  .sdk-blossom-cloud { animation: sdkBlossomDrift 36s ease-in-out var(--delay) infinite alternate; }
+  .sdk-blossom-fall i { animation: sdkBlossomFall var(--dur) ease-in-out var(--delay) infinite; }
+  .sdk-blossom-let-go { animation: sdkBlossomLetGo 1.6s ease-in var(--d) both; }
+  .sdk-blossom-butterfly { animation: sdkBlossomFlutter var(--dur) ease-in-out infinite; }
+  .sdk-blossom-butterfly[data-enter] { animation: sdkBlossomFlutter var(--dur) ease-in-out infinite, sdkBlossomFadeIn 1.4s ease-out 0.8s both; }
+  .sdk-blossom-wings { animation: sdkBlossomFlap 0.32s ease-in-out infinite alternate; }
+  .sdk-blossom-firefly { animation: sdkBlossomFirefly var(--dur) ease-in-out var(--delay) infinite; }
+  .sdk-blossom-firefly[data-enter] { animation: sdkBlossomFirefly var(--dur) ease-in-out var(--delay) infinite, sdkBlossomFadeIn 1.4s ease-out 0.8s both; }
+  .sdk-blossom-swallow { animation: sdkBlossomSwoop 2s cubic-bezier(0.42, 0.05, 0.45, 1) both; }
+  .sdk-blossom-beat { animation: sdkBlossomWingBeat 0.18s ease-in-out infinite alternate; }
+  .sdk-blossom-release { animation: sdkBlossomRelease 0.9s ease-in var(--d) both; }
+  .sdk-blossom-shower { animation: sdkBlossomShower var(--dur) cubic-bezier(0.3, 0.1, 0.6, 1) var(--d) both; }
+  .sdk-blossom-band { animation: sdkBlossomDraw 1.9s cubic-bezier(0.4, 0, 0.2, 1) calc(350ms + var(--k) * 40ms) both; }
+  .sdk-blossom-moonbow { animation: sdkBlossomMoonbow 2.3s ease-in-out both; }
+  .sdk-blossom-mote { animation: sdkBlossomMote 0.6s ease-out calc(var(--k) * 45ms) both; }
+  .sdk-blossom-ride { animation: sdkBlossomRide 0.65s ease-in-out 1.25s both; }
+  .sdk-blossom-trail path { animation: sdkBlossomTrail 2.5s ease-in-out both; }
+  .sdk-blossom-bee { animation: sdkBlossomFly 2.5s linear both; }
+  .sdk-blossom-buzz { animation: sdkBlossomBuzz 0.08s linear infinite alternate; }
+}
+
+@keyframes sdkBlossomBreeze {
+  from { rotate: -0.8deg; }
+  to { rotate: 0.8deg; }
+}
+@keyframes sdkBlossomShake {
+  0%, 100% { rotate: 0deg; }
+  15% { rotate: calc(var(--sdk-blossom-amp) * 1deg); }
+  35% { rotate: calc(var(--sdk-blossom-amp) * -1deg); }
+  55% { rotate: calc(var(--sdk-blossom-amp) * 0.8deg); }
+  75% { rotate: calc(var(--sdk-blossom-amp) * -0.5deg); }
+}
+@keyframes sdkBlossomBough {
+  0%, 100% { translate: 0 0; rotate: 0deg; }
+  40% { translate: 0 3px; rotate: calc(var(--sdk-blossom-amp) * 0.5deg); }
+  70% { translate: 0 -1px; }
+}
+@keyframes sdkBlossomSway {
+  from { rotate: -2.5deg; }
+  to { rotate: 2.5deg; }
+}
+@keyframes sdkBlossomPop {
+  0% { scale: 0.3; rotate: -14deg; opacity: 0; }
+  60% { scale: 1.18; rotate: 4deg; opacity: 1; }
+  100% { scale: 1; rotate: 0deg; }
+}
+@keyframes sdkBlossomSprout {
+  from { scale: 1 0.2; opacity: 0; }
+}
+@keyframes sdkBlossomNod {
+  0%, 100% { rotate: 0deg; }
+  30% { rotate: 7deg; }
+  60% { rotate: -4deg; }
+  82% { rotate: 1.5deg; }
+}
+@keyframes sdkBlossomNodTwin {
+  0%, 100% { rotate: 0deg; }
+  30% { rotate: 7deg; }
+  60% { rotate: -4deg; }
+  82% { rotate: 1.5deg; }
+}
+@keyframes sdkBlossomCheer {
+  0%, 100% { rotate: 0deg; scale: 1; }
+  30% { rotate: -10deg; scale: 1.12; }
+  62% { rotate: 6deg; scale: 1.04; }
+}
+@keyframes sdkBlossomCheerTwin {
+  0%, 100% { rotate: 0deg; scale: 1; }
+  30% { rotate: -10deg; scale: 1.12; }
+  62% { rotate: 6deg; scale: 1.04; }
+}
+@keyframes sdkBlossomDip {
+  0%, 100% { rotate: 0deg; translate: 0 0; }
+  40% { rotate: 6deg; translate: 0 2px; }
+}
+@keyframes sdkBlossomDipTwin {
+  0%, 100% { rotate: 0deg; translate: 0 0; }
+  40% { rotate: 6deg; translate: 0 2px; }
+}
+@keyframes sdkBlossomBob {
+  0%, 100% { translate: 0 0; scale: 1; }
+  30% { translate: 0 3px; scale: 1 0.94; }
+  62% { translate: 0 -1px; scale: 1; }
+}
+@keyframes sdkBlossomBobTwin {
+  0%, 100% { translate: 0 0; scale: 1; }
+  30% { translate: 0 3px; scale: 1 0.94; }
+  62% { translate: 0 -1px; scale: 1; }
+}
+@keyframes sdkBlossomPuff {
+  0% { opacity: 1; transform: rotate(var(--a)) translateY(-2px) scale(0.6); }
+  100% { opacity: 0; transform: rotate(var(--a)) translateY(-20px) scale(1) rotate(120deg); }
+}
+@keyframes sdkBlossomRain {
+  0% { opacity: 0; translate: 0 0; scale: 1; }
+  14% { opacity: 0.95; }
+  70% { opacity: 0.95; translate: 0 calc(var(--r) + 18px); scale: 1; }
+  100% { opacity: 0; translate: 0 calc(var(--r) + 22px); scale: 2 0.3; }
+}
+@keyframes sdkBlossomGlint {
+  0% { opacity: 0.9; scale: 0.9; }
+  100% { opacity: 0; scale: 1.5; }
+}
+@keyframes sdkBlossomTwinkle {
+  from { opacity: 0.3; scale: 0.7; }
+  to { opacity: 1; scale: 1; }
+}
+@keyframes sdkBlossomDrift {
+  from { transform: translateX(-22px); }
+  to { transform: translateX(22px); }
+}
+@keyframes sdkBlossomFall {
+  0% { translate: 0 -20px; rotate: 0deg; opacity: 0; }
+  6% { opacity: 0.85; }
+  25% { translate: var(--sway) calc(var(--fall) * 0.25); }
+  50% { translate: 0 calc(var(--fall) * 0.5); }
+  75% { translate: calc(var(--sway) * -1) calc(var(--fall) * 0.75); }
+  94% { opacity: 0.8; }
+  100% { translate: 0 var(--fall); rotate: var(--spin); opacity: 0; }
+}
+@keyframes sdkBlossomLetGo {
+  0% { opacity: 0; translate: 0 0; rotate: 0deg; }
+  12% { opacity: 0.95; }
+  55% { translate: var(--sway) 48px; }
+  100% { opacity: 0; translate: calc(var(--sway) * -0.4) 110px; rotate: 300deg; }
+}
+@keyframes sdkBlossomFlutter {
+  0%, 100% { translate: calc(var(--w) * 0.12) calc(var(--h) * 0.55); }
+  20% { translate: calc(var(--w) * 0.34) calc(var(--h) * 0.1); }
+  40% { translate: calc(var(--w) * 0.56) calc(var(--h) * 0.72); }
+  60% { translate: calc(var(--w) * 0.86) calc(var(--h) * 0.28); }
+  80% { translate: calc(var(--w) * 0.52) calc(var(--h) * 0.92); }
+}
+@keyframes sdkBlossomFadeIn {
+  from { opacity: 0; }
+}
+@keyframes sdkBlossomFlap {
+  from { scale: 1 1; }
+  to { scale: 0.3 1; }
+}
+@keyframes sdkBlossomFirefly {
+  0%, 100% { translate: 0 0; opacity: 0.25; }
+  25% { translate: var(--dx) calc(var(--dy) * -1); opacity: 1; }
+  50% { translate: calc(var(--dx) * 0.4) var(--dy); opacity: 0.35; }
+  75% { translate: calc(var(--dx) * -0.5) calc(var(--dy) * 0.3); opacity: 0.95; }
+}
+@keyframes sdkBlossomSwoop {
+  from { offset-distance: 0%; }
+  to { offset-distance: 100%; }
+}
+@keyframes sdkBlossomWingBeat {
+  from { scale: 1 1; }
+  to { scale: 1 -0.6; }
+}
+@keyframes sdkBlossomRelease {
+  0% { opacity: 0; translate: 0 0; rotate: 0deg; }
+  14% { opacity: 0.95; }
+  100% { opacity: 0; translate: var(--sway) 60px; rotate: 220deg; }
+}
+@keyframes sdkBlossomShower {
+  0% { translate: 0 var(--from); rotate: 0deg; opacity: 0; }
+  8% { opacity: 0.76; }
+  50% { translate: var(--sway) calc(var(--from) + var(--fall) * 0.5); }
+  88% { opacity: 0.7; }
+  100% { translate: calc(var(--sway) * -0.3) var(--fall); rotate: var(--spin); opacity: 0; }
+}
+@keyframes sdkBlossomDraw {
+  0% { stroke-dashoffset: 1; opacity: var(--sdk-blossom-bow-alpha); }
+  46% { stroke-dashoffset: 0; }
+  70% { stroke-dashoffset: 0; opacity: var(--sdk-blossom-bow-alpha); }
+  100% { stroke-dashoffset: 0; opacity: 0; }
+}
+@keyframes sdkBlossomMoonbow {
+  0% { stroke-dashoffset: 1; opacity: 0.07; }
+  55% { stroke-dashoffset: 0; }
+  75% { opacity: 0.07; }
+  100% { stroke-dashoffset: 0; opacity: 0; }
+}
+@keyframes sdkBlossomMote {
+  0% { opacity: 0; scale: 0.3; translate: 0 0; }
+  25% { opacity: 1; scale: 1.1; }
+  100% { opacity: 0; scale: 0.8; translate: 0 -40px; }
+}
+@keyframes sdkBlossomRide {
+  0% { opacity: 0; rotate: 0deg; }
+  15%, 85% { opacity: 1; }
+  100% { opacity: 0; rotate: 180deg; }
+}
+@keyframes sdkBlossomTrail {
+  0% { opacity: 0; }
+  20%, 70% { opacity: 0.32; }
+  100% { opacity: 0; }
+}
+@keyframes sdkBlossomFly {
+  from { offset-distance: 0%; }
+  to { offset-distance: 100%; }
+}
+@keyframes sdkBlossomBuzz {
+  from { scale: 1 1; }
+  to { scale: 1 0.6; }
+}

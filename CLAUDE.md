@@ -25,6 +25,8 @@ deviates.
 
 ## Design contract (summary of DESIGN-RULES.md — binding for every UI change)
 
+For the studio site. The games are outside it; see **Games** below.
+
 1. Carbon v11 (`@carbon/react` + `styles/_themes.scss`) is the design system.
    No other CSS framework, utility library or icon set. Icons:
    `@carbon/icons-react`.
@@ -65,6 +67,27 @@ deviates.
 13. Copy lives in `data/angeronia.ts`.
 14. No `@salesforce-ux/*` package is ever reinstalled. The reason is ADR-015.
 
+## Games (outside the design system)
+
+`/sudoku` moved here from `../portfolio` (2026-10-23). It keeps its own look —
+its own CSS, tokens, type, motion and Phosphor icons — and the contract above
+does not govern it: **ADR-019** draws the line (rules 10, 12 and 14 still
+apply). It is unlisted: not in the header, the footer or `sitemap.ts`, and
+`noindex`.
+
+* Read `docs/games/sudoku.md` before touching `components/sudoku/` or
+  `lib/sudoku/`; it is the game's design and test notes, carried over from the
+  portfolio's `CLAUDE.md`.
+* Its gates are `npm test` (Vitest, node) and `npm run test:e2e` (Playwright,
+  desktop Chromium and an iPhone in WebKit), on top of typecheck and build.
+* It renders under the root layout, so Carbon's reset reaches it.
+  `components/games/base.css` puts back the browser defaults the game was built
+  on; keep its selectors at `html body :where(...)` and never use `:is()` there
+  (the build prefixes it to `:-webkit-any()`, which counts as a class).
+* Carbon hides any `[data-hidden]` on the page; don't use that attribute.
+* Nothing in the studio site imports from the games, and the games import
+  nothing from `components/site/`, `components/ui/` or `styles/`.
+
 ## Adding a component
 
 Check `@carbon/react` first — it probably already exists there. If it does not,
@@ -93,6 +116,8 @@ npm run storybook      # Storybook 10 (nextjs-vite)
 npm run typecheck      # tsc --noEmit
 npm run check:theme    # token parity + contrast matrix + favicon check
 npm run test:storybook # every story in Chromium; axe violations fail
+npm test               # the games' unit tests (Vitest, node)
+npm run test:e2e       # the games end to end (Playwright: Chromium + iPhone WebKit)
 
 npm run build:favicon  # re-tint app/icon.svg onto the teal ramp
 npm run build:logos    # regenerate the OG/social lockups
