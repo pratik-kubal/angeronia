@@ -9,6 +9,8 @@
     "lint": "next lint",
     "build:favicon": "node scripts/retint-favicon.mjs",
     "build:logos": "node scripts/build-logos.mjs",
+    "solitaire:cards": "tsx scripts/build-solitaire-cards.ts",
+    "solitaire:deals": "tsx scripts/build-solitaire-deals.ts",
     "check:theme": "node scripts/retint-favicon.mjs --check && node scripts/check-contrast.mjs",
     "typecheck": "tsc --noEmit",
     "test": "vitest run --project=unit",
@@ -48,7 +50,9 @@
     "opentype.js": "^2.0.0",
     "playwright": "^1.63.0",
     "sass-embedded": "^1.103.1",
+    "sharp": "^0.34.5",
     "storybook": "^10.6.0",
+    "tsx": "^4.23.15",
     "typescript": "^5",
     "vitest": "^3.2.7"
   }

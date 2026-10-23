@@ -644,7 +644,7 @@ export function SudokuGame() {
         </p>
 
         {/* Before the first game Settings opens over this sheet, which comes back when it closes. */}
-        <Sheet open={menu && !settingsOpen && !shelf && !picker} label="New game" dismissible={state !== null} onClose={() => setMenu(false)}>
+        <Sheet prefix="sdk" open={menu && !settingsOpen && !shelf && !picker} label="New game" dismissible={state !== null} onClose={() => setMenu(false)}>
           <NewGamePanel
             best={best}
             current={playing ? state.difficulty : null}
@@ -653,12 +653,12 @@ export function SudokuGame() {
           />
         </Sheet>
 
-        <Sheet open={settingsOpen && !picker} label="Settings" dismissible onClose={() => setSettingsOpen(false)}>
+        <Sheet prefix="sdk" open={settingsOpen && !picker} label="Settings" dismissible onClose={() => setSettingsOpen(false)}>
           {settings && <SettingsPanel settings={settings} theme={themeId} onSettings={changeSettings} onThemes={() => setPicker(true)} />}
         </Sheet>
 
         {state && (
-          <Sheet open={result && !menu && !settingsOpen && !shelf && !picker} label="Result" dismissible onClose={() => setResult(false)}>
+          <Sheet prefix="sdk" open={result && !menu && !settingsOpen && !shelf && !picker} label="Result" dismissible onClose={() => setResult(false)}>
             <ResultPanel
               state={state}
               best={best}
@@ -673,11 +673,11 @@ export function SudokuGame() {
           </Sheet>
         )}
 
-        <Sheet open={shelf} label="Collection" dismissible onClose={() => setShelf(false)}>
+        <Sheet prefix="sdk" open={shelf} label="Collection" dismissible onClose={() => setShelf(false)}>
           {shelf && <CollectionPanel collection={collection} highlight={state?.trophy ?? null} />}
         </Sheet>
 
-        <Sheet open={picker} label={THEME_COPY.title} dismissible onClose={() => setPicker(false)}>
+        <Sheet prefix="sdk" open={picker} label={THEME_COPY.title} dismissible onClose={() => setPicker(false)}>
           {picker && settings && look && (
             <ThemePanel
               choice={settings.theme}
