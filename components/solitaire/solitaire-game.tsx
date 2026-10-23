@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useEffect, useMemo, useReducer, useRef, useState, type CSSProperties } from "react";
+import { useCallback, useEffect, useLayoutEffect, useMemo, useReducer, useRef, useState, type CSSProperties } from "react";
 import { ArrowCounterClockwiseIcon, FlagCheckeredIcon, LightbulbIcon, ListIcon } from "@phosphor-icons/react/dist/ssr";
 import { NO_MOVES } from "@/data/solitaire";
 import { cardName } from "@/lib/solitaire/cards";
@@ -94,8 +94,10 @@ export function SolitaireGame() {
     dispatch({ type: "load", state: next });
   }, []);
 
+  // The latest game, layout and handlers for the native listeners, set before paint (as the
+  // show's refs below), so an input right after a change never acts on the one before it.
   const stateRef = useRef(state);
-  useEffect(() => {
+  useLayoutEffect(() => {
     stateRef.current = state;
   }, [state]);
 
@@ -116,7 +118,7 @@ export function SolitaireGame() {
   const table = state?.table ?? null;
   const layout = useMemo(() => (table && size ? computeLayout(size, table, window.devicePixelRatio || 1) : null), [table, size]);
   const layoutRef = useRef(layout);
-  useEffect(() => {
+  useLayoutEffect(() => {
     layoutRef.current = layout;
   }, [layout]);
 
@@ -339,11 +341,11 @@ export function SolitaireGame() {
   // The table's pointer handling reads the latest game and calls back here.
   const enabled = state?.status === "playing" && sheet === null && fx === null;
   const gesture = useRef<GestureState>({ table: EMPTY_TABLE, layout: null, enabled: false });
-  useEffect(() => {
+  useLayoutEffect(() => {
     if (state) gesture.current = { table: state.table, layout, enabled };
   }, [state, layout, enabled]);
   const handlers = useRef<GestureHandlers>({ onStock() {}, onTap() {}, onDrop() {} });
-  useEffect(() => {
+  useLayoutEffect(() => {
     handlers.current = {
       onStock: () => act({ type: "stock" }),
       onTap: (from, count, cards) => {
@@ -364,8 +366,15 @@ export function SolitaireGame() {
   }, [state]);
 
   // Keys: D or Space turns the stock, U or ⌘/Ctrl+Z undoes, H hints, F finishes; any key skips the win show.
+  // The listener reads the show and the sheet through refs set before paint, so a key pressed the
+  // moment the show appears already skips it.
+  const shown = useRef({ fx, sheet });
+  useLayoutEffect(() => {
+    shown.current = { fx, sheet };
+  }, [fx, sheet]);
   useEffect(() => {
     const onKey = (e: KeyboardEvent) => {
+      const { fx, sheet } = shown.current;
       if (fx) {
         // Held back, or the same Escape would cancel the result sheet the skip opens.
         if (e.key === "Shift" || e.key === "Meta" || e.key === "Control" || e.key === "Alt") return;
@@ -391,7 +400,7 @@ export function SolitaireGame() {
     };
     document.addEventListener("keydown", onKey);
     return () => document.removeEventListener("keydown", onKey);
-  }, [fx, sheet, act, showHint, endFx]);
+  }, [act, showHint, endFx]);
 
   // ── render ───────────────────────────────────────────────────────────────
   const won = state?.status === "won";
