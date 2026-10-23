@@ -63,14 +63,20 @@ your own digit by weight (700 against 500; Candy's tiles 900 against 700).
   grabber; it reopens itself if the browser force-closes a sheet that must stay; sheets stack: the picker over
   Settings, Settings over the first New game sheet, the collection or New game over the result), `menus.tsx`
   (`NewGamePanel`: a difficulty, how to play and, before the first game (when the sheet can't close), a Settings
-  row that opens Settings over it, Play's sheet; `SettingsPanel`: theme, sound, haptics, appearance, the gear's; the theme picker (`ThemePanel`: Seasonal
+  row that opens Settings over it, Play's sheet; `SettingsPanel`: theme, sound, haptics, appearance and a note that
+  Silent Mode mutes the game on an iPhone or iPad, the gear's; the theme picker (`ThemePanel`: Seasonal
   and every theme with its swatch, season and secrets found, then the shown theme's secrets: found ones, or a
   riddle); the result with the trophy won and any secrets found; the collection shelves by rarity), `use-move-fx.ts` (the animations, after the reducer: a new game **deals in** with every
   cell's number reel spinning onto its clue; a placed digit drops in; a finished row, column or box gets a mint
   band (`--sweep`, a registered property) while its digits lift outward; a refused digit shakes and fades; a
   solved board spins all its reels outward from the last cell and bursts into **number fireworks** before the
   result; the result sheet waits for it), `feedback.ts` (a Web Audio synth on a pentatonic scale, woken on every
-  gesture for iOS; `sound` speaks in the theme's `Voice` (`setVoice`; what a theme leaves out stays Aurora's); haptics through `navigator.vibrate` or, on iOS 18+, a hidden `<input switch>` toggled inside
+  gesture for iOS; WebKit starts the context suspended in the waking tap, so the notes asked for meanwhile wait for
+  it (up to 300 ms each, at most 64, every theme's phrases whole) and play as far apart as they were asked for,
+  instead of being lost, the first game's deal among them; on an iPhone or iPad, Web Audio is ambient sound, so
+  Silent Mode mutes it (always in a Home Screen web app; in a Safari or Chrome tab unless another tab's media has
+  lifted the browser's shared audio session to playback), and Settings says so (no `navigator.audioSession`
+  "playback": it would pause the player's music); `sound` speaks in the theme's `Voice` (`setVoice`; what a theme leaves out stays Aurora's); haptics through `navigator.vibrate` or, on iOS 18+, a hidden `<input switch>` toggled inside
   the tap), `storage.ts` (the game, best time per difficulty, the trophy collection, the settings (theme defaults to
   `"aurora"`), the secrets found per theme and the last theme Seasonal brought in;
   several tabs: the tab the player last used owns the game (`claimGame` / `ownsGame`) and alone saves it and
@@ -124,6 +130,11 @@ Unit tests run in node through the Vitest `unit` project (`npm test`), co-locate
   rule scoped to the theme, keyframes named for it, animation only under `prefers-reduced-motion: no-preference`
 - `components/sudoku/board-lines.test.ts` — the board's hairlines repeat exactly every ninth (a period half a pixel
   long drifted them over the last rows' selected pill)
+- `components/sudoku/feedback.test.ts` — the synth on a context that starts suspended, as WebKit's does: the waking
+  tap's notes wait and play in order, as far apart as they were asked for, once it runs (and after an interruption,
+  or before its statechange fires), each once; none older than 300 ms, at most 64; every theme's deal and win kept
+  whole; nothing before the first gesture; one context, a failed resume caught and retried on the next tap; no Web
+  Audio, no sound
 - `components/sudoku/themes/halloween/layout.test.ts` — the Halloween scene's layout at each measured screen size:
   nine pumpkins, one per box, kept with the moon on screen, off the game and apart, inside the game column (clear of
   an iPhone's safe-area insets on its side), the sill never shrinking as the gap under the board grows; the moon's
@@ -144,7 +155,8 @@ Unit tests run in node through the Vitest `unit` project (`npm test`), co-locate
 
 End to end (`npm run test:e2e`, Playwright, kept out of `npm test`): `e2e/sudoku.spec.ts` runs on desktop Chromium
 and, as the `iphone` project, on an iPhone 15 in WebKit: the first-visit New game sheet (and Settings from it, which
-hands back to the sheet), one screen, the deal's reels, placing and refusing, notes, resuming on reload, solving (the
+hands back to the sheet and notes Silent Mode), one screen, the first deal sounding though its tap wakes the sound
+(every note counted as it starts), the deal's reels, placing and refusing, notes, resuming on reload, solving (the
 fireworks, the trophy in the result and the collection, never drawn twice, the best time), the title's board count
 (Puzzle 1 through the first win, then 2), the dock's Themes (the picker on its own) and Play (New game, closable once
 there is a game), hints, the pad (a stack per digit losing a bar as one is placed, nine colours, 1–5 over the pencil

@@ -16,7 +16,7 @@ import {
   TrophyIcon,
   VibrateIcon,
 } from "@phosphor-icons/react/dist/ssr";
-import { DIFFICULTY_COPY, HOW_TO_PLAY, RARITY_COPY, RESULT_COPY, THEME_COPY } from "@/data/sudoku";
+import { DIFFICULTY_COPY, HOW_TO_PLAY, RARITY_COPY, RESULT_COPY, SETTINGS_COPY, THEME_COPY } from "@/data/sudoku";
 import { TROPHIES, type Trophy } from "@/data/sudoku-trophies";
 import { HINTS, type GameState } from "@/lib/sudoku/game";
 import { DIFFICULTIES, type Difficulty } from "@/lib/sudoku/generate";
@@ -219,6 +219,7 @@ export function SettingsPanel({
           </span>
         </div>
       </div>
+      <p className="sdk-note">{SETTINGS_COPY.silentNote}</p>
     </>
   );
 }

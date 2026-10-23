@@ -70,6 +70,25 @@ test.describe("Sudoku", () => {
     await expect(cell(page, clue)).toHaveAccessibleName(new RegExp(`, ${game.puzzle[clue]}, clue$`));
   });
 
+  test("the tap that starts a first game, waking the sound, sounds the deal", async ({ page }) => {
+    // WebKit starts the sound suspended in that tap and running a moment later: the deal's notes
+    // wait for it instead of being lost. Every note started is counted, with the state it started in.
+    await page.addInitScript(() => {
+      const notes: string[] = [];
+      (window as unknown as { __notes: string[] }).__notes = notes;
+      const start = OscillatorNode.prototype.start;
+      OscillatorNode.prototype.start = function (this: OscillatorNode, ...args: Parameters<OscillatorNode["start"]>) {
+        notes.push(this.context.state);
+        return start.apply(this, args);
+      };
+    });
+    await deal(page, "Easy");
+    const notes = () => page.evaluate(() => (window as unknown as { __notes: string[] }).__notes);
+    // Aurora's deal is a run of nine ticks.
+    await expect.poll(async () => (await notes()).length).toBeGreaterThanOrEqual(9);
+    expect(new Set(await notes())).toEqual(new Set(["running"]));
+  });
+
   test("a correct digit locks; a wrong one is refused and counts for nothing", async ({ page }) => {
     const game = await deal(page, "Easy");
     const [a, b] = empties(game);
@@ -312,6 +331,8 @@ test.describe("Sudoku", () => {
     const settings = page.getByRole("dialog", { name: "Settings" });
     await expect(settings).toBeVisible();
     await expect(menu).toBeHidden();
+    // A page can't read Silent Mode, which mutes the game on an iPhone or iPad: Settings says so.
+    await expect(settings.getByText("On an iPhone or iPad, Silent Mode mutes the game's sounds.")).toBeVisible();
     // Quiet before the first deal makes a sound.
     await settings.getByRole("switch", { name: "Sound" }).uncheck();
     await expect.poll(() => page.evaluate(() => JSON.parse(localStorage.getItem("sudoku:settings")!).sound)).toBe(false);
