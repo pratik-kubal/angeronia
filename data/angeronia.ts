@@ -312,8 +312,9 @@ export const aboutCoda = "When quality slips, we revive it. When the spec is fuz
 
 // ── Games ─────────────────────────────────────────────────────────────────────
 /**
- * One tile in the home page's games launcher (ADR-020). A new game is one more
- * entry here; the launcher wraps to fit however many there are.
+ * One game, as both launchers show it: the home page's section (ADR-020) and
+ * the /games home screen (ADR-021). A new game is one more entry here, plus its
+ * route at `app/games/<slug>/` with its `apple-icon.png`.
  */
 export interface Game {
   name: string;
@@ -321,7 +322,7 @@ export interface Game {
   line: string;
   href: string;
   /**
-   * The game's own Add to Home Screen icon, `app/<route>/apple-icon.png`
+   * The game's own Add to Home Screen icon, `app/games/<slug>/apple-icon.png`
    * (180 × 180, full-bleed), served by Next at this URL.
    */
   icon: string;
@@ -333,14 +334,14 @@ export const games: Game[] = [
   {
     name: "Sudoku",
     line: "Calm and colourful. No losing.",
-    href: "/sudoku",
-    icon: "/sudoku/apple-icon.png",
+    href: "/games/sudoku",
+    icon: "/games/sudoku/apple-icon.png",
   },
   {
     name: "Solitaire",
     line: "Klondike. Every deal can be won.",
-    href: "/solitaire",
-    icon: "/solitaire/apple-icon.png",
+    href: "/games/solitaire",
+    icon: "/games/solitaire/apple-icon.png",
   },
 ];
 

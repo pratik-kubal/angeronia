@@ -13,7 +13,8 @@ The log spans two migrations, in order:
 
 ADR-019 (2026-10-23) is later: the games that moved here from `../portfolio`
 keep their own look, outside the design system. ADR-020 (the same day) links
-them from the home page.
+them from the home page, and ADR-021 moves them under `/games`, behind a
+launcher.
 
 **Read ADR-015 first if you want the current state.** It supersedes D1, D2, D3,
 D7, D8 and ADR-004 / 006 / 008 / 011, and it says what the site is built on
@@ -687,7 +688,8 @@ light and dark, with their scenes, sounds and secrets; Solitaire's felt, card ar
 and win shows. Rebuilding either on Carbon would be a redesign, not a move. So
 they keep their own look, and the design rules do not govern them.
 
-**What is carved out.** `app/sudoku/`, `components/sudoku/`, `lib/sudoku/`,
+**What is carved out.** `app/sudoku/` *(now `app/games/sudoku/`, with the
+launcher at `app/games/page.tsx`; ADR-021)*, `components/sudoku/`, `lib/sudoku/`,
 `data/sudoku.ts`, `data/sudoku-trophies.ts`, `components/games/`, `lib/random.ts`
 and `e2e/`; Solitaire's equivalents when it lands. Inside them, rules 1–9, 11 and
 13 do not apply:
@@ -776,8 +778,8 @@ small, and a band for one row of tiles would be the heaviest thing in the
 section.
 
 **The icon is the game's own Add to Home Screen icon, by URL.** Every game
-already ships one at `app/<route>/apple-icon.png` (180 × 180, full-bleed, square)
-and Next serves it at `/<route>/apple-icon.png`. The tile points at that URL:
+already ships one at `app/games/<slug>/apple-icon.png` (180 × 180, full-bleed,
+square) and Next serves it at `/games/<slug>/apple-icon.png` (paths as of ADR-021). The tile points at that URL:
 
 * An `href` is not an import, so ADR-019's boundary holds both ways. No game
   code or CSS reaches the site, and the site imports nothing from a game.
@@ -787,8 +789,8 @@ and Next serves it at `/<route>/apple-icon.png`. The tile points at that URL:
   rounds them only on a home screen. Rule 9 is untouched: an icon is the game's
   mark, not the page's illustration; the hero Möbius still is.
 * The icon repeats the name beside it, so it is `alt=""`.
-* Storybook serves only `public/`, so `.storybook/main.ts` lists `app/` and
-  serves every `apple-icon.png` it finds at the same URL. A new game needs no
+* Storybook serves only `public/`, so `.storybook/main.ts` lists `app/games/`
+  and serves every `apple-icon.png` it finds at the same URL. A new game needs no
   entry there either.
 
 A new game listed here therefore needs its `apple-icon.png`, which it needs
@@ -808,6 +810,69 @@ there are twelve games.
 Carbon's stylesheet loading on the game routes. A link from the home page does
 not change which routes load what, and a route group would still move every
 studio page under `app/(site)/`. Still not worth it.
+
+### ADR-021 — The games move under `/games`, behind a launcher saved as a web app
+
+**Recorded 2026-10-23, before the code, per the rule at the top of this file.**
+Extends ADR-019's carve-out to one more page and moves the games' routes. The
+home page's launcher (ADR-020) stays; its tiles point at the new paths.
+
+**The paths.**
+
+| Path | What |
+|---|---|
+| `/games` | The launcher: the games' icons and names, nothing else. |
+| `/games/sudoku` | Sudoku (was `/sudoku`). |
+| `/games/solitaire` | Solitaire (was `/solitaire`). `/games/Solitaire`, in any casing, serves it too, as `/Solitaire` did. |
+| `/sudoku`, `/solitaire`, `/Solitaire` | Permanent redirects (308) to the new paths, so a shared link or a game already saved to a home screen still opens. |
+
+A new game goes at `app/games/<slug>/`, with its own `apple-icon.png`, and one
+entry in `games` in `data/angeronia.ts`. Both launchers read that list.
+
+**The old `/Solitaire` rule no longer applies.** It was a rewrite because a
+redirect from `/Solitaire` would also catch `/solitaire` (custom routes ignore
+case) and loop. The game no longer lives at either, so both now redirect to
+`/games/solitaire`, and `/games/Solitaire` takes over the rewrite, for the same
+reason as before.
+
+The card faces stay at `/solitaire/cards/v1/`. They are versioned, cached for a
+year, and the redirect matches `/solitaire` exactly, not what is under it.
+
+**The launcher is a games page, not a studio page.** It is meant to be saved to
+an iPhone's home screen from Safari or Chrome. It then opens full screen as
+"Games", and every game opens inside that one app. That makes it the games'
+home screen, so it takes the games' side of ADR-019:
+
+* Its own look, in `components/games/launcher.css` and scoped to `.gml-*`. It is
+  laid out like a home screen: square artwork rounded the way iOS rounds an icon,
+  the name under each icon, the system font, and the system's grouped ground in
+  light and dark. It follows the device's colour scheme, not the site's
+  `data-theme`, as the games do. Carbon's square rule does not reach it.
+* `components/games/base.css` covers its shell as it covers the games'.
+* The skip link lands on its `<main id="main">`, and its heading is a visually
+  hidden `h1`. "Just the icons" is a visual brief, not a reason to leave the
+  page without a title.
+* `noindex`, like the games, and not in the sitemap.
+
+It reads the game list from `data/angeronia.ts`, which is plain data. ADR-019
+keeps the games' own copy out of that file and keeps the games from importing
+`components/site/`, `components/ui/` and `styles/`. Neither changes: the list is
+the studio's, and one list means a new game is still one entry.
+
+**Its own icon.** `app/games/apple-icon.png` is generated by
+`npm run games:icon` (`scripts/build-games-icon.ts`, sharp): the games' own
+icons, small, on a dark ground, like an iOS folder. Re-run it when a game is
+added.
+
+**Inside the saved app there is no back button**, so each game needs a way back
+to the launcher. Sudoku's home button, which pointed at `/`, now points at
+`/games`. Solitaire had no way out; its Menu gets an "All games" row. Both
+appear in the game's own look.
+
+**Status bar.** The launcher saves with `statusBarStyle: "default"`, so every
+page in the app starts below the status bar, and each page's `theme-color`
+tints it. `black-translucent` would put Solitaire's felt under the clock, but
+it would also put white status text over Sudoku's light aurora.
 
 ---
 

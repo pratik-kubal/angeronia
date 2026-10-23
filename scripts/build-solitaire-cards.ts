@@ -1,8 +1,8 @@
-// Rasterize the 52 card faces Solitaire (/solitaire) shows from Byron Knoll's Vector Playing Cards
+// Rasterize the 52 card faces Solitaire (/games/solitaire) shows from Byron Knoll's Vector Playing Cards
 // (released into the public domain; github.com/notpeter/Vector-Playing-Cards keeps them). The court
 // cards' SVGs run to 400–600 KB each, so each face is rendered once here to a 320 px wide WebP
 // (sharp, oversampled then scaled down with Lanczos, the rounded corners kept transparent) in
-// public/solitaire/cards/v1/, plus the home-screen icon (app/solitaire/apple-icon.png). All outputs
+// public/solitaire/cards/v1/, plus the home-screen icon (app/games/solitaire/apple-icon.png). All outputs
 // are committed, so builds never need the pack. Bump the v1 folder (and CARD_DIR in
 // components/solitaire/card.tsx) when the art changes: the files are served as immutable.
 //
@@ -16,7 +16,7 @@ import { CARDS, cardCode } from "../lib/solitaire/cards";
 
 const SRC = process.env.CARDS_SVG_DIR ?? path.resolve("../Vector-Playing-Cards/cards-svg");
 const OUT = "public/solitaire/cards/v1";
-const ICON = "app/solitaire/apple-icon.png";
+const ICON = "app/games/solitaire/apple-icon.png";
 export const CARD_PX = 320;
 /** Renders the 167.09 pt wide art at about 668 px, so the Lanczos step down to 320 px has detail to keep. */
 const DENSITY = 144;

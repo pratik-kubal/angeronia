@@ -1,0 +1,120 @@
+/* ══════════════════════════════════════════════════════════════════════════
+   THE GAMES LAUNCHER — /games, the games' home screen (DECISIONS.md ADR-021).
+   Meant to be saved to an iPhone's home screen, where it opens full screen as
+   "Games" and every game opens inside it. So it looks like a home screen, not
+   like the studio site: each game's own icon, rounded the way iOS rounds an app
+   icon, its name under it in the system font, on the system's grouped ground in
+   light and dark (the device's scheme, not the site's data-theme, as the games
+   do). Outside the design system with the games (ADR-019); every rule is scoped
+   to html:has(.gml-shell) or a .gml-* class. Imported by app/games/page.tsx
+   alone, after components/games/base.css.
+   ══════════════════════════════════════════════════════════════════════════ */
+html:has(.gml-shell) {
+  --gml-ground: #f2f2f7;
+  --gml-ink: #1c1c1e;
+  --gml-focus: #007aff;
+  --gml-font: -apple-system, BlinkMacSystemFont, "SF Pro Text", "Helvetica Neue", system-ui, sans-serif;
+  /* An iPhone app icon: 60pt, with 4 columns across a phone held upright. */
+  --gml-icon: 64px;
+  /* iOS rounds an icon to about 22.5% of its side. */
+  --gml-radius: 14.5px;
+  color-scheme: light;
+}
+
+@media (prefers-color-scheme: dark) {
+  html:has(.gml-shell) {
+    --gml-ground: #000000;
+    --gml-ink: #f2f2f7;
+    --gml-focus: #0a84ff;
+    color-scheme: dark;
+  }
+}
+
+html:has(.gml-shell),
+html:has(.gml-shell) body {
+  background: var(--gml-ground);
+}
+
+.gml-shell {
+  min-height: 100dvh;
+  padding:
+    max(env(safe-area-inset-top), 28px)
+    max(env(safe-area-inset-right), 16px)
+    max(env(safe-area-inset-bottom), 28px)
+    max(env(safe-area-inset-left), 16px);
+  color: var(--gml-ink);
+  font: 400 12px/1.25 var(--gml-font);
+}
+
+/* The page's title, for a screen reader and the outline; the icons say it to the eye. */
+.gml-sr {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+}
+
+/* Four across on a phone, as a home screen is, filling from the top left. */
+.gml-grid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 26px 8px;
+  max-width: 400px;
+  margin: 0 auto;
+}
+
+/* On a tablet or a desktop, as many as fit, a little larger, with room above. */
+@media (min-width: 640px) {
+  html:has(.gml-shell) {
+    --gml-icon: 76px;
+    --gml-radius: 17px;
+  }
+  .gml-grid {
+    grid-template-columns: repeat(auto-fill, minmax(104px, 1fr));
+    gap: 34px 16px;
+    max-width: 760px;
+    padding-top: 6vh;
+  }
+}
+
+/* The whole tile is the link: icon and name, one tap target, one tab stop. */
+.gml-app {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 7px;
+  border-radius: 18px;
+  touch-action: manipulation;
+}
+
+.gml-app:focus-visible {
+  outline: 2px solid var(--gml-focus);
+  outline-offset: 4px;
+}
+
+.gml-icon {
+  width: var(--gml-icon);
+  height: var(--gml-icon);
+  border-radius: var(--gml-radius);
+  transition: transform 140ms ease-out, filter 140ms ease-out;
+}
+
+/* A pressed icon dips and darkens, as it does on a home screen. */
+.gml-app:active .gml-icon {
+  transform: scale(0.9);
+  filter: brightness(0.82);
+}
+
+.gml-name {
+  max-width: 100%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  text-align: center;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .gml-icon { transition: none; }
+}

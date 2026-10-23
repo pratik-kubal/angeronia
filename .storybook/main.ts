@@ -4,16 +4,17 @@ import { fileURLToPath } from "node:url";
 
 /**
  * Every game's Add to Home Screen icon, which Next serves from
- * `app/<route>/apple-icon.png` by file convention rather than from `public/`.
- * The home page's games launcher shows them (ADR-020), so Storybook serves each
- * at the same URL. Found by listing `app/`, so a new game needs no entry here.
+ * `app/games/<slug>/apple-icon.png` by file convention rather than from
+ * `public/`. The home page's games launcher shows them (ADR-020, ADR-021), so
+ * Storybook serves each at the same URL. Found by listing `app/games/`, so a new
+ * game needs no entry here.
  */
-const APP = fileURLToPath(new URL("../app/", import.meta.url));
-const gameIcons = readdirSync(APP, { withFileTypes: true })
-  .filter((entry) => entry.isDirectory() && existsSync(`${APP}${entry.name}/apple-icon.png`))
+const GAMES = fileURLToPath(new URL("../app/games/", import.meta.url));
+const gameIcons = readdirSync(GAMES, { withFileTypes: true })
+  .filter((entry) => entry.isDirectory() && existsSync(`${GAMES}${entry.name}/apple-icon.png`))
   .map((entry) => ({
-    from: `../app/${entry.name}/apple-icon.png`,
-    to: `/${entry.name}/apple-icon.png`,
+    from: `../app/games/${entry.name}/apple-icon.png`,
+    to: `/games/${entry.name}/apple-icon.png`,
   }));
 
 /**

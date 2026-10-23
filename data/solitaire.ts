@@ -30,4 +30,7 @@ export const WIN_HEADINGS: Record<FxKind, string> = {
 };
 export const WIN_HEADING = "Solved";
 
+/** The Menu's way back to the games launcher (DECISIONS.md ADR-021). */
+export const ALL_GAMES = { label: "All games", href: "/games" } as const;
+
 export const NO_MOVES = "No useful moves left. Undo, or deal again.";
