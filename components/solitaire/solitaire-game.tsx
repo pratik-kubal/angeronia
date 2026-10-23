@@ -48,6 +48,9 @@ type Hints = { seed: number; rev: number; list: Hint[]; index: number; shown: bo
 
 const HINT_MS = 3200;
 const TOAST_MS = 3200;
+/** How long and how far the solver looks for a win before the hint falls back to rules of thumb. */
+const HINT_SOLVE_MS = 60;
+const HINT_SOLVE_NODES = 30_000;
 
 const pileName = (pile: PileId) => (pile[0] === "t" ? `column ${Number(pile[1]) + 1}` : "its foundation");
 /** The table before a game has loaded (nothing to press). */
@@ -87,6 +90,8 @@ export function SolitaireGame() {
   const [entryToken, setEntryToken] = useState(0);
   /** The rev of the game as it arrived: only changes after it are this tab's own play. */
   const loadedRev = useRef(0);
+  /** The game whose win is being shown (a new deal clears it). */
+  const winFor = useRef<string | null>(null);
   const adopt = useCallback((next: GameState, kind: "deal" | "snap") => {
     loadedRev.current = next.rev;
     entry.current = { token: entry.current.token + 1, seed: next.seed, rev: next.rev, motion: { kind } };
@@ -166,10 +171,27 @@ export function SolitaireGame() {
   useEffect(() => {
     const take = (other: GameState | null) => {
       const mine = stateRef.current;
-      if (!other || (mine && other.seed === mine.seed && other.rev === mine.rev && other.elapsed === mine.elapsed)) return;
-      adopt(other, "snap");
-      setStats(loadStats());
-      if (other.status === "won") setSheet("result");
+      if (!other) return;
+      if (mine && other.seed === mine.seed && other.rev === mine.rev) {
+        // The same position (the owner saves every tick of its clock): only the time and the stats
+        // marks move on, so nothing is replayed onto the table.
+        const marked = other.counted !== mine.counted || other.recorded !== mine.recorded;
+        if (!marked && other.elapsed === mine.elapsed) return;
+        dispatch({ type: "load", state: { ...mine, elapsed: other.elapsed, counted: other.counted, recorded: other.recorded } });
+        if (marked) setStats(loadStats());
+      } else {
+        if (!mine || other.seed !== mine.seed) {
+          // Another deal: this one's win show, result and hints go with it.
+          winFor.current = null;
+          setFx(null);
+          setLastFx(null);
+          setHints(null);
+          setSheet((s) => (s === "result" ? null : s));
+        }
+        adopt(other, "snap");
+        setStats(loadStats());
+        if (other.status === "won") setSheet("result");
+      }
       if (clock.current) clock.current.last = performance.now();
     };
     const claim = () => {
@@ -255,8 +277,6 @@ export function SolitaireGame() {
     },
     [size],
   );
-  /** The game whose win is being shown (a new deal clears it). */
-  const winFor = useRef<string | null>(null);
   useEffect(() => {
     if (!state || state.status !== "won" || state.recorded || state.rev <= loadedRev.current) return;
     const key = `${state.seed}:${state.rev}`;
@@ -317,13 +337,12 @@ export function SolitaireGame() {
   const showHint = useCallback(async () => {
     const s = stateRef.current;
     if (!s || s.status !== "playing") return;
-    dispatch({ type: "hint" });
     const mod = hintModule.current ?? (hintModule.current = await import("@/lib/solitaire/hint"));
     const now = stateRef.current;
     if (!now || now.rev !== s.rev || now.seed !== s.seed) return;
     const prev = hintsRef.current;
     const fresh = !prev || prev.rev !== s.rev || prev.seed !== s.seed;
-    const list = fresh ? mod.hintList(s.table, { deadline: performance.now() + 60 }) : prev.list;
+    const list = fresh ? mod.hintList(s.table, { maxNodes: HINT_SOLVE_NODES, deadline: performance.now() + HINT_SOLVE_MS }) : prev.list;
     if (!list.length) {
       setHints(null);
       announce(NO_MOVES);
@@ -391,6 +410,9 @@ export function SolitaireGame() {
         return;
       }
       if (meta) return;
+      // Space on a focused control (Undo, Hint, the stock, a card) presses that control; it turns
+      // the stock only from elsewhere.
+      if (key === " " && e.target instanceof Element && e.target.closest("button, a[href], input, select, textarea, [role=button]")) return;
       if (key === "d" || key === " ") {
         e.preventDefault();
         act({ type: "stock" });

@@ -177,12 +177,18 @@ test.describe("Solitaire", () => {
     expect(await places()).toBe(was);
   });
 
-  test("a win plays the next win show, and a tap skips to the result", async ({ page }) => {
+  test("a win plays the next win show, and a tap skips to the result", async ({ page, isMobile }) => {
     await win(page);
     await expect(page.locator('canvas.sol-fx[data-fx="cascade"]')).toBeVisible();
     await expect(page.locator(".sol-card").first()).toBeHidden();
-    await page.locator("canvas.sol-fx").click();
+    // Near the top, where the result sheet's backdrop comes up under the finger: the tap that
+    // skips must not close the sheet it opens.
+    const near = { position: { x: 40, y: 24 } };
+    if (isMobile) await page.locator("canvas.sol-fx").tap(near);
+    else await page.locator("canvas.sol-fx").click(near);
     const result = page.getByRole("dialog", { name: "Result" });
+    await expect(result).toBeVisible();
+    await page.waitForTimeout(500);
     await expect(result).toBeVisible();
     await expect(result.getByRole("heading")).toHaveText("Solved, the classic way");
     await expect(result.getByText("Won", { exact: true })).toBeVisible();
@@ -226,6 +232,20 @@ test.describe("Solitaire", () => {
     expect((await saved(page)).log).toEqual(["s"]);
   });
 
+  test("two tabs: a new game in one closes the other's result", async ({ page, context }) => {
+    await win(page);
+    await page.locator("canvas.sol-fx").click({ position: { x: 40, y: 24 } });
+    await expect(page.getByRole("dialog", { name: "Result" })).toBeVisible();
+    const other = await context.newPage();
+    await other.goto("/solitaire");
+    await other.waitForSelector(".sol-table[data-ready]");
+    await expect(other.getByRole("dialog", { name: "Result" })).toBeVisible();
+    await page.getByRole("dialog", { name: "Result" }).getByRole("button", { name: "New game" }).click();
+    await expect(page.getByRole("dialog", { name: "Result" })).toBeHidden();
+    await expect(other.getByRole("dialog", { name: "Result" })).toBeHidden();
+    await expect.poll(async () => (await saved(other)).seed).not.toBe(SEED);
+  });
+
   test("keys: D turns the stock, U undoes, H hints", async ({ page, isMobile }) => {
     test.skip(isMobile, "keys are for desktops");
     await open(page);
@@ -237,5 +257,42 @@ test.describe("Solitaire", () => {
     expect((await saved(page)).log).toEqual([]);
     await page.keyboard.press("h");
     await expect(page.locator("[data-hint]").first()).toBeVisible();
+  });
+
+  test("keys: Space turns the stock, but presses a focused button as its own", async ({ page, isMobile }) => {
+    test.skip(isMobile, "keys are for desktops");
+    await open(page);
+    await page.keyboard.press(" ");
+    await settled(page);
+    expect((await saved(page)).log).toEqual(["s"]);
+    await page.getByRole("button", { name: "Undo" }).focus();
+    await page.keyboard.press(" ");
+    await settled(page);
+    expect((await saved(page)).log).toEqual([]);
+  });
+
+  test("keys: the playable cards are one Tab stop, and the arrows walk them in table order", async ({ page, isMobile }) => {
+    test.skip(isMobile, "keys are for desktops");
+    const before = replay(SEED, SOLUTION.slice(0, WASTE_AT)).state;
+    await open(page, before);
+    const t = before.table;
+    const order = [...t.waste.slice(-1), ...t.foundations.flatMap((f) => f.slice(-1)), ...t.tableau.flatMap((c) => c.up)];
+    await expect(page.locator('.sol-card[tabindex="0"]')).toHaveCount(1);
+    await page.locator('[data-slot="s"]').focus();
+    await page.keyboard.press("Tab");
+    await expect(card(page, order[0])).toBeFocused();
+    for (const next of order.slice(1)) {
+      await page.keyboard.press("ArrowRight");
+      await expect(card(page, next)).toBeFocused();
+    }
+    await page.keyboard.press("Home");
+    await expect(card(page, order[0])).toBeFocused();
+    await page.keyboard.press("End");
+    await expect(card(page, order.at(-1)!)).toBeFocused();
+    // The card focused last keeps the Tab stop, and Tab leaves the cards for the controls.
+    await expect(page.locator('.sol-card[tabindex="0"]')).toHaveCount(1);
+    await expect(card(page, order.at(-1)!)).toHaveAttribute("tabindex", "0");
+    await page.keyboard.press("Tab");
+    await expect(page.getByRole("button", { name: "Menu" })).toBeFocused();
   });
 });

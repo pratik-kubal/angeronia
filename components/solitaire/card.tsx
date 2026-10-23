@@ -11,8 +11,10 @@ type Props = {
   card: Card;
   /** Its name when face up ("Face-down card" otherwise); null keeps it out of the accessibility tree (the stock). */
   label: string | null;
-  /** A face-up card that can be played: focusable, Enter plays it. */
+  /** A face-up card that can be played: a button, Enter plays it. */
   playable: boolean;
+  /** The one card in the Tab order (the table's arrow keys move between the playable ones). */
+  tabbable: boolean;
   hint: "from" | "to" | undefined;
   register: (card: Card, el: HTMLDivElement | null) => void;
 };
@@ -22,7 +24,7 @@ type Props = {
  * index for small cards, and the back on top, shown while data-up is "0". The animator owns the
  * element's transform, stacking and data-up; React never sets them.
  */
-export const CardView = memo(function CardView({ card, label, playable, hint, register }: Props) {
+export const CardView = memo(function CardView({ card, label, playable, tabbable, hint, register }: Props) {
   const ref = useCallback((el: HTMLDivElement | null) => register(card, el), [card, register]);
   return (
     <div
@@ -33,7 +35,7 @@ export const CardView = memo(function CardView({ card, label, playable, hint, re
       role={label === null ? undefined : playable ? "button" : "img"}
       aria-label={label ?? undefined}
       aria-hidden={label === null || undefined}
-      tabIndex={playable ? 0 : -1}
+      tabIndex={tabbable ? 0 : -1}
     >
       <div className="sol-card-in">
         {/* eslint-disable-next-line @next/next/no-img-element -- 52 fixed, pre-sized faces; next/image would add nothing */}

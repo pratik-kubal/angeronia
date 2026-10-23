@@ -1,8 +1,8 @@
 // Puzzle generation: a random full grid, then dig cells out while the puzzle stays fair.
 
-import { mulberry32 } from "../random";
+import { mulberry32, shuffle } from "../random";
 import { CELLS } from "./grid";
-import { countSolutions, randomSolution, shuffle, solveBySingles } from "./solver";
+import { countSolutions, randomSolution, solveBySingles } from "./solver";
 
 export type Difficulty = "easy" | "medium" | "hard";
 

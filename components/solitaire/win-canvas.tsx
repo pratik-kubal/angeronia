@@ -130,5 +130,7 @@ export function WinCanvas({ kind, layout, size, seed, onDone }: Props) {
     };
   }, [kind, layout, size, seed]);
 
-  return <canvas ref={ref} className="sol-fx" data-fx={kind} aria-hidden onPointerDown={() => done.current()} />;
+  // Skipped on the click, not the press: a result sheet opened under a finger still down would take
+  // the click that follows on its backdrop (iOS aims it at whatever is under the tap) and close.
+  return <canvas ref={ref} className="sol-fx" data-fx={kind} aria-hidden onClick={() => done.current()} />;
 }

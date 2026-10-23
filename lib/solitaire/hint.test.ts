@@ -40,6 +40,16 @@ describe("usefulMoves", () => {
     const t = table("", "", ["", "AS 2S 3S", "", ""], [["", "4S 3H"], ["", "4C"]]);
     expect(usefulMoves(t)).toContainEqual({ kind: "move", from: "t0", to: "t1", count: 1 });
   });
+
+  it("empties a column for a King that waits for it, and only then", () => {
+    // The 9S run off the felt onto the TD leaves column 2 empty for the KH on its face-down cards.
+    const cols: [string, string][] = [["4C 5C", "KH"], ["", "9S 8H"], ["", "TD"], ["2C", "3D"], ["2D", "4H"], ["2H", "6S"], ["2S", "JD"]];
+    const run = { kind: "move", from: "t1", to: "t2", count: 2 };
+    expect(usefulMoves(table("", "", ["", "", "", ""], cols))).toEqual([run]);
+    // A King still in the stock waits too; one already on the bare felt doesn't.
+    expect(usefulMoves(table("KC", "", ["", "", "", ""], [["4C 5C", "QS"], ...cols.slice(1)]))).toContainEqual(run);
+    expect(usefulMoves(table("", "", ["", "", "", ""], [["", "KH"], ...cols.slice(1)]))).toEqual([]);
+  });
 });
 
 describe("hintList", () => {
@@ -47,7 +57,7 @@ describe("hintList", () => {
     const t = deal(2);
     const best = solverHint(t, { maxNodes: 30_000 });
     expect(best).not.toBeNull();
-    const list = hintList(t);
+    const list = hintList(t, { maxNodes: 30_000 });
     expect(list[0]).toEqual(best);
     for (const h of list) if (h.kind === "move") expect(legalCount(t, h.from, h.to)).toBe(h.count);
     expect(new Set(list.map((h) => JSON.stringify(h))).size).toBe(list.length);

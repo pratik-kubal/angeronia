@@ -26,6 +26,16 @@ type Props = {
 /** How long the table waits for the faces to decode before showing the cards anyway. */
 const DECODE_WAIT_MS = 4000;
 
+/** The keys that move the focus along the playable cards: from index `i` of `n`, to the result. */
+const STEPS: Record<string, (i: number, n: number) => number> = {
+  ArrowLeft: (i) => i - 1,
+  ArrowUp: (i) => i - 1,
+  ArrowRight: (i) => i + 1,
+  ArrowDown: (i) => i + 1,
+  Home: () => 0,
+  End: (_, n) => n - 1,
+};
+
 /**
  * The felt: the piles' slots and all 52 cards, rendered once (on the server too) and placed by the
  * animator from the layout. It waits for every face to decode, so no card turns over blank.
@@ -33,6 +43,8 @@ const DECODE_WAIT_MS = 4000;
 export const SolitaireTable = memo(function SolitaireTable({ layout, table, motion, hint, fx, animator, gesture, handlers }: Props) {
   const ref = useRef<HTMLDivElement>(null);
   const [decoded, setDecoded] = useState(false);
+  /** The card focused last, which keeps the Tab stop while it can play. */
+  const [focused, setFocused] = useState<Card | null>(null);
   const register = useCallback((card: Card, el: HTMLDivElement | null) => animator.register(card, el), [animator]);
   useGesture(ref, animator, gesture, handlers);
 
@@ -65,13 +77,13 @@ export const SolitaireTable = memo(function SolitaireTable({ layout, table, moti
   const ready = layout !== null && decoded;
   const style = layout ? ({ "--card-w": `${layout.cardW}px`, "--card-h": `${layout.cardH}px` } as CSSProperties) : undefined;
 
-  // What the accessibility tree and Hint show for each card.
+  // What the accessibility tree and Hint show for each card. The playable cards, in table order (the
+  // waste, the foundations, then each column's face-up run from the top of the screen down), are one
+  // Tab stop: the arrow keys move along them, as the cards' DOM order is the deck's, not the table's.
   const faceUp = new Set<Card>([...table.waste, ...table.foundations.flat(), ...table.tableau.flatMap((c) => c.up)]);
-  const playable = new Set<Card>([
-    ...table.waste.slice(-1),
-    ...table.foundations.flatMap((f) => f.slice(-1)),
-    ...table.tableau.flatMap((c) => c.up),
-  ]);
+  const order = [...table.waste.slice(-1), ...table.foundations.flatMap((f) => f.slice(-1)), ...table.tableau.flatMap((c) => c.up)];
+  const playable = new Set<Card>(order);
+  const tabStop = focused !== null && playable.has(focused) ? focused : order[0];
   const hinted = new Map<Card, "from" | "to">();
   let hintSlot: { pile: PileId; role: "from" | "to" } | null = null;
   let toSlot: PileId | null = null;
@@ -87,6 +99,15 @@ export const SolitaireTable = memo(function SolitaireTable({ layout, table, moti
   }
 
   const onKey = (e: KeyboardEvent<HTMLDivElement>) => {
+    const step = STEPS[e.key];
+    if (step && order.length && !e.altKey && !e.metaKey && !e.ctrlKey && !e.shiftKey) {
+      const el = (e.target as HTMLElement).closest("[data-card]") as HTMLElement | null;
+      if (!el) return;
+      const i = Math.min(order.length - 1, Math.max(0, step(order.indexOf(Number(el.dataset.card)), order.length)));
+      e.preventDefault();
+      ref.current?.querySelector<HTMLElement>(`[data-card="${order[i]}"]`)?.focus();
+      return;
+    }
     if (e.key !== "Enter" && e.key !== " ") return;
     const el = (e.target as HTMLElement).closest("[data-card]") as HTMLElement | null;
     if (!el || !gesture.current.enabled) return;
@@ -114,6 +135,10 @@ export const SolitaireTable = memo(function SolitaireTable({ layout, table, moti
       data-big={layout?.bigIndex || undefined}
       data-fx={fx || undefined}
       onKeyDown={onKey}
+      onFocus={(e) => {
+        const el = (e.target as HTMLElement).closest("[data-card]") as HTMLElement | null;
+        if (el) setFocused(Number(el.dataset.card));
+      }}
     >
       {layout &&
         PILE_IDS.map((pile) => {
@@ -159,6 +184,7 @@ export const SolitaireTable = memo(function SolitaireTable({ layout, table, moti
             card={card}
             label={inStock ? null : faceUp.has(card) ? cardName(card) : "Face-down card"}
             playable={playable.has(card)}
+            tabbable={card === tabStop}
             hint={hinted.get(card)}
             register={register}
           />

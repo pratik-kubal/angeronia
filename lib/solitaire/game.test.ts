@@ -2,6 +2,7 @@ import { describe, expect, it } from "vitest";
 import { CARDS, cardCode, type Card } from "./cards";
 import { DEAL_VERSION, deal, type Table } from "./deal";
 import {
+  FREE_RECYCLES,
   MAX_MOVES,
   PILE_IDS,
   POINTS,
@@ -62,7 +63,7 @@ describe("drawing", () => {
     expect(s.table.fan).toBe(2);
   });
 
-  it("turns the waste back over in order, so the next pass deals the same threes, at −20 a recycle", () => {
+  it("turns the waste back over in order, so the next pass deals the same threes, free three times and then at −20", () => {
     let s = newGame(11);
     const pass = () => {
       const threes: string[] = [];
@@ -78,11 +79,19 @@ describe("drawing", () => {
     expect(s.table.waste).toEqual([]);
     expect(s.table.stock).toHaveLength(24);
     expect(s.last?.effects[0].recycled).toBe(true);
-    expect(s.points).toBe(POINTS.recycle);
     expect(pass()).toEqual(first);
+    for (let k = 2; k <= FREE_RECYCLES; k++) {
+      s = reduce(s, { type: "stock" });
+      pass();
+    }
+    expect(s.recycles).toBe(FREE_RECYCLES);
+    expect(s.points).toBe(0);
+    s = reduce(s, { type: "stock" });
+    expect(s.points).toBe(POINTS.recycle);
+    pass();
     s = reduce(s, { type: "stock" });
     expect(s.points).toBe(2 * POINTS.recycle);
-    expect(s.recycles).toBe(2);
+    expect(s.recycles).toBe(FREE_RECYCLES + 2);
   });
 
   it("does nothing with the stock and the waste both empty", () => {
@@ -196,11 +205,11 @@ describe("the clock, undo and restart", () => {
     expect(s.elapsed).toBe(500);
   });
 
-  it("undoes a move back to exactly the state before it, the clock and hints kept", () => {
+  it("undoes a move back to exactly the state before it, the clock kept", () => {
     let s = newGame(4);
     for (let k = 0; k < 6; k++) s = reduce(s, { type: "stock" });
     const legal = legalMoves(s.table);
-    const before = reduce(reduce(s, { type: "tick", ms: 1000 }), { type: "hint" });
+    const before = reduce(s, { type: "tick", ms: 1000 });
     let after = legal.length ? move(before, legal[0].from, legal[0].to) : reduce(before, { type: "stock" });
     after = reduce(after, { type: "tick", ms: 1000 });
     const back = reduce(after, { type: "undo" });
@@ -208,7 +217,6 @@ describe("the clock, undo and restart", () => {
     expect(back.log).toEqual(before.log);
     expect(back.points).toBe(before.points);
     expect(back.elapsed).toBe(2000);
-    expect(back.hints).toBe(1);
     expect(back.rev).toBe(after.rev + 1);
     expect(back.last?.kind).toBe("undo");
   });

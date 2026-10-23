@@ -2,7 +2,7 @@
 // plus the moves made (game.ts) and the deal bank (deals.ts) is a list of seeds. Bump DEAL_VERSION
 // whenever the shuffle or the layout changes: every banked seed and saved game is void after it.
 
-import { mulberry32 } from "../random";
+import { mulberry32, shuffle } from "../random";
 import { CARDS, type Card } from "./cards";
 
 export const DEAL_VERSION = 1;
@@ -23,15 +23,7 @@ export type Table = {
 };
 
 /** The deck shuffled by `seed` (Fisher–Yates). */
-export function shuffled(seed: number): Card[] {
-  const rng = mulberry32(seed);
-  const deck = CARDS.slice();
-  for (let i = deck.length - 1; i > 0; i--) {
-    const j = Math.floor(rng() * (i + 1));
-    [deck[i], deck[j]] = [deck[j], deck[i]];
-  }
-  return deck;
-}
+export const shuffled = (seed: number): Card[] => shuffle(CARDS.slice(), mulberry32(seed));
 
 /** Deals row by row, as by hand: columns of 1 to 7 cards, each top card face up; 24 left in the stock. */
 export function deal(seed: number): Table {

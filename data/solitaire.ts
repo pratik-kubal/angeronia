@@ -8,7 +8,7 @@ export const HOW_TO_PLAY = [
   "Tap the stock to turn three cards; only the top one plays. When the stock runs out, tap it again to turn the waste back over, as often as you like.",
   "Tap a card to send it where it fits, its foundation first. Or drag it. A card can be dragged back down off a foundation.",
   "Every deal here can be won. Hint shows a move that keeps it winnable when it finds one, and Undo takes back any move.",
-  "Windows scoring: 10 for each card to a foundation, 5 for a waste card onto the table or a card turned over, −15 for one taken back off a foundation, −20 for turning the waste over, and −2 every 10 seconds. A win in more than 30 seconds adds 700,000 ÷ seconds.",
+  "Windows scoring: 10 for each card to a foundation, 5 for a waste card onto the table or a card turned over, −15 for one taken back off a foundation, −20 for each turn of the waste after the third, and −2 every 10 seconds. A win in more than 30 seconds adds 700,000 ÷ seconds.",
 ];
 
 export const STATS_COPY = {

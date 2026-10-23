@@ -15,9 +15,9 @@ export const PILE_IDS: readonly PileId[] = ["s", "w", ...FOUNDATION_IDS, ...TABL
 
 /** Cards turned from the stock at a time. */
 export const DRAW = 3;
-/** Windows Standard scoring. A recycle costs only after the free ones (none in Windows' draw three). */
+/** Windows Standard scoring. A recycle costs only after the free ones (three in Windows' draw three). */
 export const POINTS = { wasteToTableau: 5, toFoundation: 10, flip: 5, foundationToTableau: -15, recycle: -20 } as const;
-export const FREE_RECYCLES = 0;
+export const FREE_RECYCLES = 3;
 /** −2 for every 10 s played; a win in more than 30 s adds 700,000 ÷ seconds. */
 export const TIME_PENALTY = { points: 2, everyMs: 10_000 } as const;
 /** A saved log longer than this is cut to it (no real game comes near). */
@@ -39,7 +39,6 @@ export type GameState = {
   recycles: number;
   /** Milliseconds played: the clock starts at the first move and stops at the win. */
   elapsed: number;
-  hints: number;
   status: Status;
   /** Counted as played in the stats (at its first move). */
   counted: boolean;
@@ -64,7 +63,6 @@ export type Action =
   | { type: "undo" }
   | { type: "restart" }
   | { type: "tick"; ms: number }
-  | { type: "hint" }
   | { type: "mark"; counted?: true; recorded?: true };
 
 export function newGame(seed: number): GameState {
@@ -76,7 +74,6 @@ export function newGame(seed: number): GameState {
     points: 0,
     recycles: 0,
     elapsed: 0,
-    hints: 0,
     status: "playing",
     counted: false,
     recorded: false,
@@ -296,8 +293,6 @@ export function reduce(state: GameState, action: Action): GameState {
       return action.state;
     case "tick":
       return state.status === "playing" && state.log.length > 0 ? { ...state, elapsed: state.elapsed + action.ms } : state;
-    case "hint":
-      return { ...state, hints: state.hints + 1 };
     case "mark":
       return {
         ...state,
@@ -328,11 +323,11 @@ export function reduce(state: GameState, action: Action): GameState {
     case "undo": {
       if (state.status !== "playing" || state.log.length === 0) return state;
       const { state: back } = replay(state.seed, state.log.slice(0, -1));
-      return changed(state, { ...back, elapsed: state.elapsed, hints: state.hints, counted: state.counted, recorded: state.recorded }, "undo", []);
+      return changed(state, { ...back, elapsed: state.elapsed, counted: state.counted, recorded: state.recorded }, "undo", []);
     }
     case "restart": {
       if (state.log.length === 0) return state;
-      return changed(state, { ...newGame(state.seed), hints: 0, counted: state.counted, recorded: state.recorded }, "restart", []);
+      return changed(state, { ...newGame(state.seed), counted: state.counted, recorded: state.recorded }, "restart", []);
     }
   }
 }
@@ -345,7 +340,6 @@ export type Saved = {
   seed: number;
   moves: string[];
   elapsed: number;
-  hints: number;
   counted: boolean;
   recorded: boolean;
   rev: number;
@@ -357,7 +351,6 @@ export const toSaved = (state: GameState): Saved => ({
   seed: state.seed,
   moves: state.log,
   elapsed: state.elapsed,
-  hints: state.hints,
   counted: state.counted,
   recorded: state.recorded,
   rev: state.rev,
@@ -373,14 +366,13 @@ export function parseSaved(value: unknown): GameState | null {
   const s = value as Partial<Saved>;
   if (s.v !== 1 || s.deal !== DEAL_VERSION) return null;
   const count = (n: unknown): n is number => typeof n === "number" && Number.isFinite(n) && n >= 0;
-  if (!count(s.seed) || !Number.isInteger(s.seed) || !count(s.elapsed) || !count(s.hints) || !count(s.rev)) return null;
+  if (!count(s.seed) || !Number.isInteger(s.seed) || !count(s.elapsed) || !count(s.rev)) return null;
   if (typeof s.counted !== "boolean" || typeof s.recorded !== "boolean") return null;
   if (!Array.isArray(s.moves) || !s.moves.every((m) => typeof m === "string" && isToken(m))) return null;
   const { state } = replay(s.seed, s.moves.slice(0, MAX_MOVES));
   return {
     ...state,
     elapsed: s.elapsed,
-    hints: Math.floor(s.hints),
     counted: s.counted,
     recorded: s.recorded,
     rev: Math.floor(s.rev),

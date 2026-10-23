@@ -3,7 +3,7 @@
 // animation. Every access is guarded: private mode and blocked storage just mean nothing is
 // remembered.
 
-import { mulberry32 } from "@/lib/random";
+import { mulberry32, shuffle } from "@/lib/random";
 import { DEALS } from "@/lib/solitaire/deals";
 import { parseSaved, toSaved, type GameState } from "@/lib/solitaire/game";
 
@@ -107,15 +107,11 @@ const BANK = `${DEALS.length}:${DEALS[0]}:${DEALS[DEALS.length - 1]}`;
 type Order = { bank: string; salt: number; cursor: number };
 
 /** Bank indexes 0…n−1 in the order a salt deals them. */
-export function dealOrder(salt: number, n: number): number[] {
-  const rng = mulberry32(salt);
-  const order = Array.from({ length: n }, (_, i) => i);
-  for (let i = n - 1; i > 0; i--) {
-    const j = Math.floor(rng() * (i + 1));
-    [order[i], order[j]] = [order[j], order[i]];
-  }
-  return order;
-}
+export const dealOrder = (salt: number, n: number): number[] =>
+  shuffle(
+    Array.from({ length: n }, (_, i) => i),
+    mulberry32(salt),
+  );
 
 /**
  * The next deal's seed for this browser: the bank in an order of its own, so no deal comes round

@@ -11,7 +11,7 @@ type Props = {
   onClose: () => void;
   children: ReactNode;
   /** The class prefix its styles use ("sdk" for Sudoku's, "sol" for Solitaire's). */
-  prefix?: string;
+  prefix: "sdk" | "sol";
 };
 
 /** How far down (px) a drag on the grabber must pull the sheet to dismiss it. */
@@ -25,7 +25,7 @@ const DISMISS_DRAG = 90;
  * collection or New game over the result): one that comes back puts focus where it was, and when
  * the last one closes focus returns to the page control that opened them.
  */
-export function Sheet({ open, label, dismissible, onClose, children, prefix = "sdk" }: Props) {
+export function Sheet({ open, label, dismissible, onClose, children, prefix }: Props) {
   const ref = useRef<HTMLDialogElement>(null);
   const drag = useRef<{ y: number; dy: number } | null>(null);
   /** The page control that opened this sheet. */
