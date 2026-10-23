@@ -4,7 +4,7 @@ import { BANK_BUDGET, BANK_DEAL_VERSION, DEALS } from "./deals";
 import { replay } from "./game";
 import { solve } from "./solver";
 
-// The bank (lib/solitaire/deals.ts, from `pnpm solitaire:deals`) holds only winnable deals: the
+// The bank (lib/solitaire/deals.ts, from `npm run solitaire:deals`) holds only winnable deals: the
 // script replays each solution through the reducer before keeping a seed. Here a few are proven
 // again, so a change to the deal or the rules that voids the bank fails loudly.
 

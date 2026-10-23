@@ -15,7 +15,7 @@
    `:is()`: the build prefixes `:is()` as `:-webkit-any()`, which counts as a
    class and would win.
    ══════════════════════════════════════════════════════════════════════════ */
-html:has(.sdk-shell) {
+html:has(.sdk-shell, .sol-shell) {
   line-height: 1.5;
   -webkit-text-size-adjust: 100%;
   text-size-adjust: 100%;
@@ -24,10 +24,10 @@ html:has(.sdk-shell) {
   -webkit-tap-highlight-color: transparent;
 }
 
-html body :where(.sdk-shell, .sdk-shell *),
-html body :where(.sdk-shell, .sdk-shell *)::before,
-html body :where(.sdk-shell, .sdk-shell *)::after,
-html body :where(.sdk-shell, .sdk-shell *)::backdrop {
+html body :where(.sdk-shell, .sdk-shell *, .sol-shell, .sol-shell *),
+html body :where(.sdk-shell, .sdk-shell *, .sol-shell, .sol-shell *)::before,
+html body :where(.sdk-shell, .sdk-shell *, .sol-shell, .sol-shell *)::after,
+html body :where(.sdk-shell, .sdk-shell *, .sol-shell, .sol-shell *)::backdrop {
   box-sizing: border-box;
   margin: 0;
   padding: 0;
@@ -37,37 +37,37 @@ html body :where(.sdk-shell, .sdk-shell *)::backdrop {
 }
 
 /* Carbon sets these on <body>; the games start from the browser's. */
-html body :where(.sdk-shell) {
+html body :where(.sdk-shell, .sol-shell) {
   font-feature-settings: normal;
   text-rendering: auto;
 }
 
-html body :where(.sdk-shell) :where(h1, h2, h3, h4, h5, h6, p) {
+html body :where(.sdk-shell, .sol-shell) :where(h1, h2, h3, h4, h5, h6, p) {
   font-size: inherit;
   font-weight: inherit;
   line-height: inherit;
   letter-spacing: inherit;
 }
-html body :where(.sdk-shell) :where(b, strong) { font-weight: bolder; }
-html body :where(.sdk-shell) small { font-size: 80%; }
-html body :where(.sdk-shell) :where(i, em) { font-style: italic; }
-html body :where(.sdk-shell) a {
+html body :where(.sdk-shell, .sol-shell) :where(b, strong) { font-weight: bolder; }
+html body :where(.sdk-shell, .sol-shell) small { font-size: 80%; }
+html body :where(.sdk-shell, .sol-shell) :where(i, em) { font-style: italic; }
+html body :where(.sdk-shell, .sol-shell) a {
   color: inherit;
   text-decoration: inherit;
 }
-html body :where(.sdk-shell) :where(ol, ul, menu) { list-style: none; }
-html body :where(.sdk-shell) summary { display: list-item; }
+html body :where(.sdk-shell, .sol-shell) :where(ol, ul, menu) { list-style: none; }
+html body :where(.sdk-shell, .sol-shell) summary { display: list-item; }
 
-html body :where(.sdk-shell) :where(img, svg, video, canvas, audio, iframe, embed, object) {
+html body :where(.sdk-shell, .sol-shell) :where(img, svg, video, canvas, audio, iframe, embed, object) {
   display: block;
   vertical-align: middle;
 }
-html body :where(.sdk-shell) :where(img, video) {
+html body :where(.sdk-shell, .sol-shell) :where(img, video) {
   max-width: 100%;
   height: auto;
 }
 
-html body :where(.sdk-shell) :where(button, input, select, optgroup, textarea) {
+html body :where(.sdk-shell, .sol-shell) :where(button, input, select, optgroup, textarea) {
   font: inherit;
   font-feature-settings: inherit;
   font-variation-settings: inherit;
@@ -77,6 +77,6 @@ html body :where(.sdk-shell) :where(button, input, select, optgroup, textarea) {
   background-color: transparent;
   opacity: 1;
 }
-html body :where(.sdk-shell) :where(button, input[type="button"], input[type="reset"], input[type="submit"]) {
+html body :where(.sdk-shell, .sol-shell) :where(button, input[type="button"], input[type="reset"], input[type="submit"]) {
   appearance: button;
 }

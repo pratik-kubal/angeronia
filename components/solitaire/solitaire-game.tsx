@@ -468,7 +468,7 @@ export function SolitaireGame() {
   const place = (r: { x: number; y: number; w: number; h: number }): CSSProperties => ({ left: r.x, top: r.y, width: r.w, height: r.h });
 
   return (
-    <main className="sol-game">
+    <main id="main" className="sol-game">
       <h1 className="sol-sr">Solitaire</h1>
       <div className="sol-stage" ref={stageRef}>
         {state && motion && (

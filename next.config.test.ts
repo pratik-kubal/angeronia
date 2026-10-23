@@ -5,7 +5,7 @@ describe("next.config", () => {
   it("serves /Solitaire with a rewrite, never a redirect (custom routes ignore case, so a redirect would loop)", async () => {
     const rewrites = await nextConfig.rewrites!();
     expect(rewrites).toEqual([{ source: "/Solitaire", destination: "/solitaire" }]);
-    const redirects = await nextConfig.redirects!();
+    const redirects = (await nextConfig.redirects?.()) ?? [];
     expect(redirects.some((r) => /solitaire/i.test(r.source) || /solitaire/i.test(r.destination))).toBe(false);
   });
 

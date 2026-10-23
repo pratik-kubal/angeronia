@@ -69,19 +69,20 @@ For the studio site. The games are outside it; see **Games** below.
 
 ## Games (outside the design system)
 
-`/sudoku` moved here from `../portfolio` (2026-10-23). It keeps its own look —
-its own CSS, tokens, type, motion and Phosphor icons — and the contract above
-does not govern it: **ADR-019** draws the line (rules 10, 12 and 14 still
-apply). It is unlisted: not in the header, the footer or `sitemap.ts`, and
-`noindex`.
+`/sudoku` and `/solitaire` moved here from `../portfolio` (2026-10-23). They
+keep their own look — their own CSS, tokens, type, motion and Phosphor icons —
+and the contract above does not govern them: **ADR-019** draws the line (rules
+10, 12 and 14 still apply). They are unlisted: not in the header, the footer or
+`sitemap.ts`, and `noindex`.
 
-* Read `docs/games/sudoku.md` before touching `components/sudoku/` or
-  `lib/sudoku/`; it is the game's design and test notes, carried over from the
-  portfolio's `CLAUDE.md`.
-* Its gates are `npm test` (Vitest, node) and `npm run test:e2e` (Playwright,
-  desktop Chromium and an iPhone in WebKit), on top of typecheck and build.
-* It renders under the root layout, so Carbon's reset reaches it.
-  `components/games/base.css` puts back the browser defaults the game was built
+* Read `docs/games/sudoku.md` or `docs/games/solitaire.md` before touching a
+  game's `components/` or `lib/` folder; they are the games' design and test
+  notes, carried over from the portfolio's `CLAUDE.md`.
+* Their gates are `npm test` (Vitest, node) and `npm run test:e2e` (Playwright:
+  desktop Chromium, and an iPhone and an iPad in WebKit), on top of typecheck
+  and build.
+* They render under the root layout, so Carbon's reset reaches them.
+  `components/games/base.css` puts back the browser defaults they were built
   on; keep its selectors at `html body :where(...)` and never use `:is()` there
   (the build prefixes it to `:-webkit-any()`, which counts as a class).
 * Carbon hides any `[data-hidden]` on the page; don't use that attribute.
@@ -117,7 +118,9 @@ npm run typecheck      # tsc --noEmit
 npm run check:theme    # token parity + contrast matrix + favicon check
 npm run test:storybook # every story in Chromium; axe violations fail
 npm test               # the games' unit tests (Vitest, node)
-npm run test:e2e       # the games end to end (Playwright: Chromium + iPhone WebKit)
+npm run test:e2e       # the games end to end (Playwright: Chromium + iPhone/iPad WebKit)
+npm run solitaire:cards  # Solitaire's card faces, from the Vector Playing Cards pack
+npm run solitaire:deals  # re-prove Solitaire's bank of winnable deals (~5 min)
 
 npm run build:favicon  # re-tint app/icon.svg onto the teal ramp
 npm run build:logos    # regenerate the OG/social lockups

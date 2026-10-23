@@ -6,7 +6,7 @@
 // are committed, so builds never need the pack. Bump the v1 folder (and CARD_DIR in
 // components/solitaire/card.tsx) when the art changes: the files are served as immutable.
 //
-// Usage: pnpm solitaire:cards
+// Usage: npm run solitaire:cards
 //   CARDS_SVG_DIR overrides the pack's cards-svg folder (default ../Vector-Playing-Cards/cards-svg).
 
 import fs from "node:fs";

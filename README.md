@@ -48,16 +48,19 @@ There is no CSS linter. `slds-linter` was retired with SLDS rather than replaced
 
 ### The games
 
-[`/sudoku`](docs/games/sudoku.md) is a game, not a page of the studio site. It
-moved here from the founder's portfolio and keeps its own look — its own CSS,
-type, motion and Phosphor icons — outside the design system
-([`DECISIONS.md`](docs/design-system/DECISIONS.md) ADR-019). It is unlisted and
-`noindex`. Its gates are its own:
+[`/sudoku`](docs/games/sudoku.md) and [`/solitaire`](docs/games/solitaire.md)
+are games, not pages of the studio site. They moved here from the founder's
+portfolio and keep their own look — their own CSS, type, motion and Phosphor
+icons — outside the design system
+([`DECISIONS.md`](docs/design-system/DECISIONS.md) ADR-019). They are unlisted
+and `noindex`. Their gates are their own:
 
 ```bash
 npm test                 # unit tests (Vitest, node)
-npm run test:e2e         # Playwright: desktop Chromium and an iPhone in WebKit
+npm run test:e2e         # Playwright: desktop Chromium, an iPhone and an iPad in WebKit
                          # first run: npx playwright install chromium webkit
+npm run solitaire:cards  # Solitaire's card faces, from the Vector Playing Cards pack
+npm run solitaire:deals  # re-prove Solitaire's bank of winnable deals (~5 min)
 ```
 
 ### Generated artifacts
@@ -140,10 +143,16 @@ The games sit outside that tree's rules (ADR-019):
 ```
 app/sudoku/               the page: metadata, the pre-paint look script, its CSS
 components/sudoku/        the screen, sheets, themes and their stylesheets
-components/games/         base.css: the browser defaults the games were built on
 lib/sudoku/               the rules, solver, generator, themes and trophies (pure)
-lib/random.ts             the seeded PRNG they share
 data/sudoku*.ts           the game's copy and its 100 trophies
+app/solitaire/            the page, its suit symbols, its CSS
+components/solitaire/     the table, its animator and gestures, sheets, win shows
+lib/solitaire/            the rules, solver, hints and the bank of winnable deals (pure)
+data/solitaire.ts         the game's copy
+public/solitaire/cards/   the 52 card faces (generated, versioned, served immutable)
+scripts/*solitaire*       the card rasterizer and the deal prover (npm run solitaire:*)
+components/games/         base.css: the browser defaults the games were built on
+lib/random.ts             the seeded PRNG and shuffle they share
 e2e/                      Playwright specs
 docs/games/               each game's design and test notes
 ```
@@ -167,6 +176,8 @@ by colour alone.
 * **IBM Plex** is SIL OFL 1.1, self-hosted through `next/font`.
 * **Phosphor Icons** (`@phosphor-icons/react`, MIT) draw the games' icons, and
   only theirs.
+* Solitaire's card faces are rendered from Byron Knoll's **Vector Playing
+  Cards**, released into the public domain.
 
 No IBM trademark, wordmark or product artwork ships in this product, and this
 project is not affiliated with or endorsed by IBM. `cds--*` class names and

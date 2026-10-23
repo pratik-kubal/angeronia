@@ -4,7 +4,7 @@ import sharp from "sharp";
 import { describe, expect, it } from "vitest";
 import { CARDS, cardCode } from "../lib/solitaire/cards";
 
-// The committed output of `pnpm solitaire:cards` (scripts/build-solitaire-cards.ts): what
+// The committed output of `npm run solitaire:cards` (scripts/build-solitaire-cards.ts): what
 // components/solitaire/card.tsx loads and the win animations draw.
 
 const DIR = "public/solitaire/cards/v1";

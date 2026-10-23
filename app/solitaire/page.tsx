@@ -1,5 +1,7 @@
 import type { Metadata, Viewport } from "next";
 import { SolitaireGame } from "@/components/solitaire/solitaire-game";
+// The browser defaults the game was built on, in place of Carbon's reset (ADR-019).
+import "@/components/games/base.css";
 import "@/components/solitaire/solitaire.css";
 
 // Solitaire (Klondike, turn three) on green felt, dealt only from deals proven winnable, for a
