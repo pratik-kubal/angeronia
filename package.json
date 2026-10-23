@@ -9,6 +9,7 @@
     "lint": "next lint",
     "build:favicon": "node scripts/retint-favicon.mjs",
     "build:logos": "node scripts/build-logos.mjs",
+    "build:game-shots": "node scripts/build-game-shots.mjs",
     "solitaire:cards": "tsx scripts/build-solitaire-cards.ts",
     "solitaire:deals": "tsx scripts/build-solitaire-deals.ts",
     "check:theme": "node scripts/retint-favicon.mjs --check && node scripts/check-contrast.mjs",

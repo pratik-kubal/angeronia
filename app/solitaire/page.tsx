@@ -6,7 +6,8 @@ import "@/components/solitaire/solitaire.css";
 
 // Solitaire (Klondike, turn three) on green felt, dealt only from deals proven winnable, for a
 // phone on its side first and upright too. Served at /solitaire and, through a rewrite in
-// next.config.mjs, at /Solitaire. Unlisted for now: not in the nav, not in sitemap.ts, and noindex.
+// next.config.mjs, at /Solitaire. Linked from the home page (ADR-020), but not in the nav or
+// sitemap.ts, and noindex.
 export const metadata: Metadata = {
   title: "Solitaire",
   description: "Klondike, turn three, on green felt. Every deal can be won.",

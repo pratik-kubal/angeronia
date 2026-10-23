@@ -72,8 +72,10 @@ For the studio site. The games are outside it; see **Games** below.
 `/sudoku` and `/solitaire` moved here from `../portfolio` (2026-10-23). They
 keep their own look — their own CSS, tokens, type, motion and Phosphor icons —
 and the contract above does not govern them: **ADR-019** draws the line (rules
-10, 12 and 14 still apply). They are unlisted: not in the header, the footer or
-`sitemap.ts`, and `noindex`.
+10, 12 and 14 still apply). The home page's Games section links to them
+(**ADR-020**: a screenshot of each, from `npm run build:game-shots`); nothing
+else does. They are not in the header, the footer or `sitemap.ts`, and they are
+`noindex`.
 
 * Read `docs/games/sudoku.md` or `docs/games/solitaire.md` before touching a
   game's `components/` or `lib/` folder; they are the games' design and test
@@ -124,6 +126,7 @@ npm run solitaire:deals  # re-prove Solitaire's bank of winnable deals (~5 min)
 
 npm run build:favicon  # re-tint app/icon.svg onto the teal ramp
 npm run build:logos    # regenerate the OG/social lockups
+npm run build:game-shots  # re-take the home page's game screenshots (needs a running server)
 ```
 
 `check:theme` and `build:logos` both resolve their colours by compiling

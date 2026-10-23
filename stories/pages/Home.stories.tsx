@@ -8,6 +8,7 @@ import { Services } from "@/components/site/services";
 import { Process } from "@/components/site/process";
 import { ProductSpotlight } from "@/components/site/product-spotlight";
 import { About } from "@/components/site/about";
+import { Games } from "@/components/site/games";
 import { Contact } from "@/components/site/contact";
 import { SiteFooter } from "@/components/site/site-footer";
 
@@ -28,6 +29,7 @@ function Home() {
         <Philosophy />
         <Process />
         <About />
+        <Games />
         <Contact />
       </main>
       <SiteFooter />
@@ -66,6 +68,7 @@ export const Light: Story = {
       "What we take on",
       "How we work",
       "Right Now, One Person Team",
+      "Two games, for a break",
     ]) {
       await expect(canvas.getByRole("heading", { level: 2, name })).toBeInTheDocument();
     }

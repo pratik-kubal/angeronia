@@ -14,8 +14,8 @@ import "@/components/sudoku/themes/snow/snow.css";
 import "@/components/sudoku/themes/blossom/blossom.css";
 
 // Sudoku, built for a phone held upright, with its own look (its own themes, each in light and
-// dark, not the studio site's Carbon tokens; DECISIONS.md ADR-019). Unlisted for now: not in the
-// nav, not in sitemap.ts, and noindex until the owner decides to show it.
+// dark, not the studio site's Carbon tokens; DECISIONS.md ADR-019). Linked from the home page
+// (ADR-020), but not in the nav or sitemap.ts, and noindex.
 export const metadata: Metadata = {
   title: "Sudoku",
   description: "A calm, colourful Sudoku for your phone, lit by an aurora.",

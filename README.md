@@ -52,8 +52,9 @@ There is no CSS linter. `slds-linter` was retired with SLDS rather than replaced
 are games, not pages of the studio site. They moved here from the founder's
 portfolio and keep their own look — their own CSS, type, motion and Phosphor
 icons — outside the design system
-([`DECISIONS.md`](docs/design-system/DECISIONS.md) ADR-019). They are unlisted
-and `noindex`. Their gates are their own:
+([`DECISIONS.md`](docs/design-system/DECISIONS.md) ADR-019). The home page
+links to them (ADR-020); they stay out of the nav and the sitemap, and
+`noindex`. Their gates are their own:
 
 ```bash
 npm test                 # unit tests (Vitest, node)

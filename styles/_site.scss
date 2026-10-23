@@ -613,6 +613,56 @@
   margin-block-start: $spacing-07;
 }
 
+// Games (ADR-020): per game, a screenshot, its name, two sentences and one link.
+// Carbon has no media card with a picture, so the block is the site's. It is
+// the positioning context for the stretched link below, and a column, so the
+// body absorbs a difference in blurb length and the two links line up.
+.site-game {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+}
+
+// The screenshots bring the games' own grounds, and Sudoku's light aurora is
+// near white along its top, so the picture takes the edge a card takes.
+.site-game__shot {
+  display: block;
+  inline-size: 100%;
+  block-size: auto;
+  border: var(--site-border-width) solid theme.$border-subtle;
+}
+
+.site-game__title {
+  @include type.type-style('heading-03');
+
+  margin-block-start: $spacing-06;
+  color: theme.$text-primary;
+}
+
+.site-game__body {
+  flex: 1 0 auto;
+  margin-block-start: $spacing-03;
+}
+
+.site-game__action {
+  margin-block-start: $spacing-05;
+}
+
+// The one link covers the whole block, so the screenshot opens the game too
+// without being a second tab stop. Carbon's link is unpositioned and draws
+// nothing in `::after`, so the overlay measures against `.site-game`.
+.site-game__link::after {
+  position: absolute;
+  inset: 0;
+  content: "";
+}
+
+// Anywhere on the block counts as hovering the link, so the link says so.
+.site-game:hover .site-game__link {
+  color: theme.$link-primary-hover;
+  text-decoration: underline;
+}
+
 // ── Footer ───────────────────────────────────────────────────────────────────
 // Sits at the end of the column, whatever the page height.
 .site-footer {

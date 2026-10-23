@@ -63,7 +63,7 @@ test.beforeEach(async ({ page }) => {
 });
 
 test.describe("Solitaire", () => {
-  test("serves /solitaire and /Solitaire, unlisted, on one screen", async ({ page }) => {
+  test("serves /solitaire and /Solitaire, noindex, on one screen", async ({ page }) => {
     const lower = await page.goto("/solitaire");
     expect(lower?.status()).toBe(200);
     const upper = await page.goto("/Solitaire");

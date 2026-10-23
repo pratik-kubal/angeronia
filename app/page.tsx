@@ -5,6 +5,7 @@ import { Services } from "@/components/site/services";
 import { Process } from "@/components/site/process";
 import { ProductSpotlight } from "@/components/site/product-spotlight";
 import { About } from "@/components/site/about";
+import { Games } from "@/components/site/games";
 import { Contact } from "@/components/site/contact";
 import { SiteFooter } from "@/components/site/site-footer";
 
@@ -25,6 +26,7 @@ export default function Home() {
         <Philosophy />
         <Process />
         <About />
+        <Games />
         <Contact />
       </main>
       <SiteFooter />
