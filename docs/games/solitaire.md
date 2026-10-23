@@ -6,9 +6,8 @@ section of the portfolio's `CLAUDE.md`, carried over; read it before touching `c
 `lib/solitaire/`. It shares `components/games/base.css` with Sudoku (the browser defaults both were built on), and
 its sheets are Sudoku's `components/sudoku/sheet.tsx`.
 
-Linked from the home page's Games section ([ADR-020](../design-system/DECISIONS.md)), with a screenshot from
-`npm run build:game-shots`; re-take it when the game's look changes. Not in the header, the footer or `sitemap.ts`,
-and `noindex`.
+Linked from the home page's games launcher ([ADR-020](../design-system/DECISIONS.md)), which shows this game's
+`apple-icon.png`. Not in the header, the footer or `sitemap.ts`, and `noindex`.
 
 ```bash
 npm run solitaire:cards  # Rasterize the card faces from the Vector Playing Cards pack (see Assets)

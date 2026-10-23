@@ -11,6 +11,7 @@ import { About } from "@/components/site/about";
 import { Games } from "@/components/site/games";
 import { Contact } from "@/components/site/contact";
 import { SiteFooter } from "@/components/site/site-footer";
+import { games } from "@/data/angeronia";
 
 /**
  * The whole page, in the same order `app/page.tsx` composes it — the two lists
@@ -29,7 +30,7 @@ function Home() {
         <Philosophy />
         <Process />
         <About />
-        <Games />
+        <Games games={games} />
         <Contact />
       </main>
       <SiteFooter />
@@ -68,7 +69,7 @@ export const Light: Story = {
       "What we take on",
       "How we work",
       "Right Now, One Person Team",
-      "Two games, for a break",
+      "Games for a break",
     ]) {
       await expect(canvas.getByRole("heading", { level: 2, name })).toBeInTheDocument();
     }

@@ -8,6 +8,7 @@ import { About } from "@/components/site/about";
 import { Games } from "@/components/site/games";
 import { Contact } from "@/components/site/contact";
 import { SiteFooter } from "@/components/site/site-footer";
+import { games } from "@/data/angeronia";
 
 /**
  * The home page: a composition of storied sections and nothing else.
@@ -26,7 +27,7 @@ export default function Home() {
         <Philosophy />
         <Process />
         <About />
-        <Games />
+        <Games games={games} />
         <Contact />
       </main>
       <SiteFooter />

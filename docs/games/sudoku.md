@@ -4,9 +4,8 @@ Moved here from `../portfolio` on 2026-10-23, as it stood at `0e53c81` (portfoli
 look and sits outside the design system: see [ADR-019](../design-system/DECISIONS.md). This is the game's section of
 the portfolio's `CLAUDE.md`, carried over; read it before touching `components/sudoku/` or `lib/sudoku/`.
 
-Linked from the home page's Games section ([ADR-020](../design-system/DECISIONS.md)), with a screenshot from
-`npm run build:game-shots`; re-take it when the game's look changes. Not in the header, the footer or `sitemap.ts`,
-and `noindex`.
+Linked from the home page's games launcher ([ADR-020](../design-system/DECISIONS.md)), which shows this game's
+`apple-icon.png`. Not in the header, the footer or `sitemap.ts`, and `noindex`.
 
 ## The game
 

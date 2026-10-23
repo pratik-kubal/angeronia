@@ -26,6 +26,8 @@ const SITE_VALUES = [
   { name: "--site-figure-max", use: "The hero Möbius, at its largest." },
   { name: "--site-pane-max", use: "How tall a pane in the session replica scrolls within." },
   { name: "--site-container-max", use: "The page's own width cap, shorter than Carbon's 99rem." },
+  { name: "--site-game-icon", use: "A game's icon in the games launcher." },
+  { name: "--site-game-tile", use: "The narrowest a games-launcher tile gets before a column drops." },
 ];
 
 /**

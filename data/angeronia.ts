@@ -311,45 +311,36 @@ export const aboutRange = ["Backend", "Frontend", "Cloud / DevOps", "AI / LLM", 
 export const aboutCoda = "When quality slips, we revive it. When the spec is fuzzy, we make it concrete.";
 
 // ── Games ─────────────────────────────────────────────────────────────────────
+/**
+ * One tile in the home page's games launcher (ADR-020). A new game is one more
+ * entry here; the launcher wraps to fit however many there are.
+ */
 export interface Game {
   name: string;
-  blurb: string;
+  /** One short line, under the name. Kept to a phrase so a tile stays a tile. */
+  line: string;
   href: string;
-  /** Names the game, so the link still makes sense in a list of links. */
-  cta: string;
   /**
-   * A screenshot of the game itself (ADR-020), from `npm run build:game-shots`.
-   * The deal in it is random, so the alt text describes what every shot shows.
+   * The game's own Add to Home Screen icon, `app/<route>/apple-icon.png`
+   * (180 × 180, full-bleed), served by Next at this URL.
    */
-  shot: { src: string; alt: string; width: number; height: number };
+  icon: string;
 }
 
 export const gamesLabel = "Off the clock";
-export const gamesHeading = "Two games, for a break";
+export const gamesHeading = "Games for a break";
 export const games: Game[] = [
   {
     name: "Sudoku",
-    blurb: "A calm, colourful Sudoku for a phone held upright. There are no mistakes and no losing: a digit that doesn't fit is simply refused. Every solved board wins one of a hundred trophies.",
+    line: "Calm and colourful. No losing.",
     href: "/sudoku",
-    cta: "Play Sudoku",
-    shot: {
-      src: "/games/sudoku.jpg",
-      alt: "Sudoku in its Aurora theme: an easy board partly filled in, each digit in its own colour, above the number pad.",
-      width: 1200,
-      height: 900,
-    },
+    icon: "/sudoku/apple-icon.png",
   },
   {
     name: "Solitaire",
-    blurb: "Klondike, turn three, on green felt, for a phone on its side or upright. Every deal can be won: the game deals only from shuffles a solver has proved, and each win plays one of four shows.",
+    line: "Klondike. Every deal can be won.",
     href: "/solitaire",
-    cta: "Play Solitaire",
-    shot: {
-      src: "/games/solitaire.jpg",
-      alt: "Solitaire on green felt: a fresh deal, with the stock, four empty foundations and seven columns.",
-      width: 1200,
-      height: 900,
-    },
+    icon: "/solitaire/apple-icon.png",
   },
 ];
 
