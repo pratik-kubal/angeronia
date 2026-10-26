@@ -65,5 +65,8 @@ test.describe("Games launcher", () => {
     await page.waitForSelector(".sol-table[data-ready]");
     await page.getByRole("button", { name: "Menu" }).click();
     await expect(page.getByRole("dialog", { name: "Menu" }).getByRole("link", { name: "All games" })).toHaveAttribute("href", "/games");
+
+    await page.goto("/games/lamplighter");
+    await expect(page.getByRole("link", { name: "All games" })).toHaveAttribute("href", "/games");
   });
 });

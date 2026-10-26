@@ -10,8 +10,8 @@ type Props = {
   dismissible: boolean;
   onClose: () => void;
   children: ReactNode;
-  /** The class prefix its styles use ("sdk" for Sudoku's, "sol" for Solitaire's). */
-  prefix: "sdk" | "sol";
+  /** The class prefix its styles use ("sdk" for Sudoku's, "sol" for Solitaire's, "lmp" for Lamplighter's). */
+  prefix: "sdk" | "sol" | "lmp";
 };
 
 /** How far down (px) a drag on the grabber must pull the sheet to dismiss it. */

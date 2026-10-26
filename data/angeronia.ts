@@ -343,6 +343,12 @@ export const games: Game[] = [
     href: "/games/solitaire",
     icon: "/games/solitaire/apple-icon.png",
   },
+  {
+    name: "Lamplighter",
+    line: "Fly the night's ribbons. Light the town.",
+    href: "/games/lamplighter",
+    icon: "/games/lamplighter/apple-icon.png",
+  },
 ];
 
 // ── Contact CTA ───────────────────────────────────────────────────────────────

@@ -1,0 +1,326 @@
+/* ══════════════════════════════════════════════════════════════════════════
+   LAMPLIGHTER (/games/lamplighter) — a night sky, ribbons of moonlight, a
+   firefly's warm glow. Imported by app/games/lamplighter/page.tsx only, so none
+   of it reaches the studio's CSS; every rule is scoped to the route
+   (html:has(.lmp-shell), .lmp-*). The race itself is drawn on a canvas
+   (components/lamplighter/render/); this sheet lays out the screens, the HUD
+   and the sheets around it.
+   ══════════════════════════════════════════════════════════════════════════ */
+html:has(.lmp-shell) {
+  --night: #0b1030;
+  --night-deep: #060920;
+  --night-high: #1a2360;
+  --ink: #eef1ff;
+  --muted: rgb(238 241 255 / 0.72);
+  --faint: rgb(238 241 255 / 0.14);
+  --glow: #ffd95a;
+  --glow-soft: #ffeaa6;
+  --ribbon: #cfdcff;
+  --sheet: #121944;
+  --sheet-tile: #1c2459;
+  --font: -apple-system, BlinkMacSystemFont, "SF Pro Text", system-ui, sans-serif;
+
+  background: var(--night-deep);
+  /* !important: next-themes writes the site's color-scheme inline on <html>. */
+  color-scheme: dark !important;
+}
+
+/* The sky fills the whole screen (under the notch and the home bar too); the page never scrolls,
+   rubber-bands or pulls to refresh (Chrome on iOS). */
+html:has(.lmp-shell),
+html:has(.lmp-shell) body {
+  height: 100%;
+  overflow: hidden;
+  overscroll-behavior: none;
+}
+html:has(.lmp-shell) body {
+  background: radial-gradient(120% 80% at 50% 100%, var(--night-high) 0%, var(--night) 45%, var(--night-deep) 100%);
+  background-color: var(--night);
+}
+
+.lmp-shell {
+  position: relative;
+  height: 100vh;
+  height: 100dvh;
+  display: flex;
+  color: var(--ink);
+  font-family: var(--font);
+  -webkit-font-smoothing: antialiased;
+  /* A game, not a document: no double-tap zoom, text selection or long-press callouts. */
+  touch-action: manipulation;
+  user-select: none;
+  -webkit-user-select: none;
+  -webkit-touch-callout: none;
+  -webkit-tap-highlight-color: transparent;
+}
+.lmp-shell :is(button, a):focus-visible { outline: 2px solid var(--glow); outline-offset: 2px; }
+.lmp-sr {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+}
+
+/* Screens pad themselves clear of the notch and the home bar; the race's canvas runs under both. */
+.lmp-game {
+  position: relative;
+  flex: 1 1 auto;
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  min-height: 0;
+  padding: env(safe-area-inset-top) env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left);
+}
+
+.lmp-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  padding: 10px 14px 0;
+}
+.lmp-round {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  background: var(--faint);
+  color: var(--ink);
+  cursor: pointer;
+}
+
+.lmp-title {
+  flex: 1 1 auto;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  padding: 24px;
+  text-align: center;
+}
+.lmp-name {
+  font-size: 40px;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  line-height: 1.1;
+  color: var(--glow-soft);
+}
+.lmp-tagline { max-width: 26ch; font-size: 17px; color: var(--muted); }
+.lmp-screen { flex: 1 1 auto; display: flex; flex-direction: column; min-height: 0; }
+.lmp-play {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  min-width: 180px;
+  height: 54px;
+  margin-top: 18px;
+  padding: 0 28px;
+  border-radius: 27px;
+  background: linear-gradient(#ffe48a, #f2b53c);
+  color: #2a1d05;
+  font-size: 18px;
+  font-weight: 700;
+  cursor: pointer;
+  box-shadow: 0 0 32px rgb(255 214 90 / 0.45);
+}
+
+/* ── the race: the canvas runs under the notch and the home bar, the HUD stays clear of both ── */
+.lmp-game[data-screen="race"] { padding: 0; }
+.lmp-stage {
+  position: relative;
+  flex: 1 1 auto;
+  min-width: 0;
+  min-height: 0;
+  overflow: hidden;
+  /* The race's touches are the game's alone: no panning or pinching. */
+  touch-action: none;
+  outline: none;
+}
+.lmp-canvas { position: absolute; inset: 0; width: 100%; height: 100%; }
+.lmp-hud {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: calc(env(safe-area-inset-top) + 10px) calc(env(safe-area-inset-right) + 14px) 0 calc(env(safe-area-inset-left) + 14px);
+  pointer-events: none;
+}
+.lmp-hud button { pointer-events: auto; }
+.lmp-glow { flex: 1 1 auto; display: flex; align-items: center; gap: 8px; max-width: 220px; --glow: 0; }
+.lmp-glow-label { font-size: 12px; font-weight: 600; letter-spacing: 0.06em; text-transform: uppercase; color: var(--muted); }
+.lmp-glow-track { position: relative; flex: 1 1 auto; height: 8px; border-radius: 4px; background: rgb(255 255 255 / 0.12); overflow: hidden; }
+.lmp-glow-fill {
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  background: linear-gradient(90deg, #f2b53c, #ffe48a);
+  transform-origin: left center;
+  transform: scaleX(var(--glow));
+  box-shadow: 0 0 10px rgb(255 214 90 / 0.6);
+}
+.lmp-time {
+  margin-left: auto;
+  font-size: 17px;
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+  color: var(--ink);
+  text-shadow: 0 1px 6px rgb(0 0 0 / 0.5);
+}
+.lmp-round:disabled { opacity: 0.4; cursor: default; }
+.lmp-count {
+  position: absolute;
+  top: 30%;
+  left: 0;
+  right: 0;
+  text-align: center;
+  font-size: 64px;
+  font-weight: 800;
+  color: var(--glow-soft);
+  text-shadow: 0 0 24px rgb(255 214 90 / 0.6);
+  pointer-events: none;
+}
+.lmp-count:empty { display: none; }
+.lmp-debug {
+  position: absolute;
+  left: calc(env(safe-area-inset-left) + 10px);
+  bottom: calc(env(safe-area-inset-bottom) + 10px);
+  padding: 4px 8px;
+  border-radius: 6px;
+  background: rgb(0 0 0 / 0.55);
+  font: 12px/1.3 ui-monospace, Menlo, monospace;
+  color: #b8ffb8;
+  pointer-events: none;
+}
+
+/* ── results, over the lit lantern ───────────────────────────────────────── */
+.lmp-results {
+  position: absolute;
+  left: 50%;
+  bottom: calc(env(safe-area-inset-bottom) + 16px);
+  width: min(440px, calc(100% - 32px));
+  transform: translateX(-50%);
+  padding: 20px 18px 18px;
+  border-radius: 22px;
+  background: rgb(18 25 68 / 0.92);
+  box-shadow: 0 20px 50px -20px rgb(0 0 0 / 0.7);
+  -webkit-backdrop-filter: blur(10px);
+  backdrop-filter: blur(10px);
+}
+.lmp-results-title { font-size: 21px; font-weight: 760; line-height: 1.2; outline: none; }
+.lmp-flames { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; margin: 14px 0 10px; }
+.lmp-flames li {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  padding: 10px 6px;
+  border-radius: 14px;
+  background: var(--sheet-tile);
+  color: var(--muted);
+  font-size: 12.5px;
+  line-height: 1.25;
+  text-align: center;
+}
+.lmp-flames li[data-earned] { color: var(--ink); }
+.lmp-flames li[data-earned] svg { color: var(--glow); filter: drop-shadow(0 0 6px rgb(255 214 90 / 0.7)); }
+.lmp-stats { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; margin: 0; }
+.lmp-stats div { padding: 8px 10px; border-radius: 12px; background: var(--sheet-tile); text-align: center; }
+.lmp-stats dt { color: var(--muted); font-size: 12px; }
+.lmp-stats dd { margin: 2px 0 0; font-size: 18px; font-weight: 700; font-variant-numeric: tabular-nums; }
+.lmp-actions { display: flex; gap: 8px; margin-top: 14px; }
+.lmp-button {
+  flex: 1;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  height: 46px;
+  border-radius: 14px;
+  background: linear-gradient(#ffe48a, #f2b53c);
+  color: #2a1d05;
+  font-size: 15.5px;
+  font-weight: 700;
+  cursor: pointer;
+}
+.lmp-button[data-quiet] { background: var(--sheet-tile); color: var(--ink); }
+@media (prefers-reduced-motion: no-preference) {
+  .lmp-results { animation: lmpRise 0.35s cubic-bezier(0.2, 0.8, 0.2, 1); }
+}
+@keyframes lmpRise {
+  from { opacity: 0; transform: translate(-50%, 16px); }
+}
+
+/* ── sheets: a bottom sheet on phones held upright, a card elsewhere ─────── */
+.lmp-sheet {
+  width: 100%;
+  max-width: 480px;
+  max-height: calc(100dvh - env(safe-area-inset-top) - 24px);
+  margin: auto auto 0;
+  padding: 0;
+  border: 0;
+  border-radius: 22px 22px 0 0;
+  background: var(--sheet);
+  color: var(--ink);
+  font-family: var(--font);
+  box-shadow: 0 -20px 50px -20px rgb(0 0 0 / 0.6);
+  overflow: hidden;
+}
+.lmp-sheet[open] { display: flex; flex-direction: column; }
+@media (min-width: 601px), (orientation: landscape) {
+  .lmp-sheet { width: min(440px, calc(100vw - 32px)); max-height: calc(100dvh - 24px); margin: auto; border-radius: 22px; }
+}
+.lmp-sheet:focus { outline: none; }
+.lmp-sheet::backdrop { background: rgb(3 5 20 / 0.55); }
+.lmp-sheet :is(button):focus-visible { outline: 2px solid var(--glow); outline-offset: 2px; }
+.lmp-sheet-body { position: relative; display: flex; flex-direction: column; flex: 1 1 auto; min-height: 0; }
+.lmp-sheet-scroll {
+  flex: 1 1 auto;
+  min-height: 0;
+  overflow: auto;
+  overscroll-behavior: contain;
+  touch-action: pan-y;
+  padding: 0 18px calc(env(safe-area-inset-bottom) + 18px);
+}
+.lmp-grab { flex: none; display: grid; place-items: center; height: 20px; touch-action: none; cursor: grab; }
+.lmp-grab span { width: 36px; height: 5px; border-radius: 3px; background: var(--ink); opacity: 0.25; }
+.lmp-sheet-x {
+  position: absolute;
+  top: 18px;
+  right: 14px;
+  z-index: 3;
+  display: grid;
+  place-items: center;
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  background: var(--sheet-tile);
+  color: var(--muted);
+  cursor: pointer;
+}
+.lmp-sheet-title { margin: 6px 40px 12px 0; font-size: 21px; font-weight: 760; line-height: 1.2; }
+.lmp-menu { display: grid; gap: 8px; }
+.lmp-menu-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  min-height: 48px;
+  padding: 12px 14px;
+  border-radius: 14px;
+  background: var(--sheet-tile);
+  color: inherit;
+  font-size: 15.5px;
+  font-weight: 620;
+  text-align: left;
+  cursor: pointer;
+}
+.lmp-menu-item svg { color: var(--glow); }
+.lmp-menu-item:disabled { opacity: 0.45; cursor: default; }

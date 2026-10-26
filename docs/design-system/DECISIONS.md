@@ -14,7 +14,7 @@ The log spans two migrations, in order:
 ADR-019 (2026-10-23) is later: the games that moved here from `../portfolio`
 keep their own look, outside the design system. ADR-020 (the same day) links
 them from the home page, and ADR-021 moves them under `/games`, behind a
-launcher.
+launcher. ADR-022 (2026-10-26) adds a third game, Lamplighter.
 
 **Read ADR-015 first if you want the current state.** It supersedes D1, D2, D3,
 D7, D8 and ADR-004 / 006 / 008 / 011, and it says what the site is built on
@@ -873,6 +873,78 @@ appear in the game's own look.
 page in the app starts below the status bar, and each page's `theme-color`
 tints it. `black-translucent` would put Solitaire's felt under the clock, but
 it would also put white status text over Sudoku's light aurora.
+
+### ADR-022 — Lamplighter, a third game, drawn in 3D on a 2D canvas
+
+**Recorded 2026-10-26, before the code, per the rule at the top of this file.**
+Extends ADR-019's carve-out to a third game. Nothing about the studio site
+changes.
+
+**What it is.** A racer on ribbons of moonlight: Wick, a firefly, flies them
+over a sleeping hillside town, gathers sparks and lights a lantern at the end
+of each route. It lives at `/games/lamplighter`, scoped to `.lmp-*`, in
+`app/games/lamplighter/`, `components/lamplighter/`, `lib/lamplighter/`,
+`data/lamplighter.ts` and `scripts/build-lamplighter-icon.ts`; inside them,
+ADR-019 applies as it does to Sudoku and Solitaire. It is one more entry in
+`games`, so both launchers list it; it is `noindex`, not in the sitemap, and has
+its own "All games" link (ADR-021). Its plan is
+[`lamplighter-plan.md`](../plans/lamplighter-plan.md).
+
+**An original game.** Its rules, tuning, routes, art and sound are designed
+here. It shares a genre with other racers (steering, a boost, a shield, things
+to collect, checkpoints, par times) and nothing more specific with any one of
+them. Rule 14: every image is drawn by code (the sprites at load, the
+home-screen icon by a script) and every sound is synthesised, so the game ships
+no third-party art or audio and no asset files at all.
+
+**Rendering: a 2D canvas, with the projection written here.** The scene is one
+ribbon (a few hundred quads at most) and glowing sprites. That is fill rate,
+not geometry, and WebKit's accelerated 2D canvas handles it: additive glow is a
+composite mode and pre-baked sprites, not a shader. A WebGL context is lost when
+iOS reclaims memory from a backgrounded Home Screen app and has to be rebuilt; a
+2D canvas redrawn every frame does not care. The projection, camera and quality
+governor are plain TypeScript, so they are unit-tested in node. The technique
+is the hero Möbius's (camera basis, perspective, Lambert shading, painter's
+sort), **copied, not imported**: ADR-019's boundary holds. **No new dependency,
+no WebGL and no 3D library.** The renderer sits behind one `render(view)` call,
+so a WebGL backend could replace it later; that would need its own entry here.
+
+**Motion.** A racer is motion, so reduced motion cannot turn the game off; it
+levels the camera (no bank roll, no bob), drops the twinkle, speed streaks and
+most particles, defaults the horizon counter-rotation off, and shows the
+results and the route map in their final state at once. The title screen's
+idle animation stops, as ADR-019 asks of autoplay.
+
+**Device orientation.** Tilt steering reads `deviceorientation`. On iOS that
+needs `DeviceOrientationEvent.requestPermission()`, asked only from a tap (the
+Tilt choice, and the Go button, since iOS asks again each session). Readings
+steer and level the view in memory; they are never stored or sent. Touch and
+keyboard always work, so a refusal never blocks play. Tilt needs a secure
+context, so it cannot be tried over a LAN `http://` address.
+
+**Imports between games.** Solitaire already uses Sudoku's `Sheet`. Lamplighter
+does too (`prefix: "lmp"`), and it plays its sounds through Sudoku's audio
+engine (`components/sudoku/feedback.ts`), so it gets the waking-tap queue,
+Silent Mode and the iOS switch-tick haptics as they are. That engine gains one
+export, `audioGraph()`, for sounds that hold (Wick's wing hum). The boundary
+this file draws is site ↔ games, and it is unchanged. Moving the shared engine
+into `components/games/` waits for a fourth game.
+
+**Test hook and debug overlay.** `window.__lamplighter` (state, a time scale,
+an autopilot) exists in development only, as `window.__sudoku` does, and the
+production build drops it and the bots behind it. A `?debug` overlay (frame
+rate, quality tier, pixel ratio) stays in production, because the device checks
+run on a Vercel preview.
+
+**Wake Lock and a history entry.** A tilt player may not touch the screen for a
+minute, so a race holds a screen Wake Lock, released on pause and results.
+Chrome on iOS goes back on an edge swipe, so a race pushes one history entry,
+and going back pauses instead of leaving.
+
+**What it costs.** About 50 KB gzipped of game code, on its own route only. The
+canvas runs only during a race; the title and the route map are DOM and SVG. A
+quality governor steps the pixel ratio down from 2 when frames run long, and the
+loop stops whenever the page is hidden.
 
 ---
 

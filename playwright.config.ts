@@ -22,8 +22,8 @@ export default defineConfig({
   },
   projects: [
     { name: "chromium", use: { ...devices["Desktop Chrome"] } },
-    { name: "iphone", testMatch: /(sudoku|solitaire|games)\.spec\.ts/, use: { ...devices["iPhone 15"] } },
-    { name: "iphone-landscape", testMatch: /solitaire\.spec\.ts/, use: { ...devices["iPhone 15 landscape"] } },
+    { name: "iphone", testMatch: /(sudoku|solitaire|games|lamplighter)\.spec\.ts/, use: { ...devices["iPhone 15"] } },
+    { name: "iphone-landscape", testMatch: /(solitaire|lamplighter)\.spec\.ts/, use: { ...devices["iPhone 15 landscape"] } },
     { name: "ipad-landscape", testMatch: /solitaire\.spec\.ts/, use: { ...devices["iPad Pro 11 landscape"] } },
   ],
   webServer: {

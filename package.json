@@ -12,6 +12,7 @@
     "solitaire:cards": "tsx scripts/build-solitaire-cards.ts",
     "solitaire:deals": "tsx scripts/build-solitaire-deals.ts",
     "games:icon": "tsx scripts/build-games-icon.ts",
+    "lamplighter:icon": "tsx scripts/build-lamplighter-icon.ts",
     "check:theme": "node scripts/retint-favicon.mjs --check && node scripts/check-contrast.mjs",
     "typecheck": "tsc --noEmit",
     "test": "vitest run --project=unit",
