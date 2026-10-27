@@ -48,9 +48,11 @@ There is no CSS linter. `slds-linter` was retired with SLDS rather than replaced
 
 ### The games
 
-[`/games/sudoku`](docs/games/sudoku.md) and [`/games/solitaire`](docs/games/solitaire.md),
-and the `/games` launcher of their icons (ADR-021), are games, not pages of the studio site. They moved here from the founder's
-portfolio and keep their own look — their own CSS, type, motion and Phosphor
+[`/games/sudoku`](docs/games/sudoku.md), [`/games/solitaire`](docs/games/solitaire.md)
+and [`/games/paint-by-numbers`](docs/games/color-tap.md) (Color Tap), and the `/games`
+launcher of their icons (ADR-021), are games, not pages of the studio site. Sudoku and
+Solitaire moved here from the founder's portfolio; Color Tap was made here (ADR-022). They
+keep their own look — their own CSS, type, motion and Phosphor
 icons — outside the design system
 ([`DECISIONS.md`](docs/design-system/DECISIONS.md) ADR-019). The home page
 links to them (ADR-020); they stay out of the nav and the sitemap, and
@@ -62,7 +64,15 @@ npm run test:e2e         # Playwright: desktop Chromium, an iPhone and an iPad i
                          # first run: npx playwright install chromium webkit
 npm run solitaire:cards  # Solitaire's card faces, from the Vector Playing Cards pack
 npm run solitaire:deals  # re-prove Solitaire's bank of winnable deals (~5 min)
+npm run color-tap:puzzles  # Color Tap: convert the photos in public/paint-by-numbers/ (runs before dev and build)
+npm run color-tap:puzzles -- --check  # CI: fail on a bad photo or puzzles not committed
+npm run color-tap:preview -- <dir>    # blank sheet | painting | photo, per photo and level, with metrics
+npm run color-tap:icon   # Color Tap's home-screen icon, from the butterfly's Easy puzzle
 ```
+
+To add a picture to Color Tap, drop a JPG (or PNG) into `public/paint-by-numbers/`, run
+`npm run dev` once (it converts it, about 20 s), look at it, and commit the photo with what the
+conversion wrote (`public/paint-by-numbers/puzzles/` and `lib/color-tap/pictures.ts`).
 
 ### Generated artifacts
 
@@ -153,6 +163,13 @@ lib/solitaire/            the rules, solver, hints and the bank of winnable deal
 data/solitaire.ts         the game's copy
 public/solitaire/cards/   the 52 card faces (generated, versioned, served immutable)
 scripts/*solitaire*       the card rasterizer and the deal prover (npm run solitaire:*)
+app/games/paint-by-numbers/  Color Tap's page and its home-screen icon
+components/color-tap/     the screen, the canvas renderer and stage, palette, sheets, sounds, saves
+lib/color-tap/            photo to puzzle (quantise, regions, shared borders, labels), rules, camera, gestures (pure)
+lib/color-tap/pictures.ts the generated manifest of the photos and their puzzles
+public/paint-by-numbers/  the photos; puzzles/ holds their generated puzzles (named by hash, served immutable)
+scripts/*color-tap*       the converter, its --check, the preview harness and the icon (npm run color-tap:*)
+data/color-tap.ts         the game's copy
 components/games/         base.css: the browser defaults the games were built on
 lib/random.ts             the seeded PRNG and shuffle they share
 e2e/                      Playwright specs

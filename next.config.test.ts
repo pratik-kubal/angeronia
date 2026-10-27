@@ -22,4 +22,15 @@ describe("next.config", () => {
     const rule = headers.find((h) => h.source === "/solitaire/cards/:path*");
     expect(rule?.headers).toContainEqual({ key: "Cache-Control", value: "public, max-age=31536000, immutable" });
   });
+
+  it("caches Color Tap's puzzles for good (each is named by a hash of its content)", async () => {
+    const headers = await nextConfig.headers!();
+    const rule = headers.find((h) => h.source === "/paint-by-numbers/puzzles/:path*");
+    expect(rule?.headers).toContainEqual({ key: "Cache-Control", value: "public, max-age=31536000, immutable" });
+  });
+
+  it("gives Color Tap no short path: it lives only at /games/paint-by-numbers (ADR-022)", async () => {
+    const redirects = (await nextConfig.redirects?.()) ?? [];
+    expect(redirects.some((r) => /paint-by-numbers/.test(r.source))).toBe(false);
+  });
 });

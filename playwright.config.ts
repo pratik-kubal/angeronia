@@ -2,8 +2,8 @@ import { defineConfig, devices } from "@playwright/test";
 
 // End-to-end tests for the games (DECISIONS.md ADR-019): Sudoku on desktop
 // Chromium and on an iPhone in WebKit, the engine of every iOS browser (Chrome's
-// included), and Solitaire there too, on an iPhone on its side and an iPad; the
-// /games launcher on desktop Chromium and the iPhone (ADR-021). The
+// included), and Solitaire and Color Tap (ADR-022) there too, on an iPhone on its
+// side and an iPad; the /games launcher on desktop Chromium and the iPhone (ADR-021). The
 // studio pages are covered by the Storybook tests instead. Kept separate from
 // `npm test` (Vitest). Run with `npm run test:e2e`; E2E_PORT picks another port
 // when 3000 is taken (an existing dev server on that port is reused).
@@ -22,9 +22,9 @@ export default defineConfig({
   },
   projects: [
     { name: "chromium", use: { ...devices["Desktop Chrome"] } },
-    { name: "iphone", testMatch: /(sudoku|solitaire|games)\.spec\.ts/, use: { ...devices["iPhone 15"] } },
-    { name: "iphone-landscape", testMatch: /solitaire\.spec\.ts/, use: { ...devices["iPhone 15 landscape"] } },
-    { name: "ipad-landscape", testMatch: /solitaire\.spec\.ts/, use: { ...devices["iPad Pro 11 landscape"] } },
+    { name: "iphone", testMatch: /(sudoku|solitaire|color-tap|games)\.spec\.ts/, use: { ...devices["iPhone 15"] } },
+    { name: "iphone-landscape", testMatch: /(solitaire|color-tap)\.spec\.ts/, use: { ...devices["iPhone 15 landscape"] } },
+    { name: "ipad-landscape", testMatch: /(solitaire|color-tap)\.spec\.ts/, use: { ...devices["iPad Pro 11 landscape"] } },
   ],
   webServer: {
     command: `npm run dev -- --port ${PORT}`,

@@ -14,7 +14,8 @@ The log spans two migrations, in order:
 ADR-019 (2026-10-23) is later: the games that moved here from `../portfolio`
 keep their own look, outside the design system. ADR-020 (the same day) links
 them from the home page, and ADR-021 moves them under `/games`, behind a
-launcher.
+launcher. ADR-022 (2026-10-27) adds a third game, Color Tap, whose pictures are
+converted from JPGs at build time.
 
 **Read ADR-015 first if you want the current state.** It supersedes D1, D2, D3,
 D7, D8 and ADR-004 / 006 / 008 / 011, and it says what the site is built on
@@ -873,6 +874,89 @@ appear in the game's own look.
 page in the app starts below the status bar, and each page's `theme-color`
 tints it. `black-translucent` would put Solitaire's felt under the clock, but
 it would also put white status text over Sudoku's light aurora.
+
+### ADR-022 — Color Tap joins the games; its pictures are converted at build time
+
+**Recorded 2026-10-27, before the code, per the rule at the top of this file.**
+Extends ADR-019's carve-out to a third game. ADR-020 and ADR-021 apply to it
+unchanged: one more `games` entry, an `apple-icon.png`, a link back to `/games`.
+
+**What it is.** Color Tap is paint-by-numbers. Every photo in
+`public/paint-by-numbers/` becomes a picture of outlines and numbers on white,
+at five levels (12, 20, 30, 45 and 60 colours). The player picks a colour and
+taps its areas. The owner's calls: the route is `/games/paint-by-numbers`
+(`/games/<slug>`, ADR-021), with **no** short `/paint-by-numbers` redirect;
+the look is a dark studio (navy ground, white paper); magnifier uses grow with
+the level (3 / 4 / 5 / 6 / 8).
+
+**What is carved out**, on the same terms as ADR-019 (rules 1–9, 11 and 13 off;
+10, 12 and 14 on): `app/games/paint-by-numbers/`, `components/color-tap/`,
+`lib/color-tap/`, `data/color-tap.ts`, `public/paint-by-numbers/` and the
+`scripts/*color-tap*` tools. Its CSS is `components/color-tap/color-tap.css`,
+scoped to `html:has(.ctp-shell)` and `.ctp-*`; `.ctp-shell` joins every
+selector list in `components/games/base.css`.
+
+**Conversion runs at build time, not in the browser.** A photo could be
+converted on the phone, in a worker, when it is picked. It is not, because:
+
+* The result would not be stable. Engines decode and downscale JPEGs
+  differently, `Math.cbrt` and `Math.pow` may differ in the last bit, and
+  Safari's fingerprinting protection adds noise to canvas reads. A picture's
+  areas could differ between browsers or between visits, and saved progress
+  would no longer fit.
+* Under `next dev --turbopack`, Next 15.5 starts a worker from a `blob:` URL
+  with `importScripts`, which a module worker cannot run. The worker would need
+  special care and a fallback for every engine.
+* An older iPhone would spend seconds of battery on every new picture.
+
+So `npm run color-tap:puzzles` (`scripts/build-color-tap-puzzles.ts`, sharp in
+Node) converts every JPG, JPEG or PNG at the top of `public/paint-by-numbers/`,
+and only the ones whose source, settings or pipeline version changed. It runs
+from `predev` and `prebuild`, so a photo dropped into the folder just works
+after a dev restart or a deploy (sharp and tsx are devDependencies, which
+Vercel installs). Its output is committed, as Solitaire's deals and card faces
+are:
+
+* `public/paint-by-numbers/puzzles/<picture>-<level>.<hash>.json`, named by a
+  hash of their content, so `next.config.mjs` serves the folder `immutable`;
+* `lib/color-tap/pictures.ts`, the generated manifest the page reads.
+
+The conversion itself (`lib/color-tap/`) is pure TypeScript on typed arrays, so
+the unit tests run exactly what ships.
+
+**A bad photo is stopped at the pull request, never at a deploy.** Because the
+conversion runs before every build, one damaged file, or two photos whose names
+come out the same (`Leaves.jpg` and `leaves.png`), could otherwise fail the
+build of every page of the site. So the two runs differ:
+
+* `predev` and `prebuild` leave a photo they can't use out, with a warning, and
+  the rest of the site builds.
+* CI's **Color Tap photos** job runs `npm run color-tap:puzzles -- --check`,
+  which writes nothing and fails on a damaged photo, a name collision, an image
+  in a format it doesn't read (HEIC, WebP…), a puzzle that breaks its level's
+  promises, or a photo whose puzzles weren't made and committed. Listed as a
+  required status check in the `main` ruleset (a repository setting, outside
+  this code), it stops such a pull request merging. `npm test` checks the same
+  freshness (`scripts/color-tap-puzzles.test.ts`).
+
+**Players' progress comes first (the owner's call).** A puzzle is remade only
+when something deliberate changes: its photo, its level's settings, the seed,
+the work size or `PIPELINE_VERSION`. The conversion's code and the image library
+are not part of that key on purpose, so a comment edit, a change to the shared
+`lib/random.ts` or a routine sharp update never remakes a puzzle or fails the
+check. The cost, accepted: a change to `lib/color-tap/` that does alter what it
+makes must bump `PIPELINE_VERSION`, by hand, and be looked at with
+`npm run color-tap:preview`. And a remade puzzle never takes a painting away:
+the puzzle it replaces stays in the folder, listed in the manifest as
+**retired** (with its own area count), and a painting begun on it resumes and
+finishes on it. Only "Start this painting again" moves a player to the current
+puzzle. A retired puzzle is deleted only when its photo is removed.
+
+**Borrowed from Sudoku, as Solitaire borrows.** The sheets are
+`components/sudoku/sheet.tsx` (its `prefix` gains `"ctp"`), and the sounds are
+built on Sudoku's synth (`unlockAudio`, `tone`, `haptic` from
+`components/sudoku/feedback.ts`), not Sudoku's voice. Both games stay free of
+`components/site/`, `components/ui/` and `styles/`.
 
 ---
 

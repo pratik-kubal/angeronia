@@ -46,6 +46,27 @@ jobs:
       - name: Next build (strict)
         run: npm run build
 
+  # Color Tap's photos (DECISIONS.md ADR-022). A build only warns about a photo it can't convert and
+  # leaves it out, so one bad file never stops the site deploying; this is where it is stopped. It
+  # fails on a damaged photo, two photos whose names come out the same, or a photo whose puzzles
+  # weren't made and committed. Listed as a required check in the main branch's ruleset, a pull
+  # request that fails it can't merge.
+  color-tap:
+    name: Color Tap photos
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+
+      - uses: actions/setup-node@v5
+        with:
+          node-version: 22
+          cache: npm
+
+      - run: npm ci
+
+      - name: Every photo converts, and its puzzles are committed
+        run: npm run color-tap:puzzles -- --check
+
   storybook:
     name: Storybook — a11y and interactions
     runs-on: ubuntu-latest

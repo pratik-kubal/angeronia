@@ -65,5 +65,9 @@ test.describe("Games launcher", () => {
     await page.waitForSelector(".sol-table[data-ready]");
     await page.getByRole("button", { name: "Menu" }).click();
     await expect(page.getByRole("dialog", { name: "Menu" }).getByRole("link", { name: "All games" })).toHaveAttribute("href", "/games");
+
+    // Color Tap: the first visit's New painting sheet has its own way out; behind it, the bar's.
+    await page.goto("/games/paint-by-numbers");
+    await expect(page.getByRole("dialog", { name: "New painting" }).getByRole("link", { name: "All games" })).toHaveAttribute("href", "/games");
   });
 });
