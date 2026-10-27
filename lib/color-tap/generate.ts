@@ -133,7 +133,7 @@ export function generate(picture: Picture, level: Level, name: string, seed: num
   // Number the colours that are left, in palette order.
   const { palette: means } = result;
   const k = means.length / 3;
-  const used = paletteOrder(means).filter((c) => !Number.isNaN(means[c * 3]));
+  const used = paletteOrder(means);
   const renumber = new Int32Array(k).fill(-1);
   used.forEach((c, i) => (renumber[c] = i));
   const Q = result.Q.map((c) => renumber[c]);

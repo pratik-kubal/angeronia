@@ -14,8 +14,9 @@
 //
 // A photo that can't be used (damaged, named the same as another, in a format it doesn't read, or
 // whose puzzle would break a level's promises) never stops a build or the dev server: it is left
-// out, with a warning, and the rest of the site builds. CI is where it is caught: --check changes
-// nothing and fails on any photo that is unusable or whose puzzles weren't made and committed.
+// out, with a warning (a picture already listed keeps its earlier puzzles), and the rest of the
+// site builds. CI is where it is caught: --check changes nothing and fails on any photo that is
+// unusable or whose puzzles weren't made and committed.
 //
 // Usage: npm run color-tap:puzzles [-- --force | --check]
 
@@ -169,9 +170,11 @@ async function main() {
           key,
           retired: retired.filter((r) => r.id !== id),
         };
-        const broken = puzzleProblems({ ...puzzle, id }, entry, level);
+        const encoded = encodePuzzle({ ...puzzle, id });
+        // Checked as the game will read it: labels and points are stored to 1/8 px.
+        const broken = puzzleProblems(decodePuzzle(JSON.parse(encoded)), entry, level);
         if (broken.length > 0) throw new Error(`its ${level.name} puzzle breaks the level's promises (${broken.slice(0, 3).join("; ")})`);
-        fs.writeFileSync(file, encodePuzzle({ ...puzzle, id }));
+        fs.writeFileSync(file, encoded);
         kept.push(file, ...entry.retired.map((r) => (old ? versionOf(old, r.id) : "")).filter(Boolean));
         if (entry.retired.length > (old?.retired.length ?? 0)) console.log(`  ${source.id} ${level.name}: the earlier puzzle stays, retired, for paintings begun on it`);
         made++;
@@ -181,7 +184,18 @@ async function main() {
       kept.forEach((file) => keep.add(file));
       pictures.push({ id: source.id, title: source.title, src: publicUrl(source.file), thumb: publicUrl(thumb), width, height, levels });
     } catch (error) {
-      skipped.push(`${source.file}: can't be converted (${reason(error)}). Replace or remove it.`);
+      // A picture already listed keeps its puzzles, current and retired, as they were: a bad change
+      // to its photo, or a failure in this run, never takes away paintings begun on them.
+      const listed = PICTURES.find((p) => p.id === source.id);
+      if (listed) {
+        pictures.push(listed);
+        keep.add(fileOf(listed.thumb));
+        for (const entry of listed.levels) {
+          keep.add(fileOf(entry.src));
+          for (const { id } of entry.retired) keep.add(versionOf(entry, id));
+        }
+      }
+      skipped.push(`${source.file}: can't be converted (${reason(error)}).${listed ? " Its earlier puzzles stay." : ""} Replace or remove it.`);
     }
   }
 

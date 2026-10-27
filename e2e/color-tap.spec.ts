@@ -202,6 +202,26 @@ test.describe("Color Tap", () => {
     await expect(page.getByRole("status").filter({ hasText: /Here's one/ })).toBeAttached();
   });
 
+  test("a magnifier flight cut short by a touch costs nothing", async ({ page }) => {
+    await start(page, PICTURES[0].title, "Hard");
+    await page.getByRole("slider", { name: "Zoom" }).fill("1000");
+    await page.waitForTimeout(200);
+    const before = await state(page);
+    // In one go, so the touch lands mid-flight however slow the machine.
+    await page.evaluate(() => {
+      const glass = [...document.querySelectorAll<HTMLButtonElement>("button.ctp-glass")].find((b) => b.offsetParent !== null)!;
+      const canvas = document.querySelector<HTMLCanvasElement>("canvas.ctp-canvas")!;
+      const box = canvas.getBoundingClientRect();
+      glass.click();
+      const at = { bubbles: true, pointerId: 7, pointerType: "touch", isPrimary: true, clientX: box.x + box.width / 2, clientY: box.y + box.height / 2 };
+      canvas.dispatchEvent(new PointerEvent("pointerdown", at));
+      canvas.dispatchEvent(new PointerEvent("pointercancel", at));
+    });
+    await page.waitForTimeout(1400);
+    expect((await state(page)).magnifiers).toBe(before.magnifiers);
+    await expect(page.getByRole("button", { name: /^Magnifier, \d+ left/ })).toHaveAccessibleName(`Magnifier, ${before.magnifiers} left`);
+  });
+
   test("auto-paint finishes the picture area by area, and the painting looks like the photo", async ({ page }) => {
     test.setTimeout(90_000);
     await start(page, PICTURES[0].title, "Easy");
@@ -240,6 +260,34 @@ test.describe("Color Tap", () => {
     const n = (await state(page)).order.length;
     await page.waitForTimeout(500);
     expect((await state(page)).order.length).toBe(n);
+  });
+
+  test("the tap that stops auto-paint paints nothing, even on an open area of its colour", async ({ page }) => {
+    await start(page, PICTURES[0].title, "Medium");
+    await page.getByRole("button", { name: /^Auto/ }).click();
+    await page.waitForTimeout(900);
+    // In one go, so auto-paint can't paint in between. Auto-paint selects the colour it paints; in
+    // the breath after a colour is finished there is no open area of it, so try again.
+    let counts: { before: number; after: number } | null = null;
+    for (let i = 0; i < 20 && !counts; i++) {
+      counts = await page.evaluate(() => {
+        type Hooks = { state(): { order: number[]; selected: number }; puzzle(): { regions: { colour: number }[] }; point(area: number): { x: number; y: number } };
+        const hooks = (window as unknown as { __colorTap: Hooks }).__colorTap;
+        const s = hooks.state();
+        const area = hooks.puzzle().regions.findIndex((r, i) => r.colour === s.selected && !s.order.includes(i));
+        if (area < 0) return null;
+        const p = hooks.point(area);
+        const canvas = document.querySelector<HTMLCanvasElement>("canvas.ctp-canvas")!;
+        const at = { bubbles: true, pointerId: 7, pointerType: "touch", isPrimary: true, clientX: p.x, clientY: p.y };
+        canvas.dispatchEvent(new PointerEvent("pointerdown", at));
+        canvas.dispatchEvent(new PointerEvent("pointerup", at));
+        return { before: s.order.length, after: hooks.state().order.length };
+      });
+      if (!counts) await page.waitForTimeout(50);
+    }
+    expect(counts).not.toBeNull();
+    expect(counts!.after).toBe(counts!.before);
+    await expect(page.getByRole("button", { name: "Stop auto-paint" })).toBeHidden();
   });
 
   test("plays by keyboard: N finds the colour's next area, Enter paints it", async ({ page, isMobile }) => {

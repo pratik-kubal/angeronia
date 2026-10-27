@@ -1,6 +1,8 @@
 // A puzzle as an SVG: the blank sheet (outlines and numbers), the finished painting, or anything
-// between. Drawn the way the game's canvas draws it (components/color-tap/renderer.ts), so the
-// preview harness, the icon and the tests see what a player sees.
+// between. Drawn the way the game's canvas draws it (components/color-tap/renderer.ts, which takes
+// its ink and its number sizes from here), so the preview harness, the icon and the tests see what
+// a player sees. What only the game shows is left out: the selection, motion, and the faint edges
+// painted areas keep until the picture is finished.
 
 import { SvgPath, traceHalf, traceRegion } from "./geometry";
 import type { Puzzle } from "./types";
@@ -20,9 +22,10 @@ export const OUTLINE = "#707070";
 export const NUMBER = "#595959";
 /** A painted area is stroked in its own colour, this wide in work px, so neighbours leave no seam. */
 const SEAM = 0.6;
+/** The biggest number, in work px. */
 const MAX_NUMBER = 16;
 
-/** The number's font size in work px for a label of radius `r`: the d-digit box fits the circle. */
+/** The number's font size for a label of radius `r` (in the same units): the d-digit box fits the circle. */
 export function numberSize(r: number, digits: number): number {
   return (0.85 * 2 * r) / Math.sqrt((0.6 * digits) ** 2 + 0.72 ** 2);
 }

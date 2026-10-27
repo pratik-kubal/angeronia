@@ -79,8 +79,9 @@ paint by numbers, was made here (2026-10-27) at `/games/paint-by-numbers`
 by `predev` and `prebuild`; the output is committed, and CI's `--check` fails a
 PR with a bad or unconverted photo). They keep their
 own look — their own CSS, tokens, type, motion and Phosphor icons — and the
-contract above does not govern them: **ADR-019** draws the line (rules 10, 12
-and 14 still apply), and the launcher sits on their side of it. The home page's
+contract above does not govern them: **ADR-019** draws the line (rule 10, rule
+12's typecheck and build gates, and rule 14 still apply), and the launcher sits
+on their side of it. The home page's
 Games section links to them too (**ADR-020**); nothing else does. They are not
 in the header, the footer or `sitemap.ts`, and they are `noindex`.
 

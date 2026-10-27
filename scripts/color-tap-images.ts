@@ -20,14 +20,16 @@ export const SEED = 7707;
 export const hash = (data: string | Buffer, length: number) => crypto.createHash("sha256").update(data).digest("hex").slice(0, length);
 
 /**
- * What a puzzle is made from, deliberately: the photo, its level's settings, PIPELINE_VERSION, the
- * seed and the work size. When any of these changes, the puzzle is made again. The conversion's
- * code and the image library are not in it on purpose: a comment edit or a routine sharp update
- * must not remake puzzles players are painting (a change that does alter what the conversion makes
- * bumps PIPELINE_VERSION, and the paintings begun on the old puzzles carry on on them, retired).
+ * What a puzzle is made from, deliberately: the photo, its level's conversion settings,
+ * PIPELINE_VERSION, the seed and the work size. When any of these changes, the puzzle is made
+ * again. The conversion's code and the image library are not in it on purpose: a comment edit or a
+ * routine sharp update must not remake puzzles players are painting (a change that does alter what
+ * the conversion makes bumps PIPELINE_VERSION, and the paintings begun on the old puzzles carry on
+ * on them, retired). Nor are the level's name and magnifiers, which the conversion never reads.
  */
 export function puzzleKey(photo: Buffer, level: Level): string {
-  return hash(JSON.stringify({ photo: hash(photo, 64), level, pipeline: PIPELINE_VERSION, seed: SEED, size: WORK_SIZE }), 16);
+  const { name: _name, magnifiers: _magnifiers, ...settings } = level;
+  return hash(JSON.stringify({ photo: hash(photo, 64), level: settings, pipeline: PIPELINE_VERSION, seed: SEED, size: WORK_SIZE }), 16);
 }
 
 /** A file under public/ as the URL it is served at, each part of its path encoded. */

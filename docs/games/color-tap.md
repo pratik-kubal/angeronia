@@ -44,18 +44,20 @@ glass buttons, and the picture on white paper.
 - **The magnifier** (3 / 4 / 5 / 6 / 8 uses per painting, more on harder levels: the owner's call) flies to an open
   area of the colour the player can't see (its number off screen or under 24 CSS px across): the smallest, ties to the
   one nearest the middle; it arrives with the area 72 CSS px across and rings it twice. A use is charged only when it
-  flies. With nothing hidden it rings every remaining area for free; with none left it says so.
+  arrives: a touch that cuts the flight short costs nothing. With nothing hidden it rings every remaining area for
+  free; with none left it says so.
 - **Zoom:** pinch (with a little give past the limits, springing back), the slider (logarithmic), − / + / Fit; a
   mouse wheel or trackpad pinch zooms at the pointer, a trackpad scroll pans. Double-click has no zoom of its own (its
   first click would paint: the owner's call). The most zoom is where the thinnest area is 40 CSS px across.
 - **Auto-paint** fits the picture and paints the rest area by area, colour by colour, each colour as a
   nearest-neighbour chain, in 8–30 s whatever the level, with a breath between colours. A Stop pill, or any tap on the
-  picture, stops it; nothing it painted is undone.
+  picture, stops it (that tap only stops it, and paints nothing); nothing it painted is undone.
 - **The finish:** a beat of stillness, the outlines and numbers fade away (the kit's "after" has no lines), a fanfare,
   the painting held, then the player's own fills replayed in order in 8 s (skipped if auto-paint did most of it). The
   Finished sheet compares **Before** (the blank sheet), **After** (the painting) and the **Photo**, with the areas,
   colours, time and anything auto-painted, Replay, and Save image (a PNG through the share sheet, or a download).
-- **Saves:** every painting (picture × level) is kept, so switching never loses one; the last one opened reopens.
+- **Saves:** every painting (picture × level) is kept, so switching never loses one; the last one opened reopens. A
+  change is saved 0.3 s after it is made; the clock on its own every 15 s, and whenever the page is hidden or left.
 
 ## How a photo becomes a puzzle (`lib/color-tap/`, pure, relative imports)
 
@@ -111,7 +113,8 @@ Output, all committed: `public/paint-by-numbers/puzzles/<picture>-<level>.<id>.j
 (served `immutable`), and the manifest `lib/color-tap/pictures.ts`.
 
 **Players' progress comes first** (the owner's call). The script remakes a puzzle only when something deliberate
-changes: its photo, its level's settings, the seed, the work size or `PIPELINE_VERSION`. The conversion's code and
+changes: its photo, its level's conversion settings (not its name or magnifiers), the seed, the work size or
+`PIPELINE_VERSION`. The conversion's code and
 sharp are left out of that key on purpose (a comment edit or a library update must not remake puzzles people are
 painting), so **a change to the conversion that alters a puzzle must bump `PIPELINE_VERSION` by hand**; look at
 `color-tap:preview` before committing. A remade puzzle never takes a painting away: the old puzzle stays in the
@@ -122,7 +125,7 @@ ever deleted; a retired puzzle goes only with its photo.
 **A bad photo** (damaged, named the same as another once lower-cased and stripped of accents: `Leaves.jpg` and
 `leaves.png`, an image in a format the conversion doesn't read such as HEIC or WebP, or one whose puzzle would break
 its level's promises) never stops `npm run dev` or a deploy: the build leaves it out with a warning and the rest of the
-site builds. On a name clash the photo already in the manifest keeps its name. CI's **Color Tap photos** job
+site builds; a picture already listed keeps its earlier puzzles, current and retired. On a name clash the photo already in the manifest keeps its name. CI's **Color Tap photos** job
 (`--check`) fails on all of these, and on a photo whose puzzles weren't committed, and as a required check in the
 `main` ruleset it stops the pull request merging.
 

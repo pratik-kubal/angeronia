@@ -44,6 +44,13 @@ describe("Color Tap's puzzles", () => {
     expect(new Set(fs.readdirSync(PUZZLES_DIR).filter((name) => !name.startsWith(".")))).toEqual(expected);
   });
 
+  it("remakes a puzzle for its level's conversion settings, not for its name or magnifiers", () => {
+    const photo = Buffer.from("a photo");
+    const level = LEVELS[0];
+    expect(puzzleKey(photo, { ...level, name: "Renamed", magnifiers: level.magnifiers + 1 })).toBe(puzzleKey(photo, level));
+    expect(puzzleKey(photo, { ...level, minArea: level.minArea + 1 })).not.toBe(puzzleKey(photo, level));
+  });
+
   for (const picture of PICTURES) {
     describe(picture.title, () => {
       it("climbs a ladder: more areas and a closer painting at every level", () => {

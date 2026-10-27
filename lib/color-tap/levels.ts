@@ -9,7 +9,7 @@ import type { LevelId } from "./types";
  * Bump it whenever the conversion changes what it produces: every puzzle is made again, and the old
  * ones stay as retired puzzles, so paintings already begun carry on on the puzzle they began on.
  */
-export const PIPELINE_VERSION = 1;
+export const PIPELINE_VERSION = 2;
 
 /** The long edge of the work grid, in px. */
 export const WORK_SIZE = 800;

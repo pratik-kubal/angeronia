@@ -337,6 +337,9 @@ export function SettingsPanel({
 
 type View = "before" | "after" | "photo";
 
+/** The painting to keep is made this long after the Finished panel opens, ms. */
+const MAKE_AFTER_MS = 500;
+
 export function FinishedPanel({
   picture,
   level,
@@ -362,8 +365,27 @@ export function FinishedPanel({
   const views: View[] = ["before", "after", "photo"];
   const name = `${picture.title}, ${levelById(level).name}`;
 
+  // The PNG is made soon after the panel opens (once the sheet has slid in), so Save image can hand
+  // it to the share sheet at once: Safari shares only straight from a tap, and drawing and encoding
+  // the painting can outlast that.
+  const made = useRef<Blob | null>(null);
+  useEffect(() => {
+    let live = true;
+    const t = setTimeout(
+      () =>
+        paintingBlob(puzzle).then((blob) => {
+          if (live) made.current = blob;
+        }),
+      MAKE_AFTER_MS,
+    );
+    return () => {
+      live = false;
+      clearTimeout(t);
+    };
+  }, [puzzle]);
+
   const save = async () => {
-    const blob = await paintingBlob(puzzle);
+    const blob = made.current ?? (await paintingBlob(puzzle));
     if (!blob) return;
     const file = new File([blob], `${picture.id}-${level}.png`, { type: "image/png" });
     try {

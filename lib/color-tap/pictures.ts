@@ -19,7 +19,7 @@ export const PICTURES: readonly PictureInfo[] = [
         "deltaE": 0.09892,
         "src": "/paint-by-numbers/puzzles/berries-easy.fe391e4417.json",
         "id": "fe391e4417",
-        "key": "95c2bbf6833b75af",
+        "key": "bdeb2ad7c504cce4",
         "retired": []
       },
       {
@@ -29,7 +29,7 @@ export const PICTURES: readonly PictureInfo[] = [
         "deltaE": 0.09669,
         "src": "/paint-by-numbers/puzzles/berries-medium.4a3088b1fe.json",
         "id": "4a3088b1fe",
-        "key": "5e6fe35ad0a66192",
+        "key": "1aeee0a9158e3033",
         "retired": []
       },
       {
@@ -39,7 +39,7 @@ export const PICTURES: readonly PictureInfo[] = [
         "deltaE": 0.08568,
         "src": "/paint-by-numbers/puzzles/berries-hard.325de2de04.json",
         "id": "325de2de04",
-        "key": "c2bf28d67fcf9531",
+        "key": "b5119556e9443e8a",
         "retired": []
       },
       {
@@ -47,20 +47,30 @@ export const PICTURES: readonly PictureInfo[] = [
         "colours": 44,
         "areas": 1009,
         "deltaE": 0.08307,
-        "src": "/paint-by-numbers/puzzles/berries-expert.b9dd9da5ae.json",
-        "id": "b9dd9da5ae",
-        "key": "49a15fedcf6c7ddb",
-        "retired": []
+        "src": "/paint-by-numbers/puzzles/berries-expert.a8d382bc44.json",
+        "id": "a8d382bc44",
+        "key": "a8f30fc7dd4af947",
+        "retired": [
+          {
+            "id": "b9dd9da5ae",
+            "areas": 1009
+          }
+        ]
       },
       {
         "level": "master",
         "colours": 60,
         "areas": 1902,
         "deltaE": 0.07453,
-        "src": "/paint-by-numbers/puzzles/berries-master.c229c0019c.json",
-        "id": "c229c0019c",
-        "key": "7dd92a22cc5f0049",
-        "retired": []
+        "src": "/paint-by-numbers/puzzles/berries-master.b915cb64fb.json",
+        "id": "b915cb64fb",
+        "key": "2aeb9d7a7e0495d0",
+        "retired": [
+          {
+            "id": "c229c0019c",
+            "areas": 1902
+          }
+        ]
       }
     ]
   },
@@ -79,7 +89,7 @@ export const PICTURES: readonly PictureInfo[] = [
         "deltaE": 0.04242,
         "src": "/paint-by-numbers/puzzles/butterfly-easy.de77ecf4b9.json",
         "id": "de77ecf4b9",
-        "key": "8588330c62b3b4e3",
+        "key": "84a3b3ef315c6634",
         "retired": []
       },
       {
@@ -89,7 +99,7 @@ export const PICTURES: readonly PictureInfo[] = [
         "deltaE": 0.03599,
         "src": "/paint-by-numbers/puzzles/butterfly-medium.a6ad70b987.json",
         "id": "a6ad70b987",
-        "key": "584adcd8fd907ff3",
+        "key": "1f5a2a9bfa2ad67c",
         "retired": []
       },
       {
@@ -99,7 +109,7 @@ export const PICTURES: readonly PictureInfo[] = [
         "deltaE": 0.03308,
         "src": "/paint-by-numbers/puzzles/butterfly-hard.65f72e56b3.json",
         "id": "65f72e56b3",
-        "key": "7cb74f8def826d00",
+        "key": "a8e0f4130c85ff2e",
         "retired": []
       },
       {
@@ -109,7 +119,7 @@ export const PICTURES: readonly PictureInfo[] = [
         "deltaE": 0.03061,
         "src": "/paint-by-numbers/puzzles/butterfly-expert.a5a211cfa9.json",
         "id": "a5a211cfa9",
-        "key": "04ff6191fac6485b",
+        "key": "d6b4a9d0b6a88f85",
         "retired": []
       },
       {
@@ -119,7 +129,7 @@ export const PICTURES: readonly PictureInfo[] = [
         "deltaE": 0.02802,
         "src": "/paint-by-numbers/puzzles/butterfly-master.d51aa12668.json",
         "id": "d51aa12668",
-        "key": "a0e19815cb58be56",
+        "key": "48b151ad125c1fa8",
         "retired": []
       }
     ]
@@ -139,7 +149,7 @@ export const PICTURES: readonly PictureInfo[] = [
         "deltaE": 0.05185,
         "src": "/paint-by-numbers/puzzles/leaves-easy.5b33215551.json",
         "id": "5b33215551",
-        "key": "d923ca39898293ca",
+        "key": "913bdaedab051a5a",
         "retired": []
       },
       {
@@ -149,7 +159,7 @@ export const PICTURES: readonly PictureInfo[] = [
         "deltaE": 0.04625,
         "src": "/paint-by-numbers/puzzles/leaves-medium.bccd62e11d.json",
         "id": "bccd62e11d",
-        "key": "29ec9ac0cda552a2",
+        "key": "a2675da9b159ac6e",
         "retired": []
       },
       {
@@ -159,7 +169,7 @@ export const PICTURES: readonly PictureInfo[] = [
         "deltaE": 0.04437,
         "src": "/paint-by-numbers/puzzles/leaves-hard.8c9e68c29b.json",
         "id": "8c9e68c29b",
-        "key": "fa05094c2cf8168b",
+        "key": "fd0d237767f28e5d",
         "retired": []
       },
       {
@@ -167,20 +177,30 @@ export const PICTURES: readonly PictureInfo[] = [
         "colours": 44,
         "areas": 852,
         "deltaE": 0.04416,
-        "src": "/paint-by-numbers/puzzles/leaves-expert.148794cfc1.json",
-        "id": "148794cfc1",
-        "key": "570708cb78c70e1d",
-        "retired": []
+        "src": "/paint-by-numbers/puzzles/leaves-expert.ab0867f739.json",
+        "id": "ab0867f739",
+        "key": "a9f179f3daecbffd",
+        "retired": [
+          {
+            "id": "148794cfc1",
+            "areas": 852
+          }
+        ]
       },
       {
         "level": "master",
         "colours": 55,
         "areas": 1409,
         "deltaE": 0.04055,
-        "src": "/paint-by-numbers/puzzles/leaves-master.d54a5853e6.json",
-        "id": "d54a5853e6",
-        "key": "309ef7317ebc8f6a",
-        "retired": []
+        "src": "/paint-by-numbers/puzzles/leaves-master.538ac0c9c9.json",
+        "id": "538ac0c9c9",
+        "key": "5669d2da1d25cdc2",
+        "retired": [
+          {
+            "id": "d54a5853e6",
+            "areas": 1409
+          }
+        ]
       }
     ]
   }

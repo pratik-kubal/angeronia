@@ -10,11 +10,10 @@
 
 import { traceHalf, traceRegion } from "@/lib/color-tap/geometry";
 import type { Camera, Size } from "@/lib/color-tap/camera";
+import { NUMBER, OUTLINE, numberSize } from "@/lib/color-tap/render-svg";
 import type { Puzzle } from "@/lib/color-tap/types";
 
 const PAPER = "#ffffff";
-const OUTLINE = "#707070";
-const NUMBER = "#595959";
 const NUMBER_SELECTED = "#262626";
 const CHECK_DARK = "#d9d9d9";
 const CHECK_LIGHT = "#f2f2f2";
@@ -23,7 +22,10 @@ const CHECK = 6;
 const TINT = "rgba(79, 140, 255, 0.32)";
 const RING = "#4f8cff";
 const FONT = '-apple-system, BlinkMacSystemFont, "SF Pro Text", system-ui, sans-serif';
-/** Numbers are drawn from this size up (CSS px), fading in over the next two. */
+/**
+ * Numbers are drawn from this size up, fading in over the next two, and no bigger than MAX_NUMBER:
+ * CSS px on screen, at any zoom (puzzleSvg caps them in work px, as its picture scales whole).
+ */
 const MIN_NUMBER = 7;
 const MAX_NUMBER = 20;
 /** An open area of the selected colour smaller than this across on screen (CSS px) gets a dot. */
@@ -173,14 +175,6 @@ export class Renderer {
   select(colour: number, now: number) {
     if (colour !== this.selected) this.highlightFrom = now;
     this.selected = colour;
-  }
-
-  stopAnimations() {
-    for (const r of this.reveals) this.show(r.area, this.painted[r.area]);
-    this.reveals = [];
-    this.specks = [];
-    this.rings = null;
-    this.bump = null;
   }
 
   /** Releases every cached path (a new picture, or leaving the page). */
@@ -407,7 +401,7 @@ export class Renderer {
       const selected = region.colour === this.selected;
       for (const label of region.labels) {
         const r = label.r * scale;
-        let size = Math.min((0.85 * 2 * r) / Math.sqrt((0.6 * text.length) ** 2 + 0.72 ** 2), MAX_NUMBER);
+        let size = Math.min(numberSize(r, text.length), MAX_NUMBER);
         if (size < MIN_NUMBER) continue;
         const x = camera.x + label.x * scale;
         const y = camera.y + label.y * scale;

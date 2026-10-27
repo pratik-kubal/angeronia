@@ -36,9 +36,6 @@ export class HitIndex {
   private readonly items: Int32Array;
   /** Each area's flattened outline, once a point has needed it. */
   private readonly outlines: (number[][] | undefined)[];
-  /** For within(): the call that last saw each area, so an area in several cells is listed once. */
-  private readonly seen: Int32Array;
-  private call = 0;
 
   constructor(puzzle: Puzzle) {
     this.puzzle = puzzle;
@@ -46,7 +43,6 @@ export class HitIndex {
     this.rows = Math.max(1, Math.ceil(puzzle.height / CELL));
     const count = puzzle.regions.length;
     this.outlines = new Array(count);
-    this.seen = new Int32Array(count);
 
     // Smallest area first (then by index, so the order never depends on the sort), so that where
     // two smoothed outlines both hold a point the small island wins over the area around it: it
@@ -93,36 +89,6 @@ export class HitIndex {
     return -1;
   }
 
-  /** Areas whose bounding boxes meet the rectangle (work px), ascending, each once. */
-  within(x0: number, y0: number, x1: number, y1: number): number[] {
-    // A box meets the rectangle if they overlap or touch: a dirty rectangle that ends exactly on an
-    // area's edge still lists it, since its outline (and the stroke along it) reaches that edge.
-    const left = Math.min(x0, x1);
-    const right = Math.max(x0, x1);
-    const top = Math.min(y0, y1);
-    const bottom = Math.max(y0, y1);
-    const c0 = this.column(left);
-    const c1 = this.column(right);
-    const r0 = this.row(top);
-    const r1 = this.row(bottom);
-    const call = ++this.call;
-    const regions = this.puzzle.regions;
-    const out: number[] = [];
-    for (let row = r0; row <= r1; row++) {
-      for (let column = c0; column <= c1; column++) {
-        const cell = row * this.columns + column;
-        for (let k = this.starts[cell]; k < this.starts[cell + 1]; k++) {
-          const i = this.items[k];
-          if (this.seen[i] === call) continue;
-          this.seen[i] = call;
-          const box = regions[i].box;
-          if (box[0] <= right && box[2] >= left && box[1] <= bottom && box[3] >= top) out.push(i);
-        }
-      }
-    }
-    return out.sort((a, b) => a - b);
-  }
-
   private outline(i: number): number[][] {
     let rings = this.outlines[i];
     if (!rings) {
@@ -147,7 +113,7 @@ export class HitIndex {
     return this.row(y) * this.columns + this.column(x);
   }
 
-  /** The column of x, clamped to the grid: a box or rectangle reaching past the picture keeps to its edge cells. */
+  /** The column of x, clamped to the grid: a box reaching the picture's far edge keeps to its last cell. */
   private column(x: number): number {
     return Math.min(this.columns - 1, Math.max(0, Math.floor(x / CELL)));
   }

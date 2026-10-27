@@ -100,7 +100,7 @@ export function boundary(label: Int32Array, width: number, height: number): Uint
  * edge pixel is ½), and each area's largest: the radius of the biggest circle that fits inside it.
  */
 export function radii(c: Components, width: number, height: number): { r: Float64Array; max: Float64Array } {
-  const { d2 } = distanceMap(boundary(c.label, width, height), width, height);
+  const d2 = distanceMap(boundary(c.label, width, height), width, height);
   const r = new Float64Array(d2.length);
   const max = new Float64Array(c.count);
   for (let p = 0; p < d2.length; p++) {
@@ -399,7 +399,8 @@ export function paletteColours(Q: Uint8Array, lab: Float32Array, colours: number
 /**
  * Palette order: neutrals (OKLCh chroma under 0.03) first, then by hue in twelve 30° groups from
  * red round to pink, light to dark within each, so similar shades sit together in the dock like a
- * paint box. Returns the old indices in their new order.
+ * paint box. Returns the old indices of the colours in use (a colour merged away or lost to cleanup
+ * is NaN, and left out) in their new order.
  */
 export function paletteOrder(palette: Float64Array): number[] {
   const k = palette.length / 3;
@@ -410,7 +411,10 @@ export function paletteOrder(palette: Float64Array): number[] {
     const hue = ((Math.atan2(b, a) * 180) / Math.PI + 360) % 360;
     return { group: chroma < 0.03 ? -1 : Math.floor(hue / 30), L: palette[c * 3] };
   };
-  return Array.from({ length: k }, (_, c) => c).sort((x, y) => {
+  // The unused ones are dropped before the sort: a NaN key makes the comparison inconsistent, and
+  // the sort could then leave the colours in use out of order.
+  const used = Array.from({ length: k }, (_, c) => c).filter((c) => !Number.isNaN(palette[c * 3]));
+  return used.sort((x, y) => {
     const kx = key(x);
     const ky = key(y);
     return kx.group - ky.group || ky.L - kx.L || x - y;

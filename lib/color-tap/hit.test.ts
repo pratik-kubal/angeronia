@@ -14,9 +14,9 @@ import type { Puzzle, Region } from "./types";
 // scan of every area finds, and every point finds an area; near() takes the area under the finger
 // when it may, whatever the radius (0, infinite or NaN included), otherwise reaches an allowed area
 // up to its radius, from inside the picture or just off its edge, never one beyond it, and looks
-// in the documented order; within() lists exactly the areas whose boxes a scan finds meeting the
-// rectangle. On a small hand-built puzzle: where two outlines both hold a point, the smaller area
-// wins, whatever their order in the file, and the index never changes the puzzle it was given.
+// in the documented order. On a small hand-built puzzle: where two outlines both hold a point, the
+// smaller area wins, whatever their order in the file, and the index never changes the puzzle it
+// was given.
 // And 10,000 taps on Master take well under a second.
 
 function load(src: string): Puzzle {
@@ -227,30 +227,6 @@ describe(`HitIndex on ${picture.title}`, () => {
           if (found >= 0) expect(boxDistance(puzzle.regions[found], x, y)).toBeLessThanOrEqual(RADIUS + 1e-9);
         }
       });
-
-      it("within() lists exactly the areas whose boxes a scan finds meeting the rectangle, in order, once each", () => {
-        const scan = (x0: number, y0: number, x1: number, y1: number) =>
-          puzzle.regions.flatMap((region, i) => {
-            const [bx0, by0, bx1, by1] = region.box;
-            return bx0 <= x1 && bx1 >= x0 && by0 <= y1 && by1 >= y0 ? [i] : [];
-          });
-        const random = mulberry32(5);
-        for (let n = 0; n < 300; n++) {
-          // Some reach past the picture's edges, some are a single point.
-          const x0 = random() * (width + 80) - 40;
-          const y0 = random() * (height + 80) - 40;
-          const x1 = x0 + (n % 10 === 0 ? 0 : random() * 240);
-          const y1 = y0 + (n % 10 === 0 ? 0 : random() * 240);
-          expect(index.within(x0, y0, x1, y1)).toEqual(scan(x0, y0, x1, y1));
-        }
-      });
-
-      it("within() lists every area for the whole picture, none for a rectangle off it, and takes its corners either way round", () => {
-        expect(index.within(0, 0, width, height)).toEqual(puzzle.regions.map((_, i) => i));
-        expect(index.within(-50, -50, -1, -1)).toEqual([]);
-        expect(index.within(width + 1, 0, width + 60, height)).toEqual([]);
-        expect(index.within(300, 200, 100, 50)).toEqual(index.within(100, 50, 300, 200));
-      });
     });
   }
 });
@@ -297,23 +273,13 @@ describe("HitIndex on a hand-built puzzle", () => {
     expect(index.near(20, 20, 6, (a) => a === 1)).toBe(-1);
   });
 
-  it("leaves the puzzle it is given as it found it, and hands out a fresh list from within() each time", () => {
+  it("leaves the puzzle it is given as it found it", () => {
     const given = puzzle([big, small]);
     const before = structuredClone(given);
     const index = new HitIndex(given);
     index.at(32, 32);
     index.near(27, 32, 6, (a) => a === 1);
-    const first = index.within(0, 0, 40, 40);
-    first.push(99);
-    expect(index.within(0, 0, 40, 40)).toEqual([0, 1]);
     expect(given).toEqual(before);
-  });
-
-  it("within() lists both areas for a rectangle in either cell they share, and one where only the big one reaches", () => {
-    const index = new HitIndex(puzzle([big, small]));
-    expect(index.within(33, 33, 34, 34)).toEqual([0, 1]);
-    expect(index.within(5, 5, 10, 10)).toEqual([0]);
-    expect(index.within(0, 0, 1, 1)).toEqual([]);
   });
 });
 

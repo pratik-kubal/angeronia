@@ -71,8 +71,13 @@ const HIDDEN = 24;
 /** The next colour is picked this long after one is finished, ms. */
 const ADVANCE_MS = 600;
 const SAVE_MS = 300;
+/** The clock alone is saved this often, ms (and whenever the page is hidden or left). */
+const CLOCK_SAVE_MS = 15000;
 /** The finished painting's replay is squeezed into this long, ms. */
 const REPLAY_MS = 8000;
+
+/** Two states of a game that differ only in the time spent on it. */
+const onlyClock = (a: GameState, b: GameState) => (Object.keys(b) as (keyof GameState)[]).every((key) => key === "elapsed" || a[key] === b[key]);
 
 const puzzles = new Map<string, Promise<Puzzle>>();
 /** A puzzle file, fetched once (its name is its hash, so the browser may keep it for good). */
@@ -201,16 +206,24 @@ export function ColorTapGame() {
   const stagePuzzle = showing ? showing.puzzle : (active?.puzzle ?? null);
 
   // ── Saving ──────────────────────────────────────────────────────────────────
+  /** The game last saved, and when (performance.now()). */
+  const saved = useRef<{ game: GameState; at: number } | null>(null);
   const flush = useCallback(() => {
     const g = gameRef.current;
     if (!g || !owns()) return;
     const camera = sheetRef.current === "new" ? cameraBefore.current : (stage.current?.camera() ?? null);
     const work: Work = { saved: toSaved(g), camera: g.done ? null : camera, at: Date.now() };
     saveWork(work);
+    saved.current = { game: g, at: performance.now() };
     setWorks((all) => ({ ...all, [workKey(g.picture, g.level)]: work }));
   }, []);
   useEffect(() => {
     if (!game) return;
+    // The clock changes the game every second. On its own it is saved every CLOCK_SAVE_MS (and
+    // when the page is hidden or left), not on every tick: a save rewrites every painting stored,
+    // and every other tab reads them all again.
+    const last = saved.current;
+    if (last && onlyClock(last.game, game) && performance.now() - last.at < CLOCK_SAVE_MS) return;
     const t = setTimeout(flush, SAVE_MS);
     return () => clearTimeout(t);
   }, [game, flush]);
@@ -251,6 +264,8 @@ export function ColorTapGame() {
       const g = resumed ?? newGame(board, pictureId, level, puzzle.id, levelById(level).magnifiers);
       stopAuto(false);
       clearTimeout(advanceTimer.current);
+      // The painting in hand is saved as it is first: the clock's last seconds may not be yet.
+      flush();
       ink.current = g.done ? 0 : 1;
       setFocus(-1);
       setActive({ picture, entry, puzzle, board, hit });
@@ -279,14 +294,24 @@ export function ColorTapGame() {
 
   // What the stage shows: the chosen picture while choosing, else the painting in hand. The clock
   // changes the game every second; a frame is drawn only when something drawn changes.
-  const drawn = useRef<{ r: unknown; painted: unknown; selected: number; done: boolean; focus: number; ink: number } | null>(null);
+  // The preview is part of what's drawn: the painting in hand shown behind the New painting sheet
+  // has the same puzzle and paint, but no selection.
+  const drawn = useRef<{ r: unknown; preview: unknown; painted: unknown; selected: number; done: boolean; focus: number; ink: number } | null>(null);
   useEffect(() => {
     const r = stage.current?.renderer();
     if (!r) return;
     const painted = showing ? showing.painted : game?.painted;
     const last = drawn.current;
-    const same = last && last.r === r && last.painted === painted && last.selected === (game?.selected ?? -1) && last.done === !!game?.done && last.focus === focus && last.ink === ink.current;
-    drawn.current = { r, painted, selected: game?.selected ?? -1, done: !!game?.done, focus, ink: ink.current };
+    const same =
+      last &&
+      last.r === r &&
+      last.preview === showing &&
+      last.painted === painted &&
+      last.selected === (game?.selected ?? -1) &&
+      last.done === !!game?.done &&
+      last.focus === focus &&
+      last.ink === ink.current;
+    drawn.current = { r, preview: showing, painted, selected: game?.selected ?? -1, done: !!game?.done, focus, ink: ink.current };
     if (same) return;
     const now = performance.now();
     if (showing) {
@@ -660,16 +685,21 @@ export function ColorTapGame() {
     else if (under >= 0 && !g.painted[under]) wrong(under);
   };
 
+  /** True when the press stopped auto-paint: then it only stops it, and never paints. */
   const onPress = () => {
     if (settingsRef.current.sound) unlockAudio();
     if (busyRef.current === "replay") skipReplay.current = true;
-    if (autoRun.current) stopAuto(true);
+    if (!autoRun.current) return false;
+    stopAuto(true);
+    return true;
   };
   const onMove = () => {
     if (autoRun.current) stopAuto(true);
   };
 
   // ── Auto-paint ──────────────────────────────────────────────────────────────
+  /** The latest stepAuto: its timer outlives the render that set it, and paint() reads the state of the render it came from. */
+  const autoStep = useRef<() => void>(() => {});
   const stepAuto = () => {
     const run = autoRun.current;
     const a = activeRef.current;
@@ -681,11 +711,12 @@ export function ColorTapGame() {
     }
     // A big picture paints a few areas a tick (a timer can't fire much faster than 30 times a
     // second), never across a colour, so the pause still falls between colours.
-    let area = run.plan[run.i];
+    let last = -1;
     for (let n = 0; n < run.batch && run.i < run.plan.length; n++) {
-      area = run.plan[run.i];
-      if (n > 0 && a.board.colourOf[area] !== a.board.colourOf[run.plan[run.i - 1]]) break;
+      const area = run.plan[run.i];
+      if (last >= 0 && a.board.colourOf[area] !== a.board.colourOf[last]) break;
       run.i++;
+      last = area;
       paint(area, a.puzzle.regions[area].labels[0], null, true);
       if (!autoRun.current) return;
     }
@@ -695,8 +726,9 @@ export function ColorTapGame() {
       return;
     }
     const next = run.plan[run.i];
-    run.timer = window.setTimeout(stepAuto, run.interval + (a.board.colourOf[next] !== a.board.colourOf[area] ? run.pause : 0));
+    run.timer = window.setTimeout(() => autoStep.current(), run.interval + (a.board.colourOf[next] !== a.board.colourOf[last] ? run.pause : 0));
   };
+  autoStep.current = stepAuto;
   const startAuto = () => {
     const g = gameRef.current;
     const a = activeRef.current;
@@ -718,7 +750,7 @@ export function ColorTapGame() {
     setAutoOn(true);
     announce("Auto-painting. Tap the picture to stop.");
     st.fit(true);
-    autoRun.current.timer = window.setTimeout(stepAuto, calm ? 0 : 360);
+    autoRun.current.timer = window.setTimeout(() => autoStep.current(), calm ? 0 : 360);
   };
   useEffect(() => () => stopAuto(false), [stopAuto]);
 
@@ -758,14 +790,15 @@ export function ColorTapGame() {
       return;
     }
     const target = magnifierTarget(hidden, a.board, toWork(camera, { x: view.width / 2, y: view.height / 2 }));
-    act({ type: "magnify" });
     const label = a.puzzle.regions[target].labels[0];
     const range = st.range();
     const scale = Math.min(range.max, Math.max(camera.scale, LOOK_AT / (2 * label.r)));
     const goal = centreOn(view, label, scale);
     if (settingsRef.current.sound) sound.magnify(calm ? 0 : flight(camera, goal, view).duration);
     const arrived = await st.fly(goal);
+    // A use is spent on arriving: a touch that cuts the flight short costs nothing.
     if (!arrived) return;
+    act({ type: "magnify" });
     st.renderer()?.ring([target], performance.now(), 1200);
     st.invalidate();
     const left = gameRef.current?.magnifiers ?? 0;
@@ -880,7 +913,16 @@ export function ColorTapGame() {
   }, []);
 
   // ── What the screen shows ───────────────────────────────────────────────────
-  const progress = game && active ? colourProgress(game, active.board) : null;
+  // The paint box is memoised: the clock's tick every second leaves its progress and its onSelect
+  // as they were, so it isn't drawn again.
+  const progress = useMemo(
+    () => (game && active ? colourProgress(game, active.board) : null),
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [game?.order, active?.board],
+  );
+  const selectNow = useRef(select);
+  selectNow.current = select;
+  const onSelect = useCallback((colour: number) => selectNow.current(colour, true), []);
   const total = active?.puzzle.regions.length ?? 0;
   const done = game?.order.length ?? 0;
   const entryOf = (picture: string, level: LevelId) => PICTURES.find((p) => p.id === picture)?.levels.find((l) => l.level === level);
@@ -970,7 +1012,7 @@ export function ColorTapGame() {
 
       <div className="ctp-dock">
         {active && game && progress && !showing ? (
-          <Palette palette={active.puzzle.palette} painted={progress} total={active.board.total} selected={game.selected} onSelect={(c) => select(c, true)} wiggle={wiggle} calm={calm} />
+          <Palette palette={active.puzzle.palette} painted={progress} total={active.board.total} selected={game.selected} onSelect={onSelect} wiggle={wiggle} calm={calm} />
         ) : (
           <div className="ctp-palette" aria-hidden />
         )}

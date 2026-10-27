@@ -890,7 +890,8 @@ the look is a dark studio (navy ground, white paper); magnifier uses grow with
 the level (3 / 4 / 5 / 6 / 8).
 
 **What is carved out**, on the same terms as ADR-019 (rules 1–9, 11 and 13 off;
-10, 12 and 14 on): `app/games/paint-by-numbers/`, `components/color-tap/`,
+rule 10, rule 12's TypeScript and strict-build gates, and rule 14 on):
+`app/games/paint-by-numbers/`, `components/color-tap/`,
 `lib/color-tap/`, `data/color-tap.ts`, `public/paint-by-numbers/` and the
 `scripts/*color-tap*` tools. Its CSS is `components/color-tap/color-tap.css`,
 scoped to `html:has(.ctp-shell)` and `.ctp-*`; `.ctp-shell` joins every
@@ -930,7 +931,9 @@ come out the same (`Leaves.jpg` and `leaves.png`), could otherwise fail the
 build of every page of the site. So the two runs differ:
 
 * `predev` and `prebuild` leave a photo they can't use out, with a warning, and
-  the rest of the site builds.
+  the rest of the site builds. A picture already listed keeps its earlier
+  puzzles, current and retired, so a bad replacement photo takes no painting
+  away.
 * CI's **Color Tap photos** job runs `npm run color-tap:puzzles -- --check`,
   which writes nothing and fails on a damaged photo, a name collision, an image
   in a format it doesn't read (HEIC, WebP…), a puzzle that breaks its level's
@@ -940,7 +943,8 @@ build of every page of the site. So the two runs differ:
   freshness (`scripts/color-tap-puzzles.test.ts`).
 
 **Players' progress comes first (the owner's call).** A puzzle is remade only
-when something deliberate changes: its photo, its level's settings, the seed,
+when something deliberate changes: its photo, its level's conversion settings
+(not its name or its magnifiers), the seed,
 the work size or `PIPELINE_VERSION`. The conversion's code and the image library
 are not part of that key on purpose, so a comment edit, a change to the shared
 `lib/random.ts` or a routine sharp update never remakes a puzzle or fails the

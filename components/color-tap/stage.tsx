@@ -77,8 +77,11 @@ export interface StageProps {
   onTap: (at: Point, scale: number, stage: Point) => void;
   /** The player moved the view: anything that moves it on its own should stop. */
   onMove: () => void;
-  /** Every press on the stage, first (wakes the sound inside the gesture, as iOS requires). */
-  onPress: () => void;
+  /**
+   * Every press on the stage, first (wakes the sound inside the gesture, as iOS requires). True
+   * when the press only stops something (auto-paint): its tap is then never handed on.
+   */
+  onPress: () => boolean;
   zoom: ZoomStore;
   label: string;
   /** The id of the element that says which keys the picture takes. */
@@ -331,7 +334,7 @@ export const Stage = forwardRef<StageHandle, StageProps>(function Stage({ puzzle
     const gestures = new Gestures();
     let rect = canvas.getBoundingClientRect();
     let pinchAt: Point | null = null;
-    /** A press that stopped a glide only stops it, as on iOS: it never paints. */
+    /** A press that stopped a glide (as on iOS) or auto-paint only stops it: it never paints. */
     let swallowTap = false;
     const local = (e: { clientX: number; clientY: number }) => ({ x: e.clientX - rect.left, y: e.clientY - rect.top });
     const kindOf = (e: PointerEvent): PointerKind => (e.pointerType === "mouse" ? "mouse" : e.pointerType === "pen" ? "pen" : "touch");
@@ -375,11 +378,12 @@ export const Stage = forwardRef<StageHandle, StageProps>(function Stage({ puzzle
 
     const onDown = (e: PointerEvent) => {
       if (e.pointerType === "mouse" && e.button !== 0) return;
-      props.current.onPress();
+      const stopped = props.current.onPress();
       if (gestures.active === 0) {
         rect = canvas.getBoundingClientRect();
-        swallowTap = s.current.motion?.kind === "glide";
-        if (swallowTap) s.current.motion = null;
+        const gliding = s.current.motion?.kind === "glide";
+        if (gliding) s.current.motion = null;
+        swallowTap = stopped || gliding;
       }
       try {
         canvas.setPointerCapture(e.pointerId);
