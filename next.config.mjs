@@ -26,6 +26,11 @@ const nextConfig = {
         source: "/solitaire/cards/:path*",
         headers: [{ key: "Cache-Control", value: "public, max-age=31536000, immutable" }],
       },
+      {
+        // Color Tap's puzzles and thumbnails are named by a hash of what they hold (ADR-022).
+        source: "/paint-by-numbers/puzzles/:path*",
+        headers: [{ key: "Cache-Control", value: "public, max-age=31536000, immutable" }],
+      },
     ];
   },
   experimental: {

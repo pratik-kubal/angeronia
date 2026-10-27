@@ -72,10 +72,16 @@ For the studio site. The games are outside it; see **Games** below.
 Sudoku and Solitaire moved here from `../portfolio` (2026-10-23) and live under
 `/games` (**ADR-021**): `/games/sudoku`, `/games/solitaire`, and `/games`
 itself, a launcher of their icons meant to be saved to an iPhone's home screen.
-The old `/sudoku`, `/solitaire` and `/Solitaire` redirect (308). They keep their
+The old `/sudoku`, `/solitaire` and `/Solitaire` redirect (308). Color Tap,
+paint by numbers, was made here (2026-10-27) at `/games/paint-by-numbers`
+(**ADR-022**, no short path): its puzzles are converted from the photos in
+`public/paint-by-numbers/` **at build time** (`npm run color-tap:puzzles`, run
+by `predev` and `prebuild`; the output is committed, and CI's `--check` fails a
+PR with a bad or unconverted photo). They keep their
 own look — their own CSS, tokens, type, motion and Phosphor icons — and the
-contract above does not govern them: **ADR-019** draws the line (rules 10, 12
-and 14 still apply), and the launcher sits on their side of it. The home page's
+contract above does not govern them: **ADR-019** draws the line (rule 10, rule
+12's typecheck and build gates, and rule 14 still apply), and the launcher sits
+on their side of it. The home page's
 Games section links to them too (**ADR-020**); nothing else does. They are not
 in the header, the footer or `sitemap.ts`, and they are `noindex`.
 
@@ -85,9 +91,18 @@ in the header, the footer or `sitemap.ts`, and they are `noindex`.
   own icon, and give the game a link back to `/games` (there is no back button
   in a saved web app).
 
-* Read `docs/games/sudoku.md` or `docs/games/solitaire.md` before touching a
-  game's `components/` or `lib/` folder; they are the games' design and test
-  notes, carried over from the portfolio's `CLAUDE.md`.
+* Read `docs/games/sudoku.md`, `docs/games/solitaire.md` or
+  `docs/games/color-tap.md` before touching a game's `components/` or `lib/`
+  folder; they are the games' design and test notes (Sudoku's and Solitaire's
+  carried over from the portfolio's `CLAUDE.md`).
+* **A new Color Tap picture** is a JPG or PNG dropped into
+  `public/paint-by-numbers/`; `npm run dev` converts it. Commit the photo with
+  `public/paint-by-numbers/puzzles/` and `lib/color-tap/pictures.ts`. Changing
+  anything in `lib/color-tap/` that alters a puzzle means bumping
+  `PIPELINE_VERSION` in `lib/color-tap/levels.ts` by hand (code edits alone
+  don't remake puzzles: players' progress comes first) and checking
+  `npm run color-tap:preview`. Remade puzzles keep the old ones as retired, so
+  paintings already begun carry on on them; never delete a retired puzzle.
 * Their gates are `npm test` (Vitest, node) and `npm run test:e2e` (Playwright:
   desktop Chromium, and an iPhone and an iPad in WebKit), on top of typecheck
   and build.
@@ -132,6 +147,9 @@ npm run test:e2e       # the games end to end (Playwright: Chromium + iPhone/iPa
 npm run solitaire:cards  # Solitaire's card faces, from the Vector Playing Cards pack
 npm run solitaire:deals  # re-prove Solitaire's bank of winnable deals (~5 min)
 npm run games:icon     # redraw the /games launcher's home-screen icon from the games' icons
+npm run color-tap:puzzles  # Color Tap: photos -> puzzles (also before dev/build; --check in CI)
+npm run color-tap:preview -- <dir>  # before | after | photo strips and metrics, per photo and level
+npm run color-tap:icon     # Color Tap's home-screen icon
 
 npm run build:favicon  # re-tint app/icon.svg onto the teal ramp
 npm run build:logos    # regenerate the OG/social lockups

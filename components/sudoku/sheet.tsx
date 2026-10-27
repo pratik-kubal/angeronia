@@ -10,8 +10,8 @@ type Props = {
   dismissible: boolean;
   onClose: () => void;
   children: ReactNode;
-  /** The class prefix its styles use ("sdk" for Sudoku's, "sol" for Solitaire's). */
-  prefix: "sdk" | "sol";
+  /** The class prefix its styles use ("sdk" for Sudoku's, "sol" for Solitaire's, "ctp" for Color Tap's). */
+  prefix: "sdk" | "sol" | "ctp";
 };
 
 /** How far down (px) a drag on the grabber must pull the sheet to dismiss it. */
@@ -112,7 +112,7 @@ export function Sheet({ open, label, dismissible, onClose, children, prefix }: P
         </div>
         {dismissible && (
           <button type="button" className={`${prefix}-sheet-x`} aria-label="Close" onClick={onClose}>
-            <XIcon size={13} weight="bold" />
+            <XIcon size={13} weight="bold" aria-hidden />
           </button>
         )}
         <div className={`${prefix}-sheet-scroll`}>{children}</div>

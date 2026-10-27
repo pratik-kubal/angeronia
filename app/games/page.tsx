@@ -11,7 +11,7 @@ import "@/components/games/launcher.css";
 // by `npm run games:icon`.
 export const metadata: Metadata = {
   title: "Games",
-  description: "Sudoku, Solitaire and whatever comes next, in one place.",
+  description: "Sudoku, Solitaire, Color Tap and whatever comes next, in one place.",
   robots: { index: false, follow: false },
   // Add to Home Screen opens it full screen, like an app. The default status bar keeps every
   // page below the clock, tinted by its own theme-color (ADR-021).

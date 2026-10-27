@@ -6,7 +6,7 @@
    with its padding, links in link-primary, i not italic, SVGs on the
    baseline). This puts back the parts of the preflight they rely on, scoped
    to a game's shell, so nothing here reaches the studio pages. Imported by
-   each game's page and by the /games launcher (DECISIONS.md ADR-019, ADR-021).
+   each game's page and by the /games launcher (DECISIONS.md ADR-019, ADR-021, ADR-022).
 
    Specificity is the whole trick: `html body` then a `:where()` (0,0,2, or
    0,0,3 on a pseudo-element) beats Carbon's bare-element rules (0,0,1) and
@@ -15,7 +15,7 @@
    `:is()`: the build prefixes `:is()` as `:-webkit-any()`, which counts as a
    class and would win.
    ══════════════════════════════════════════════════════════════════════════ */
-html:has(.sdk-shell, .sol-shell, .gml-shell) {
+html:has(.sdk-shell, .sol-shell, .gml-shell, .ctp-shell) {
   line-height: 1.5;
   -webkit-text-size-adjust: 100%;
   text-size-adjust: 100%;
@@ -24,10 +24,10 @@ html:has(.sdk-shell, .sol-shell, .gml-shell) {
   -webkit-tap-highlight-color: transparent;
 }
 
-html body :where(.sdk-shell, .sdk-shell *, .sol-shell, .sol-shell *, .gml-shell, .gml-shell *),
-html body :where(.sdk-shell, .sdk-shell *, .sol-shell, .sol-shell *, .gml-shell, .gml-shell *)::before,
-html body :where(.sdk-shell, .sdk-shell *, .sol-shell, .sol-shell *, .gml-shell, .gml-shell *)::after,
-html body :where(.sdk-shell, .sdk-shell *, .sol-shell, .sol-shell *, .gml-shell, .gml-shell *)::backdrop {
+html body :where(.sdk-shell, .sdk-shell *, .sol-shell, .sol-shell *, .gml-shell, .gml-shell *, .ctp-shell, .ctp-shell *),
+html body :where(.sdk-shell, .sdk-shell *, .sol-shell, .sol-shell *, .gml-shell, .gml-shell *, .ctp-shell, .ctp-shell *)::before,
+html body :where(.sdk-shell, .sdk-shell *, .sol-shell, .sol-shell *, .gml-shell, .gml-shell *, .ctp-shell, .ctp-shell *)::after,
+html body :where(.sdk-shell, .sdk-shell *, .sol-shell, .sol-shell *, .gml-shell, .gml-shell *, .ctp-shell, .ctp-shell *)::backdrop {
   box-sizing: border-box;
   margin: 0;
   padding: 0;
@@ -37,37 +37,37 @@ html body :where(.sdk-shell, .sdk-shell *, .sol-shell, .sol-shell *, .gml-shell,
 }
 
 /* Carbon sets these on <body>; the games start from the browser's. */
-html body :where(.sdk-shell, .sol-shell, .gml-shell) {
+html body :where(.sdk-shell, .sol-shell, .gml-shell, .ctp-shell) {
   font-feature-settings: normal;
   text-rendering: auto;
 }
 
-html body :where(.sdk-shell, .sol-shell, .gml-shell) :where(h1, h2, h3, h4, h5, h6, p) {
+html body :where(.sdk-shell, .sol-shell, .gml-shell, .ctp-shell) :where(h1, h2, h3, h4, h5, h6, p) {
   font-size: inherit;
   font-weight: inherit;
   line-height: inherit;
   letter-spacing: inherit;
 }
-html body :where(.sdk-shell, .sol-shell, .gml-shell) :where(b, strong) { font-weight: bolder; }
-html body :where(.sdk-shell, .sol-shell, .gml-shell) small { font-size: 80%; }
-html body :where(.sdk-shell, .sol-shell, .gml-shell) :where(i, em) { font-style: italic; }
-html body :where(.sdk-shell, .sol-shell, .gml-shell) a {
+html body :where(.sdk-shell, .sol-shell, .gml-shell, .ctp-shell) :where(b, strong) { font-weight: bolder; }
+html body :where(.sdk-shell, .sol-shell, .gml-shell, .ctp-shell) small { font-size: 80%; }
+html body :where(.sdk-shell, .sol-shell, .gml-shell, .ctp-shell) :where(i, em) { font-style: italic; }
+html body :where(.sdk-shell, .sol-shell, .gml-shell, .ctp-shell) a {
   color: inherit;
   text-decoration: inherit;
 }
-html body :where(.sdk-shell, .sol-shell, .gml-shell) :where(ol, ul, menu) { list-style: none; }
-html body :where(.sdk-shell, .sol-shell, .gml-shell) summary { display: list-item; }
+html body :where(.sdk-shell, .sol-shell, .gml-shell, .ctp-shell) :where(ol, ul, menu) { list-style: none; }
+html body :where(.sdk-shell, .sol-shell, .gml-shell, .ctp-shell) summary { display: list-item; }
 
-html body :where(.sdk-shell, .sol-shell, .gml-shell) :where(img, svg, video, canvas, audio, iframe, embed, object) {
+html body :where(.sdk-shell, .sol-shell, .gml-shell, .ctp-shell) :where(img, svg, video, canvas, audio, iframe, embed, object) {
   display: block;
   vertical-align: middle;
 }
-html body :where(.sdk-shell, .sol-shell, .gml-shell) :where(img, video) {
+html body :where(.sdk-shell, .sol-shell, .gml-shell, .ctp-shell) :where(img, video) {
   max-width: 100%;
   height: auto;
 }
 
-html body :where(.sdk-shell, .sol-shell, .gml-shell) :where(button, input, select, optgroup, textarea) {
+html body :where(.sdk-shell, .sol-shell, .gml-shell, .ctp-shell) :where(button, input, select, optgroup, textarea) {
   font: inherit;
   font-feature-settings: inherit;
   font-variation-settings: inherit;
@@ -77,6 +77,6 @@ html body :where(.sdk-shell, .sol-shell, .gml-shell) :where(button, input, selec
   background-color: transparent;
   opacity: 1;
 }
-html body :where(.sdk-shell, .sol-shell, .gml-shell) :where(button, input[type="button"], input[type="reset"], input[type="submit"]) {
+html body :where(.sdk-shell, .sol-shell, .gml-shell, .ctp-shell) :where(button, input[type="button"], input[type="reset"], input[type="submit"]) {
   appearance: button;
 }

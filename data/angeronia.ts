@@ -343,6 +343,12 @@ export const games: Game[] = [
     href: "/games/solitaire",
     icon: "/games/solitaire/apple-icon.png",
   },
+  {
+    name: "Color Tap",
+    line: "Paint by numbers, one tap at a time.",
+    href: "/games/paint-by-numbers",
+    icon: "/games/paint-by-numbers/apple-icon.png",
+  },
 ];
 
 // ── Contact CTA ───────────────────────────────────────────────────────────────
