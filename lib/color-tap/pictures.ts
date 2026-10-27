@@ -50,12 +50,7 @@ export const PICTURES: readonly PictureInfo[] = [
         "src": "/paint-by-numbers/puzzles/berries-expert.a8d382bc44.json",
         "id": "a8d382bc44",
         "key": "a8f30fc7dd4af947",
-        "retired": [
-          {
-            "id": "b9dd9da5ae",
-            "areas": 1009
-          }
-        ]
+        "retired": []
       },
       {
         "level": "master",
@@ -65,12 +60,7 @@ export const PICTURES: readonly PictureInfo[] = [
         "src": "/paint-by-numbers/puzzles/berries-master.b915cb64fb.json",
         "id": "b915cb64fb",
         "key": "2aeb9d7a7e0495d0",
-        "retired": [
-          {
-            "id": "c229c0019c",
-            "areas": 1902
-          }
-        ]
+        "retired": []
       }
     ]
   },
@@ -180,12 +170,7 @@ export const PICTURES: readonly PictureInfo[] = [
         "src": "/paint-by-numbers/puzzles/leaves-expert.ab0867f739.json",
         "id": "ab0867f739",
         "key": "a9f179f3daecbffd",
-        "retired": [
-          {
-            "id": "148794cfc1",
-            "areas": 852
-          }
-        ]
+        "retired": []
       },
       {
         "level": "master",
@@ -195,12 +180,7 @@ export const PICTURES: readonly PictureInfo[] = [
         "src": "/paint-by-numbers/puzzles/leaves-master.538ac0c9c9.json",
         "id": "538ac0c9c9",
         "key": "5669d2da1d25cdc2",
-        "retired": [
-          {
-            "id": "d54a5853e6",
-            "areas": 1409
-          }
-        ]
+        "retired": []
       }
     ]
   }
