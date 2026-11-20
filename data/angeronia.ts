@@ -33,7 +33,7 @@ export const BRAND = {
 
 export const LINKS = {
   email: "pratik-kubal@outlook.com",
-  codeSocratic: "https://code-socratic.angeronia.com/",
+  codeSocratic: "https://www.code-socratic.com/",
   linkedin: "https://www.linkedin.com/company/angeronia",
   github: "https://github.com/pratik-kubal",
   calendar: "mailto:pratik-kubal@outlook.com?subject=Project%20inquiry%20%E2%80%94%20Angeronia%20Labs",

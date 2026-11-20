@@ -28,7 +28,7 @@ export default meta;
 type Story = StoryObj<typeof meta>;
 
 export const Default: Story = {
-  args: { href: "https://code-socratic.angeronia.com/", children: "Try Code Socratic" },
+  args: { href: "https://www.code-socratic.com/", children: "Try Code Socratic" },
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
     const link = canvas.getByRole("link", { name: /Try Code Socratic/ });
