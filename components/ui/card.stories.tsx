@@ -48,7 +48,7 @@ export const WithFooter: Story = {
   args: {
     ...Default.args,
     icon: Terminal,
-    footer: <ExternalLink href="https://code-socratic.angeronia.com/">Try it</ExternalLink>,
+    footer: <ExternalLink href="https://www.code-socratic.com/">Try it</ExternalLink>,
   },
 };
 

@@ -1,7 +1,7 @@
 # angeronia.com
 
 Marketing site for **Angeronia Labs LLC** — a software engineering studio in
-Philadelphia, and the maker of [Code Socratic](https://code-socratic.angeronia.com/).
+Philadelphia, and the maker of [Code Socratic](https://www.code-socratic.com/).
 
 Built on **IBM Carbon v11** under an Angeronia brand override: Carbon Teal in
 place of Carbon Blue, IBM Plex as the typeface, Carbon for icons. Storybook is
