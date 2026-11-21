@@ -10,11 +10,7 @@ const at = (i: number) => ({ "--i": i }) as React.CSSProperties;
 /** Who you are hiring: a short column of first-person text, and the four terms. */
 export function Intro() {
   return (
-    <Reveal
-      as="section"
-      aria-labelledby="intro-heading"
-      className={cx("frame", "section", styles.intro)}
-    >
+    <Reveal as="section" aria-labelledby="intro-heading" className="frame section">
       <div className={styles.who}>
         <h2
           id="intro-heading"
