@@ -39,6 +39,14 @@
   color: var(--ink);
 }
 
+/* On desktop the questions hang from L2, column 4, as the problem titles do,
+   so a question and its answer are near each other (ADR-030). */
+@media (min-width: 62.5rem) {
+  .q {
+    grid-column: 4 / 8;
+  }
+}
+
 @media (max-width: 47.4375rem) {
   .rows {
     row-gap: var(--s-6);

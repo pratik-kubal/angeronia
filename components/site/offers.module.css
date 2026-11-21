@@ -128,6 +128,11 @@
   margin-block-start: var(--s-1);
 }
 
+/* Where the hours have to wrap, they wrap in balance, not with an orphan. */
+.tier dt {
+  text-wrap: balance;
+}
+
 /* A price never breaks, so every price keeps the same tabular width and the
    column stays straight where the hours have to wrap (768 and 390). */
 .tier dd {

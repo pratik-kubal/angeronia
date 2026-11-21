@@ -1,4 +1,5 @@
 import type * as React from "react";
+import { FitText } from "@/components/site/fit-text";
 import { Reveal } from "@/components/site/reveal";
 import { ButtonLink } from "@/components/ui/button-link";
 import { ExternalLink } from "@/components/ui/external-link";
@@ -92,7 +93,9 @@ export function Close({ variant = "full" }: { variant?: "full" | "compact" }) {
         </span>
       </p>
       <div className={styles.crop} aria-hidden="true">
-        <p className={`display ${styles.wordmark}`}>{close.wordmark}</p>
+        <p className={`display ${styles.wordmark}`}>
+          <FitText>{close.wordmark}</FitText>
+        </p>
       </div>
     </footer>
   );

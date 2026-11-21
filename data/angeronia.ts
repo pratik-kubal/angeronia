@@ -44,11 +44,11 @@ export const LINKS: Links = {
   email: "pratik-kubal@outlook.com", // [CONFIRM: the address to publish]
   booking: null, // [CONFIRM: booking link, tested]
   demoVideo: null, // [CONFIRM: recorded and hosted]
-  writeUp: null, // the credit ledger, model routing and token economics
-  sampleHandoff: null, // redacted sample handoff document and eval plan
-  repos: null, // only if clean
+  writeUp: null, // [CONFIRM: optional] the credit ledger, model routing and token economics
+  sampleHandoff: null, // [CONFIRM: optional] redacted sample handoff document and eval plan
+  repos: null, // [CONFIRM: optional] only if clean
   codeSocratic: "https://www.code-socratic.com/",
-  codeSocraticBuild: null, // "Read how it’s built"
+  codeSocraticBuild: null, // [CONFIRM: optional] "Read how it’s built"
   linkedin: "https://www.linkedin.com/company/angeronia",
   github: "https://github.com/pratik-kubal",
 };
@@ -104,9 +104,10 @@ export const hero = {
   },
 } as const;
 
-/** The credit CC BY 2.0 requires: author, licence, and that the picture was changed. */
+/** The credit CC BY 2.0 requires: title, author, licence, and that the picture was changed. */
 export const photoCredit = {
-  text: "Photograph by Andrew Parlette, cropped",
+  // [CONFIRM: the lit "WSFS Bank" sign. Left as it is, or dimmed, and then "cropped and retouched".]
+  text: "“Philadelphia Skyline” by Andrew Parlette, cropped",
   href: "https://commons.wikimedia.org/w/index.php?curid=135482068",
   license: "CC BY 2.0",
   licenseHref: "https://creativecommons.org/licenses/by/2.0/",
@@ -114,7 +115,7 @@ export const photoCredit = {
 
 // ── Who you are hiring ────────────────────────────────────────────────────────
 export const intro = {
-  heading: "I’m Pratik, a solo AI engineer in Philadelphia.",
+  heading: "I’m Pratik, a solo AI engineer in Philadelphia.", // [CONFIRM: city, as BRAND.city]
   paragraphs: [
     "I build Claude-based agents for small software teams at a fixed scope and price, accepted against an eval set you approve.",
     "I recently built a Socratic coding tutor end to end, with sandboxed code execution, hidden-test verification and per-user usage metering.",
@@ -223,6 +224,7 @@ export const offers = {
         "Credited toward an MVP if you sign within 14 days",
       ],
       bestFor:
+        // [CONFIRM: optional. In quotation marks this can read as a client quote.]
         "“We’re not sure it’s feasible or what it would cost.” Not ready for an MVP yet? Start here.",
     },
   ] satisfies readonly Offer[],
@@ -260,6 +262,8 @@ export const proof = {
       id: "tests",
       built:
         "Server-verified hidden tests in a sandboxed runner (browser IDE, cloud execution)",
+      // [CONFIRM: true for library problems. For a problem the tutor builds, the model writes
+      // the hidden tests itself (build_harness). Keep, or narrow it.]
       relevance:
         "Verification the model cannot see or game. It is the same principle as eval design: the agent never grades itself.",
       panel: "run",
@@ -281,7 +285,7 @@ export const proof = {
     {
       id: "data",
       built:
-        "A data layer where reference solutions and expected outputs never leave the database",
+        "A data layer where reference solutions and expected outputs never reach the browser",
       relevance: "Security and data-boundary thinking applied to an agent system.",
       panel: "boundary",
     },
@@ -388,6 +392,7 @@ export const process = {
     },
     {
       title: "Deposit and kickoff.",
+      // [CONFIRM: terms, as intro.facts[1]]
       body: "50% to start. If access to your systems is not ready at kickoff, the clock pauses.",
       fact: "50% to start",
     },
@@ -415,6 +420,7 @@ export const faq = {
   items: [
     {
       q: "Do you have other clients?",
+      // [CONFIRM: "a full product you can inspect" holds only if sign-up is open, not waitlisted.]
       a: "Angeronia Labs is new as a consultancy. I don’t have logos to show, and I won’t pretend otherwise. What I have is a full product you can inspect, and terms that tie payment to results you define.",
     },
     {
@@ -441,6 +447,7 @@ export const faq = {
     },
     {
       q: "Do you only use Claude?",
+      // [CONFIRM: "where my production experience is". Nothing on the page shows Claude work in production.]
       a: "Claude is my default and where my production experience is. If a smaller model handles part of the workflow more cheaply, routing between tiers is part of how I would design it.",
     },
     {
@@ -460,6 +467,7 @@ export const product = {
   heading: ["Also from", "Angeronia Labs"],
   name: "Code.Socratic",
   blurb:
+    // [CONFIRM: "It has a live agent" invites a visit; true only if sign-up is open.]
     "Code.Socratic is an AI coding-interview tutor that teaches by asking, not telling. It has a live agent, a real browser IDE, hidden-test verification and a transparent credit meter, so you always see what you are using.",
   visit: { label: "Visit Code.Socratic", href: LINKS.codeSocratic } satisfies Cta,
   /** Not rendered until the write-up exists. */
@@ -542,12 +550,14 @@ export interface LegalDocument {
   sections: LegalSection[];
 }
 
+// [CONFIRM: city, as BRAND.city]
 const LEGAL_CONTACT = `Angeronia Labs LLC, Philadelphia, Pennsylvania. Questions about either document go to ${LINKS.email}.`;
 
+// [CONFIRM: both documents speak as "we", the LLC, against the page's "I, never we". Exempt them, or rewrite.]
 export const privacyPolicy: LegalDocument = {
   slug: "privacy",
   title: "Privacy Policy",
-  // Set both to the day the redesign merges.
+  // [CONFIRM: set both, here and in termsOfService, to the day the redesign merges.]
   updated: "23 November 2026",
   updatedIso: "2026-11-23",
   lede: "This site collects nothing about you. The detail below explains what that means in practice, and the two places where information exists anyway.",
@@ -591,7 +601,7 @@ export const privacyPolicy: LegalDocument = {
     {
       heading: "Links to other sites",
       paragraphs: [
-        "We link to LinkedIn, GitHub, Code.Socratic and Wikimedia Commons, and to a booking page when there is one. Once you follow one of those links you are on someone else’s site under someone else’s policy, and this one no longer applies.",
+        "We link to LinkedIn, GitHub, Code.Socratic, Wikimedia Commons and Creative Commons, and to a booking page when there is one. Once you follow one of those links you are on someone else’s site under someone else’s policy, and this one no longer applies.",
       ],
     },
     {
@@ -618,6 +628,7 @@ export const privacyPolicy: LegalDocument = {
 export const termsOfService: LegalDocument = {
   slug: "terms",
   title: "Terms of Service",
+  // [CONFIRM: the day the redesign merges, as privacyPolicy.updated]
   updated: "23 November 2026",
   updatedIso: "2026-11-23",
   lede: "These terms cover this website. They do not cover consulting work, which is governed by a separate signed agreement.",

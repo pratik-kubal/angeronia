@@ -85,10 +85,3 @@
     display: none;
   }
 }
-
-/* Storybook only: a dark block to lay the transparent header over. */
-.storyBlock {
-  position: relative;
-  min-block-size: calc(var(--header) + var(--section));
-  background: var(--surface);
-}

@@ -1,0 +1,18 @@
+/* Storybook only, so none of it ships in the page's CSS. */
+/* A fixed-width box to fit the name into (FitText stories). */
+.storyFrame {
+  padding: var(--s-5) var(--m);
+}
+
+.storyFit {
+  inline-size: var(--measure);
+  max-inline-size: 100%;
+  margin: 0;
+  white-space: nowrap;
+  font-size: var(--step-lead);
+  line-height: 0.9;
+}
+
+.storyFit > span {
+  display: inline-block;
+}

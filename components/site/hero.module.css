@@ -30,7 +30,7 @@
   inset-inline: 0;
   inset-block-end: 0;
   block-size: 60%;
-  background: linear-gradient(
+  background: linear-gradient( /* taste-skill-ignore: the neutral scrim over the photograph (design.md §4.2, §8) */
     to top,
     rgb(12 10 8 / 0.93) 0%,
     rgb(12 10 8 / 0.72) 48%,
@@ -44,7 +44,7 @@
   inset-inline: 0;
   inset-block-start: 0;
   block-size: 24%;
-  background: linear-gradient(to bottom, rgb(12 10 8 / 0.6), rgb(12 10 8 / 0));
+  background: linear-gradient(to bottom, rgb(12 10 8 / 0.6), rgb(12 10 8 / 0)); /* taste-skill-ignore: the neutral scrim (design.md §4.2, §8) */
 }
 
 .title {
@@ -197,22 +197,4 @@
     opacity: 1;
     transform: none;
   }
-}
-
-/* Storybook only: a fixed-width box to fit the name into (FitText stories). */
-.storyFrame {
-  padding: var(--s-5) var(--m);
-}
-
-.storyFit {
-  inline-size: var(--measure);
-  max-inline-size: 100%;
-  margin: 0;
-  white-space: nowrap;
-  font-size: var(--step-lead);
-  line-height: 0.9;
-}
-
-.storyFit > span {
-  display: inline-block;
 }

@@ -74,9 +74,14 @@
     }
 
     /* Five twelfths, less a gutter: the claims hold columns 1 to 5. */
+    /* The 4px bar is a border that is always there and only coloured on the
+       chosen claim, so choosing never moves the text; the padding gives back
+       the bar's width. (design.md §8: drawn without box-shadow.) */
     .claim {
       inline-size: calc(41.667% - var(--gutter));
       padding: var(--s-3) var(--s-4);
+      padding-inline-start: calc(var(--s-4) - var(--bar));
+      border-inline-start: var(--bar) solid transparent;
     }
 
     /* A claim's rise (styles/motion.css) moves it with a transform, and a
@@ -107,9 +112,15 @@
       cursor: pointer;
     }
 
+    /* A claim that can be chosen shows its bar at rest, in the secondary ink,
+       so the set reads as choices; the chosen one turns ink (ADR-030). */
+    .claim:has(.radio) {
+      border-inline-start-color: var(--muted);
+    }
+
     .claim:has(.radio:checked) {
       background: var(--surface);
-      box-shadow: inset var(--bar) 0 0 var(--ink);
+      border-inline-start-color: var(--ink);
     }
 
     .claim:has(.radio:focus-visible) {

@@ -42,7 +42,7 @@ export function Reveal<T extends keyof React.JSX.IntrinsicElements = "div">({
           observer.disconnect();
         }
       },
-      { rootMargin: "0px 0px -12% 0px", threshold: 0.1 },
+      { rootMargin: "0px 0px -12% 0px", threshold: 0 }, // ADR-030: tall sections on a phone
     );
     observer.observe(el);
     return () => observer.disconnect();

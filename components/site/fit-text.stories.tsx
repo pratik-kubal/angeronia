@@ -3,7 +3,7 @@ import { expect, waitFor } from "storybook/test";
 import { hero } from "@/data/angeronia";
 import { cx } from "@/lib/cx";
 import { FitText } from "./fit-text";
-import styles from "./hero.module.css";
+import styles from "./fit-text.stories.module.css";
 
 const meta = {
   title: "Sections/FitText",

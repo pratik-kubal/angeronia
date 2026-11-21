@@ -2,6 +2,7 @@ import type * as React from "react";
 import { offers } from "@/data/angeronia";
 import type { Offer } from "@/data/angeronia";
 import { ButtonLink } from "@/components/ui/button-link";
+import { ExternalLink } from "@/components/ui/external-link";
 import { Reveal } from "@/components/site/reveal";
 import { cx } from "@/lib/cx";
 import styles from "./offers.module.css";
@@ -131,7 +132,14 @@ export function Offers() {
         </div>
 
         <p className={cx("lead", styles.after)} data-reveal="rise" style={stagger(6)}>
-          {offers.after.text} <a href={offers.after.cta.href}>{offers.after.cta.label}</a>
+          {offers.after.text}{" "}
+          {/* Today a mailto; once LINKS.booking is confirmed it is an https page, and then this
+              link leaves the site the way the button above does. */}
+          {/^https?:/.test(offers.after.cta.href) ? (
+            <ExternalLink href={offers.after.cta.href}>{offers.after.cta.label}</ExternalLink>
+          ) : (
+            <a href={offers.after.cta.href}>{offers.after.cta.label}</a>
+          )}
         </p>
       </div>
     </Reveal>

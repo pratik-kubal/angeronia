@@ -1086,6 +1086,73 @@ launcher, previews as itself: its own title and description, and its own
 180 × 180 home-screen icon as a `summary` card. Each `app/games/**/page.tsx`
 sets both objects; nothing else in the games changed.
 
+### ADR-030 — What the Phase D review changed from the specification
+
+**Recorded 2026-11-20, during the review, before each change.** Each item
+departs from `docs/plans/monument-redesign/design.md` or `content.md`; the
+reason is the one given. Nothing here changes the direction.
+
+1. **The chosen proof claim's 4px bar is a border, not an inset box-shadow.**
+   The design skill's lint fails any `box-shadow`; design.md §8 named this
+   fallback. Every claim carries the border, so choosing one never moves its
+   text.
+2. **A section's parts arrive on the first pixel past the line** (`threshold:
+   0` in `reveal.tsx`, not 0.1). On a phone, Proof, Offers and the FAQ are two
+   to four screens tall, so 10% of them meant 200 to 340px of scrolling past an
+   empty heading.
+3. **On a tablet the Process heading starts on column 1**, over its paragraphs,
+   which start there too. The specification gave the tablet no heading rule,
+   and column 4 left it indented past the text it heads.
+4. **The closing wordmark is fitted margin to margin**, by the same `FitText`
+   as the name over the city, instead of §4.10's 33vw running off the right
+   edge. At 33vw it stopped inside the margin at 1440 and 768. Every larger
+   size that ran off the edge cut the last letters to a sliver (the inspector's
+   `one-sided-bleed`, and an independent juror's "ANGERONI|"), because the A
+   and the I are the narrowest letters and the last two. Fitted, the two names
+   bookend the page on the same pair of margins.
+5. **The wordmark is cut on its baseline**, so the letters stand whole on the
+   page's bottom edge. §4.10's crop cut through the bottom fifth of the
+   capitals, which took the lower arm off the E and made the word read
+   "ANGFRONIA". `FitText` fills 0.998 of the width, not 0.99, which left the
+   name 14px short of the right margin at 1440; its loop still never lets the
+   text overrun.
+6. **The close is as tall as its content.** §4.10's `min-block-size: 100svh`
+   left a band of empty white between the links and the legal line wherever
+   the content was shorter than the screen (a tablet held upright).
+7. **Every link in the footer and the product section is a 44px touch target**
+   (design.md §7), by `min-block-size: var(--control-small)`. They were 17 to
+   29px tall. The link lists lose their 8px row margin, so each row is the
+   target's own height.
+8. **Every proof claim that can be chosen shows its 4px bar at rest**, in
+   `--muted`; the chosen one turns `--ink`. With only the chosen claim marked,
+   the other three panels were easy to miss. The claim without a panel has no
+   bar.
+9. **On desktop the FAQ questions start on column 4** (L2), as the problem
+   titles do. On column 1 a short question sat 500px from its answer.
+10. **The fractional tiers' hours wrap in balance** where they must (768,
+    390): "About 7 hours / a week", not "About 7 hours a / week".
+11. **The proof panel stays on column 7**, against the anchor-line rule. It is
+    a picture, not a text edge, and on column 8 it would leave two empty
+    columns and squeeze the credit tiles further.
+12. **The photograph's credit names the work**: "“Philadelphia Skyline” by
+    Andrew Parlette, cropped". CC BY 2.0 asks for the title when one is given.
+13. **Two lines of copy are narrowed to what is true.** The data-layer claim
+    now says reference solutions and expected outputs "never reach the
+    browser" (the tutor service reads them, so "never leave the database" was
+    wrong), and the privacy policy's list of linked sites adds Creative
+    Commons, which the footer links to. Six more lines are put to the owner as
+    `[CONFIRM]` rows 16 to 21 in the plan's README §7.
+14. **Two of the design skill's inspector findings are passed with `--allow`**,
+    each with its evidence in the pull request: `eyebrow`, because the "label"
+    is the hero's button, a link styled as a button, which the detector does
+    not recognise (and only below 18px, so at 768 and 390, not 1440); and
+    `blank-gap` at 390, because the inspector stops after eleven screens and
+    the phone page is fourteen and a half, so Product and the close never
+    scrolled into view (after a full scroll its own gap probe finds none). Its
+    reduced-motion pass cannot finish (a CDP timeout), so `reduced-hidden` is
+    checked by hand: with reduced motion on, nothing on the page is hidden or
+    moving.
+
 ---
 
 ## 4. Plan closure

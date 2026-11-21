@@ -2,8 +2,10 @@
 
 import * as React from "react";
 
-/** How much of the parent's width the text may take: never quite all of it. */
-const FILL = 0.99;
+/** How much of the parent's width the text may take: never quite all of it.
+ *  0.998, not design.md's 0.99, which left the name 14px short of the right
+ *  margin at 1440 (ADR-030); the loop below still never lets it overrun. */
+const FILL = 0.998;
 /** Imbue's optical size changes its widths with the type size, so one pass is not always enough. */
 const PASSES = 6;
 
@@ -14,8 +16,9 @@ const PASSES = 6;
  * fonts arrive. It never leaves the text wider than the parent.
  *
  * The parent must be a block box. Its stylesheet gives this span
- * `display: inline-block` (hero.module.css), and the fallback size it holds
- * before the first measurement.
+ * `display: inline-block` and the fallback size it holds before the first
+ * measurement (hero.module.css for the name, close.module.css for the
+ * wordmark).
  */
 export function FitText({ children }: { children: string }) {
   const ref = React.useRef<HTMLSpanElement>(null);

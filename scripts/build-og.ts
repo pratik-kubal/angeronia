@@ -24,8 +24,8 @@ async function main() {
   await page.screenshot({ path: "app/opengraph-image.png", clip: { x: 0, y: 0, width: 1200, height: 630 } });
   await browser.close();
   copyFileSync("app/opengraph-image.png", "app/twitter-image.png");
-  writeFileSync("app/opengraph-image.alt.txt", seo.ogImageAlt + "\n");
-  writeFileSync("app/twitter-image.alt.txt", seo.ogImageAlt + "\n");
+  writeFileSync("app/opengraph-image.alt.txt", seo.ogImageAlt);
+  writeFileSync("app/twitter-image.alt.txt", seo.ogImageAlt);
   console.log("wrote app/opengraph-image.png and app/twitter-image.png");
 }
 

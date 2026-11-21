@@ -27,6 +27,13 @@
   margin-block-start: var(--s-4);
 }
 
+/* A 44px touch target (design.md §7). */
+.links a {
+  display: inline-flex;
+  align-items: center;
+  min-block-size: var(--control-small);
+}
+
 @media (max-width: 47.4375rem) {
   .about {
     margin-block-start: var(--s-5);

@@ -49,6 +49,11 @@
 }
 
 @media (min-width: 47.5rem) and (max-width: 62.4375rem) {
+  /* Over its paragraphs, which start on column 1 here too (ADR-030). */
+  .heading {
+    grid-column: 1 / -1;
+  }
+
   .body {
     grid-column: 1 / 9;
   }

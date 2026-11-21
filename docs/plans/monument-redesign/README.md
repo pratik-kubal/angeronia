@@ -253,18 +253,26 @@ The pull request stays open until each line is ticked. They are marked
 | 1 | Booking link | `LINKS.booking` | Stays `null`; "Book a call" opens an email draft. Acceptable to merge. |
 | 2 | 90-second demo video | `LINKS.demoVideo` | Stays `null`; the link is not rendered. Acceptable to merge. |
 | 3 | The email address to publish | `LINKS.email` | Blocks the merge. |
-| 4 | "Fixed price: 50% deposit, 50% on acceptance" | `trustFacts[1]`, process step 3 | Blocks the merge. |
-| 5 | "You own the code, assigned on final payment" | `trustFacts[2]`, FAQ | Blocks the merge. |
+| 4 | "Fixed price: 50% deposit, 50% on acceptance" | `intro.facts[1]`, `process.steps[2]` | Blocks the merge. |
+| 5 | "You own the code, assigned on final payment" | `intro.facts[2]`, FAQ | Blocks the merge. |
 | 6 | Offer A price, "$6,000 to $8,000" | `PRICES.mvpRange` | Blocks the merge. |
 | 7 | Change requests at "$150 an hour" | `PRICES.changeRequestRate` | Blocks the merge. |
 | 8 | Offer B tiers | `PRICES.fractional` | Blocks the merge. |
 | 9 | Offer C, the sprint, "$1,800" and whether to offer it | `PRICES.sprint` | Blocks the merge. |
 | 10 | FAQ: what if it misses the threshold | `faq.items` | Blocks the merge. |
 | 11 | FAQ: the ownership carve-out wording | `faq.items` | Blocks the merge. |
-| 12 | Footer city, "Philadelphia, PA" | `BRAND.city` | Blocks the merge. |
+| 12 | Footer city, "Philadelphia, PA" | `BRAND.city`, `intro.heading`, `LEGAL_CONTACT`, the JSON-LD address in `app/layout.tsx` | Blocks the merge. |
 | 13 | Privacy policy: the new "What your browser stores" paragraph | `privacyPolicy` | Blocks the merge. |
 | 14 | Write-up, sample handoff, repositories, "Read how it's built" | `LINKS.*` | Stay `null`; not rendered. Acceptable to merge. |
 | 15 | The photograph shows one small lit sign, "WSFS Bank", on a mid-rise near the centre. Accept it, or have it dimmed out (the licence allows it; the credit then says "cropped and retouched"). | `scripts/build-hero.mjs`, `photoCredit.text` | Left as it is. Acceptable to merge. |
+| 16 | The legal pages' "Last updated" date, set to the day it merges | `privacyPolicy.updated`, `termsOfService.updated` | Blocks the merge. |
+| 17 | FAQ: "Claude is my default and where my production experience is." | `faq.items`, "Do you only use Claude?" | Blocks the merge. |
+| 18 | Proof: "Verification the model cannot see or game", which does not hold for problems the tutor builds | `proof.claims` (`tests`) | Blocks the merge. |
+| 19 | "A full product you can inspect" and "It has a live agent" hold only while sign-up is open | `faq.items`, `product.blurb` | Blocks the merge. |
+| 20 | The legal documents speak as "we" (the LLC), against "I, never we" | `privacyPolicy`, `termsOfService` | Exempt them. Acceptable to merge. |
+| 21 | The sprint's "Best for" line in quotation marks can read as a client quote | `offers` (`sprint`) | Left as it is. Acceptable to merge. |
+
+Rows 16 to 21 were added in Phase D, from the review's copy and truth check.
 
 ---
 

@@ -2,13 +2,14 @@ import type { Meta, StoryObj } from "@storybook/nextjs-vite";
 import { expect, waitFor } from "storybook/test";
 import { HeaderState } from "./header-state";
 import styles from "./site-header.module.css";
+import storyStyles from "./site-header.stories.module.css";
 
 const meta = {
   title: "Sections/HeaderState",
   component: HeaderState,
   parameters: { layout: "fullscreen" },
   render: (args) => (
-    <div className={styles.storyBlock}>
+    <div className={storyStyles.storyBlock}>
       <HeaderState {...args} />
     </div>
   ),
