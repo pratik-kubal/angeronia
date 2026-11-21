@@ -1,0 +1,49 @@
+/* A legal document: one readable column from column 4 (design.md §4.11). */
+.legal {
+  padding-block: calc(var(--header) + var(--s-7)) var(--section);
+}
+
+.title,
+.updated,
+.lede,
+.body {
+  grid-column: 4 / 11;
+}
+
+.updated {
+  margin-block-start: var(--s-3);
+}
+
+.lede {
+  max-inline-size: 44ch;
+  margin-block-start: var(--s-5);
+  color: var(--ink);
+}
+
+.body h2 {
+  margin-block: var(--s-6) var(--s-3);
+  font-weight: 500;
+  font-size: var(--step-lead);
+  line-height: 1.25;
+}
+
+.body p {
+  max-inline-size: var(--measure);
+  font-size: var(--step-body);
+  color: var(--ink);
+}
+
+.body p + p {
+  margin-block-start: var(--s-3);
+}
+
+.body ul {
+  max-inline-size: var(--measure);
+  margin-block-start: var(--s-3);
+  padding-inline-start: 1.1em;
+  list-style: square;
+}
+
+.body li + li {
+  margin-block-start: var(--s-1);
+}
