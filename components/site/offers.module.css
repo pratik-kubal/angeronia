@@ -113,29 +113,27 @@
 
 .tiers {
   margin-block-start: var(--s-4);
-  font-variant-numeric: tabular-nums;
 }
 
+/* Hours and price as two columns at every width; tabular figures keep the
+   prices the same width, so space-between lines them up. No rules. */
 .tier {
   display: flex;
-  flex-wrap: wrap;
   justify-content: space-between;
-  column-gap: var(--s-4);
-}
-
-/* Hours and price are two columns where they fit, and stack where they do not. */
-.tier dt,
-.tier dd {
-  white-space: nowrap;
+  gap: var(--s-4);
+  font-variant-numeric: tabular-nums;
 }
 
 .tier + .tier {
   margin-block-start: var(--s-1);
 }
 
+/* A price never breaks, so every price keeps the same tabular width and the
+   column stays straight where the hours have to wrap (768 and 390). */
 .tier dd {
   margin: 0;
   font-weight: 500;
+  white-space: nowrap;
 }
 
 .body {
@@ -145,13 +143,6 @@
 .after {
   grid-column: 1 / -1;
   margin-block-start: var(--s-7);
-}
-
-/* Below desktop the tiers stack, so give each pair more air than a row has. */
-@media (max-width: 62.4375rem) {
-  .tier + .tier {
-    margin-block-start: var(--s-3);
-  }
 }
 
 @media (max-width: 47.4375rem) {
