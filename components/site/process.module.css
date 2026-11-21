@@ -1,0 +1,79 @@
+/* Process: one reading column, each paragraph opening with a bold phrase that
+   names its moment. The figure beside it is a repeat, hidden from screen
+   readers. No numbers, no markers, no connecting line (design.md 4.7). */
+
+.process {
+  background: var(--surface);
+}
+
+.heading {
+  grid-column: 4 / 13;
+}
+
+/* .steps and .step are both subgrids, so the twelve columns of .frame reach
+   the paragraph and the figure. */
+.steps {
+  grid-column: 1 / -1;
+  display: grid;
+  grid-template-columns: subgrid;
+  row-gap: var(--s-6);
+  margin-block-start: var(--s-7);
+}
+
+.step {
+  grid-column: 1 / -1;
+  display: grid;
+  grid-template-columns: subgrid;
+}
+
+.body {
+  grid-row: 1;
+  grid-column: 4 / 10;
+  max-inline-size: 34rem;
+  font-size: var(--step-body);
+  line-height: 1.6;
+  color: var(--ink);
+}
+
+.body strong {
+  font-weight: 600;
+}
+
+.fact {
+  grid-row: 1;
+  grid-column: 10 / 13;
+  align-self: start;
+  font-size: var(--step-head);
+  color: var(--ink);
+  white-space: nowrap;
+}
+
+@media (min-width: 47.5rem) and (max-width: 62.4375rem) {
+  .body {
+    grid-column: 1 / 9;
+  }
+
+  .fact {
+    grid-column: 9 / 13;
+  }
+}
+
+@media (max-width: 47.4375rem) {
+  .steps {
+    row-gap: var(--s-5);
+  }
+
+  .step {
+    row-gap: var(--s-2);
+  }
+
+  .body,
+  .fact {
+    grid-row: auto;
+    grid-column: 1 / -1;
+  }
+
+  .fact {
+    order: -1;
+  }
+}
