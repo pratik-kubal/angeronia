@@ -1,14 +1,38 @@
-/* The Foundations/Tokens board: flat swatches, and each type step at its size. */
+/* The Foundations/Tokens board: flat swatches grouped by the ground they are
+   used on, each group on a strip it contrasts with, and each type step at its
+   size. No borders: a chip is seen against its strip. */
 .board {
   display: grid;
-  row-gap: var(--s-7);
-  padding: var(--m);
+}
+
+.strip {
+  display: grid;
+  row-gap: var(--s-6);
+  padding: var(--s-6) var(--m);
+  background: var(--bg);
+  color: var(--ink);
+}
+
+.strip.light {
+  background: var(--inv-bg);
+  color: var(--inv-ink);
+}
+
+.caption {
+  font-size: var(--step-small);
+  line-height: 1.45;
+  color: var(--muted);
+}
+
+.light .caption {
+  color: var(--inv-muted);
 }
 
 .swatches {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(12rem, 1fr));
   gap: var(--s-4);
+  margin-block-start: var(--s-2);
 }
 
 .swatch {
@@ -25,6 +49,7 @@
 .sizes {
   display: grid;
   row-gap: var(--s-4);
+  padding: var(--s-7) var(--m);
 }
 
 .size {

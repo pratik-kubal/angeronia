@@ -42,9 +42,3 @@
     background-color: color-mix(in srgb, var(--inv-ink) 82%, var(--inv-bg));
   }
 }
-
-/* Storybook only: the white field the ink variant is made for. */
-.storyInverse {
-  padding: var(--s-4);
-  background: var(--inv-bg);
-}

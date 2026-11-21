@@ -1,7 +1,7 @@
 import type { Meta, StoryObj } from "@storybook/nextjs-vite";
 import { close, hero, nav } from "@/data/angeronia";
 import { ButtonLink } from "./button-link";
-import styles from "./button-link.module.css";
+import styles from "./button-link.stories.module.css";
 
 const meta = {
   title: "Components/ButtonLink",

@@ -1,0 +1,6 @@
+/* Storybook only, so it never ships in the page's CSS: the white field the ink
+   variant is made for. */
+.storyInverse {
+  padding: var(--s-4);
+  background: var(--inv-bg);
+}

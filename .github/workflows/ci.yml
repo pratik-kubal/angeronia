@@ -36,6 +36,11 @@ jobs:
       - name: Unit tests
         run: npm test
 
+      # The pairings the design relies on, checked against WCAG 2.2 straight
+      # from styles/tokens.css. The committed report must be current.
+      - name: Contrast gate
+        run: npm run check:contrast && git diff --exit-code docs/design-system/contrast-report.md
+
       - name: Next build (strict)
         run: npm run build
 
@@ -76,9 +81,10 @@ jobs:
       - name: Install Chromium
         run: npx playwright install --with-deps chromium
 
-      # Every story, in both themes, with axe violations failing the run rather
-      # than reporting. This is the gate that replaced `slds-linter` — see
-      # DECISIONS.md ADR-018.
+      # Every story in its one colour scheme (DECISIONS.md ADR-026), with axe
+      # violations failing the run rather than reporting, and the page's own
+      # play tests (Pages/Home). Together with the contrast gate above, this is
+      # what catches an accessibility fault in a component (ADR-023).
       - name: Story tests
         run: npm run test:storybook
 

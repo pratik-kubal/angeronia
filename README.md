@@ -1,215 +1,76 @@
 # angeronia.com
 
-Marketing site for **Angeronia Labs LLC** — a software engineering studio in
-Philadelphia, and the maker of [Code Socratic](https://code-socratic.angeronia.com/).
+Angeronia Labs builds production AI agents on the Claude API for small software teams. It is also the maker of [Code.Socratic](https://www.code-socratic.com/).
 
-Built on **IBM Carbon v11** under an Angeronia brand override: Carbon Teal in
-place of Carbon Blue, IBM Plex as the typeface, Carbon for icons. Storybook is
-the source of truth for the UI — every component has a story before it appears
-on a page, and the page itself is a story.
+This repository is the studio's site: one page that sets out the offer, the
+proof and the process and asks for a call, plus `/privacy` and `/terms`. Three
+games live under `/games`, outside the site's design; see
+[The games](#the-games).
 
 ## Stack
 
 | | |
 |---|---|
-| Framework | Next.js 15 (App Router), React 19, TypeScript — statically prerendered, no backend |
-| Design system | [`@carbon/react`](https://www.npmjs.com/package/@carbon/react) 1.115 + `styles/_themes.scss` |
-| Icons | [`@carbon/icons-react`](https://www.npmjs.com/package/@carbon/icons-react) |
-| Type | IBM Plex Sans / Mono, self-hosted via `next/font` |
-| Themes | Carbon White / Gray 100, switched by `data-theme` via `next-themes` |
-| Storybook | 10.x with `@storybook/nextjs-vite`, `addon-a11y`, `addon-vitest` |
+| Framework | Next.js 15 (App Router), React 19, TypeScript. Statically prerendered, no backend. |
+| Styles | Plain CSS: `styles/tokens.css`, `styles/base.css`, `styles/motion.css`, and one CSS Module per component. No component library, CSS framework or icon set. |
+| Type | Imbue (capitals, for the name and titles) and Albert Sans (text), self-hosted through `next/font`. |
+| Storybook | 10, with `@storybook/nextjs-vite`, `addon-a11y` and `addon-vitest`. Every component has a story before it is on a page, and `Pages/Home` is the page itself. |
 
-No CSS framework, no utility library, no second icon set. Carbon's own classes
-and tokens are the whole vocabulary — for the studio site. The games below are
-the one exception.
-
-## Develop
+## Commands
 
 ```bash
 npm install
-npm run dev              # http://localhost:3000
-npm run storybook        # http://localhost:6006
-npm run build            # production build (fully static)
+npm run dev            # Next dev (Turbopack)
+npm run build          # strict build
+npm run storybook      # Storybook on port 6006
+
+npm run typecheck      # tsc --noEmit
+npm run check:contrast # the tokens' pairings against WCAG 2.2; writes docs/design-system/contrast-report.md
+npm run test:storybook # every story in Chromium; axe violations fail
+npm test               # the games' unit tests (Vitest, node)
+npm run test:e2e       # the games end to end (Playwright; first run: npx playwright install chromium webkit)
+npm run games:parity -- baseline|compare   # prove a global CSS change left the games alone
+
+npm run build:hero     # the first-screen photograph's served sizes, from scripts/sources/
+npm run build:og       # the social image: a photograph of the first screen (needs a production server on 3417)
 ```
 
-### Gates
+CI runs `typecheck`, `npm test`, `check:contrast`, `build` and
+`test:storybook` on every pull request, with Color Tap's photo check
+(`npm run color-tap:puzzles -- --check`). `test:e2e` runs locally.
 
-All three must pass to merge, and CI runs them on every pull request.
+## Where the rules live
 
-```bash
-npm run typecheck        # tsc --noEmit, strict
-npm run check:theme      # token parity, contrast matrix, favicon
-npm run test:storybook   # every story in Chromium, axe violations fail
-```
+* [`docs/design-system/DESIGN-RULES.md`](docs/design-system/DESIGN-RULES.md):
+  the contract for every change to the studio pages.
+* [`docs/design-system/DECISIONS.md`](docs/design-system/DECISIONS.md): every
+  decision and deviation. ADR-023 explains the current look.
+* [`docs/plans/monument-redesign/`](docs/plans/monument-redesign/): the
+  specification the pages were built from (`design.md` for the look,
+  `content.md` for every word).
+* Every string the studio pages render is in `data/angeronia.ts`.
 
-There is no CSS linter. `slds-linter` was retired with SLDS rather than replaced
-— the axe pass over every story is the gate that catches real problems. See
-[`DECISIONS.md`](docs/design-system/DECISIONS.md) ADR-018.
+## The games
 
-### The games
+[Sudoku](docs/games/sudoku.md), [Solitaire](docs/games/solitaire.md) and
+[Color Tap](docs/games/color-tap.md), at `/games/sudoku`, `/games/solitaire`
+and `/games/paint-by-numbers`, with a launcher at `/games` meant to be saved to
+a phone's home screen. They keep their own look, outside the site's design
+rules (ADR-019); nothing on the studio pages links to them, and they are
+`noindex`. Their notes, and their own scripts, are in `docs/games/` and
+`CLAUDE.md`.
 
-[`/games/sudoku`](docs/games/sudoku.md), [`/games/solitaire`](docs/games/solitaire.md)
-and [`/games/paint-by-numbers`](docs/games/color-tap.md) (Color Tap), and the `/games`
-launcher of their icons (ADR-021), are games, not pages of the studio site. Sudoku and
-Solitaire moved here from the founder's portfolio; Color Tap was made here (ADR-022). They
-keep their own look — their own CSS, type, motion and Phosphor
-icons — outside the design system
-([`DECISIONS.md`](docs/design-system/DECISIONS.md) ADR-019). The home page
-links to them (ADR-020); they stay out of the nav and the sitemap, and
-`noindex`. Their gates are their own:
+## Picture credit
 
-```bash
-npm test                 # unit tests (Vitest, node)
-npm run test:e2e         # Playwright: desktop Chromium, an iPhone and an iPad in WebKit
-                         # first run: npx playwright install chromium webkit
-npm run solitaire:cards  # Solitaire's card faces, from the Vector Playing Cards pack
-npm run solitaire:deals  # re-prove Solitaire's bank of winnable deals (~5 min)
-npm run color-tap:puzzles  # Color Tap: convert the photos in public/paint-by-numbers/ (runs before dev and build)
-npm run color-tap:puzzles -- --check  # CI: fail on a bad photo or puzzles not committed
-npm run color-tap:preview -- <dir>    # blank sheet | painting | photo, per photo and level, with metrics
-npm run color-tap:icon   # Color Tap's home-screen icon, from the butterfly's Easy puzzle
-```
+The first-screen photograph is "Philadelphia Skyline" by Andrew Parlette,
+taken on 13 March 2023 from the South Street Bridge, used under
+[CC BY 2.0](https://creativecommons.org/licenses/by/2.0/)
+([source](https://commons.wikimedia.org/w/index.php?curid=135482068)). It is
+cropped; the page credits it in the footer, and
+[`scripts/sources/CREDITS.md`](scripts/sources/CREDITS.md) records the change.
 
-To add a picture to Color Tap, drop a JPG (or PNG) into `public/paint-by-numbers/`, run
-`npm run dev` once (it converts it, about 20 s), look at it, and commit the photo with what the
-conversion wrote (`public/paint-by-numbers/puzzles/` and `lib/color-tap/pictures.ts`).
-
-### Generated artifacts
-
-```bash
-npm run build:favicon    # app/icon.svg re-tinted onto the teal ramp
-npm run build:logos      # public/angeronia-logo-*.{svg,png} — OG/social lockups
-```
-
-Both, and `check:theme`, resolve their colours by compiling
-`styles/globals.scss` and reading the custom properties back out
-(`scripts/carbon-tokens.mjs`). Nothing is duplicated in JavaScript, so a raster
-or a contrast assertion cannot drift from the stylesheet the site ships.
-
-## The theme layer
-
-`styles/_themes.scss` is the **only** file allowed to assign a `--cds-*` token.
-Everywhere else they are referenced and never re-valued. It does three things:
-
-* Emits Carbon's **White** token set on `:root` and **Gray 100** on
-  `:root[data-theme="dark"]`, plus a `prefers-color-scheme` fallback for the
-  no-JS case.
-* Applies the **brand override** — 21 tokens moved from Carbon's Blue 60 family
-  to Teal. Teal 60/40 are luminance twins of Blue 60/40, which is what lets the
-  swap keep every contrast pairing Carbon designed around blue. Everything else
-  keeps its stock value; `support-*` is deliberately untouched, because a brand
-  colour that can be mistaken for "success" is a colour-only meaning waiting to
-  happen.
-* Declares the handful of `--site-*` values that vary by theme: the hero
-  Möbius's lit and shaded faces, and the four syntax colours in the Code
-  Socratic replica.
-
-`npm run check:theme` checks that every token the override assigns is one Carbon
-actually defines, and asserts WCAG 2.2 across 40 pairings in both themes. The
-current matrix is committed at
-[`docs/design-system/theme-report.md`](docs/design-system/theme-report.md).
-
-## Adding a component
-
-1. Check `@carbon/react` — it probably already exists there.
-2. If not, ask whether what you need is a *composition* of Carbon parts (a
-   `Card` is a `Tile` plus three rows) or something Carbon genuinely has no word
-   for (a media object, an avatar, a cluster). Both go in `components/ui/`;
-   nothing else does.
-3. Write `<name>.stories.tsx`: Default, every variant and size, states, long
-   content, dark. The dark story is not optional.
-4. Run the three gates.
-
-The full contract is
-[`docs/design-system/DESIGN-RULES.md`](docs/design-system/DESIGN-RULES.md).
-Every decision and every deviation is recorded in
-[`docs/design-system/DECISIONS.md`](docs/design-system/DECISIONS.md).
-
-## Layout
-
-```
-app/
-  layout.tsx              fonts, metadata, JSON-LD, providers, skip link
-  page.tsx                composes storied sections and nothing else
-  icon.svg                favicon, on the teal ramp
-  robots.ts  sitemap.ts
-styles/
-  _config.scss            Carbon configured once — fonts, CSS grid only
-  _themes.scss            THE theme layer: White + Gray 100 + the teal override
-  _site.scss              site composition only, Carbon tokens throughout
-  globals.scss            config -> carbon -> themes -> site
-components/
-  ui/                     only what Carbon does not provide, each with a story
-  site/                   page sections, built from @carbon/react and ui/
-lib/                      cx(), theme helpers
-data/angeronia.ts         every string the site renders
-scripts/                  token resolver, contrast gate, favicon, logos
-stories/foundations/      Brand, Color, Typography, Spacing/Shape/Motion, Icons
-stories/pages/            the whole page, as a story
-docs/design-system/       DESIGN-RULES.md, DECISIONS.md, theme-report.md
-```
-
-The games sit outside that tree's rules (ADR-019):
-
-```
-app/games/page.tsx        the /games launcher (its CSS: components/games/launcher.css)
-app/games/sudoku/         the page: metadata, the pre-paint look script, its CSS
-components/sudoku/        the screen, sheets, themes and their stylesheets
-lib/sudoku/               the rules, solver, generator, themes and trophies (pure)
-data/sudoku*.ts           the game's copy and its 100 trophies
-app/games/solitaire/      the page, its suit symbols, its CSS
-components/solitaire/     the table, its animator and gestures, sheets, win shows
-lib/solitaire/            the rules, solver, hints and the bank of winnable deals (pure)
-data/solitaire.ts         the game's copy
-public/solitaire/cards/   the 52 card faces (generated, versioned, served immutable)
-scripts/*solitaire*       the card rasterizer and the deal prover (npm run solitaire:*)
-app/games/paint-by-numbers/  Color Tap's page and its home-screen icon
-components/color-tap/     the screen, the canvas renderer and stage, palette, sheets, sounds, saves
-lib/color-tap/            photo to puzzle (quantise, regions, shared borders, labels), rules, camera, gestures (pure)
-lib/color-tap/pictures.ts the generated manifest of the photos and their puzzles
-public/paint-by-numbers/  the photos; puzzles/ holds their generated puzzles (named by hash, served immutable)
-scripts/*color-tap*       the converter, its --check, the preview harness and the icon (npm run color-tap:*)
-data/color-tap.ts         the game's copy
-components/games/         base.css: the browser defaults the games were built on
-lib/random.ts             the seeded PRNG and shuffle they share
-e2e/                      Playwright specs
-docs/games/               each game's design and test notes
-```
-
-## Accessibility
-
-WCAG 2.2 AA in both themes, and it is enforced rather than asserted:
-`check:theme` covers the brand override's own pairings without a browser, and
-`test:storybook` runs axe over every story — including the whole page in both
-themes — with violations failing the run rather than reporting.
-
-Semantic HTML throughout, a skip link that works before hydration, Carbon's own
-focus ring, every icon either labelled or `aria-hidden`, and no meaning carried
-by colour alone.
-
-## Licensing and third-party assets
-
-* **IBM Carbon** (`@carbon/react`, `@carbon/styles`, `@carbon/themes`,
-  `@carbon/icons-react`, `@carbon/colors`) is Apache-2.0. Glyphs are used
-  unmodified. No UI attribution is required; the notices stay in `node_modules`.
-* **IBM Plex** is SIL OFL 1.1, self-hosted through `next/font`.
-* **Phosphor Icons** (`@phosphor-icons/react`, MIT) draw the games' icons, and
-  only theirs.
-* Solitaire's card faces are rendered from Byron Knoll's **Vector Playing
-  Cards**, released into the public domain.
-
-No IBM trademark, wordmark or product artwork ships in this product, and this
-project is not affiliated with or endorsed by IBM. `cds--*` class names and
-`--cds-*` custom properties do appear in the markup and CSS: they are the API of
-the stylesheet, not trademark use.
-
-**On Salesforce Lightning Design System.** This site ran on SLDS 2 until
-2026-09-08. It no longer does, and no `@salesforce-ux/*` package remains: the
-SLDS 2 Terms of Use are not an OSI licence, and their indemnity clause covers
-claims arising from *any application you develop with the Software* — which is
-this site's own content, uncapped, running to a company. The reasoning, and what
-the move cost, are in
-[`DECISIONS.md`](docs/design-system/DECISIONS.md) ADR-015 and in
-[`docs/plans/carbon-migration-plan.md`](docs/plans/carbon-migration-plan.md).
+Imbue and Albert Sans are under the SIL Open Font License 1.1. The games use
+Phosphor Icons (MIT), and Solitaire's card faces are rendered from Byron
+Knoll's Vector Playing Cards, released into the public domain.
 
 © 2026 Angeronia Labs LLC.

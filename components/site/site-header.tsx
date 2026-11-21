@@ -9,6 +9,9 @@ import styles from "./site-header.module.css";
  * button. Transparent over the photograph, solid once the page has scrolled.
  */
 export function SiteHeader({ variant }: { variant: "overlay" | "solid" }) {
+  // The four links name sections of the home page. The solid header is the
+  // legal pages', where those sections are not, so its links go home first.
+  const base = variant === "solid" ? "/" : "";
   return (
     <HeaderState variant={variant} className={styles.header}>
       <a className={styles.brand} href="/">
@@ -19,7 +22,7 @@ export function SiteHeader({ variant }: { variant: "overlay" | "solid" }) {
         <ul className={styles.list}>
           {nav.items.map((item) => (
             <li key={item.href}>
-              <a className={styles.link} href={item.href}>
+              <a className={styles.link} href={`${base}${item.href}`}>
                 {item.label}
               </a>
             </li>
