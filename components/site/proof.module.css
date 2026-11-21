@@ -32,8 +32,11 @@
   display: none;
 }
 
+/* cursor: auto, as §4.6 gives it below 1000px: a label's own default is the
+   arrow, which would hide the text cursor over words nobody needs to click. */
 .built {
   display: block;
+  cursor: auto;
   font-weight: 500;
   font-size: var(--step-body);
   color: var(--ink);

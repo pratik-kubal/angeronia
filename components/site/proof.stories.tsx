@@ -8,8 +8,12 @@ const meta = {
   component: Proof,
   parameters: {
     layout: "fullscreen",
+    // Listing options replaces Storybook's own, so the 1280px canvas the play
+    // test needs is named here; without it the Storybook UI falls back to the
+    // first option (the phone) and the Default play test fails there.
     viewport: {
       options: {
+        desktop: { name: "Desktop", styles: { width: "1280px", height: "1024px" }, type: "desktop" },
         phone: { name: "Phone", styles: { width: "390px", height: "844px" }, type: "mobile" },
       },
     },
