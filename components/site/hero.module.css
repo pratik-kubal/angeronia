@@ -131,7 +131,7 @@
   }
 
   .name > span {
-    animation: name-rise 800ms var(--ease-expo) 150ms both;
+    animation: name-rise var(--t-reveal) var(--ease-expo) 150ms both;
   }
 
   .statement {
@@ -190,7 +190,7 @@
 @keyframes arrive {
   from {
     opacity: 0;
-    transform: translateY(0.75rem);
+    transform: translateY(var(--s-2));
   }
 
   to {

@@ -54,14 +54,19 @@ export function FitText({ children }: { children: string }) {
 
     fit();
 
+    // Refitting changes the parent's height, so doing it inside the observer's
+    // callback would raise "ResizeObserver loop completed with undelivered
+    // notifications". Fit on the next frame instead.
     let lastWidth = parent.clientWidth;
+    let frame = 0;
     const observer =
       typeof ResizeObserver === "undefined"
         ? null
         : new ResizeObserver(() => {
             if (parent.clientWidth === lastWidth) return;
             lastWidth = parent.clientWidth;
-            fit();
+            cancelAnimationFrame(frame);
+            frame = requestAnimationFrame(fit);
           });
     observer?.observe(parent);
 
@@ -71,6 +76,7 @@ export function FitText({ children }: { children: string }) {
     fonts?.addEventListener("loadingdone", fit);
 
     return () => {
+      cancelAnimationFrame(frame);
       observer?.disconnect();
       window.removeEventListener("resize", fit);
       fonts?.removeEventListener("loadingdone", fit);

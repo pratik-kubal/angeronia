@@ -1,10 +1,29 @@
 import { FitText } from "@/components/site/fit-text";
 import { ButtonLink } from "@/components/ui/button-link";
-import { hero, type Cta } from "@/data/angeronia";
+import { copy, hero, type Cta } from "@/data/angeronia";
 import { cx } from "@/lib/cx";
 import styles from "./hero.module.css";
 
 const PHONE = "(max-width: 47.4375rem)";
+
+/**
+ * The second action: plain underlined text beside the button (design.md §4.2).
+ * The demo video lives off the site, so an `http` link opens in a new tab and
+ * says so, as the button beside it would (design.md §5.1).
+ */
+function SecondLink({ cta }: { cta: Cta }) {
+  const external = /^https?:/.test(cta.href);
+  return (
+    <a
+      className={styles.second}
+      href={cta.href}
+      {...(external ? { target: "_blank", rel: "noreferrer noopener" } : {})}
+    >
+      {cta.label}
+      {external ? <span className="visually-hidden"> ({copy.externalLink})</span> : null}
+    </a>
+  );
+}
 
 /**
  * The first screen (design.md §4.2): one photograph, the name fitted to the full
@@ -55,11 +74,7 @@ export function Hero({ secondary = hero.secondaryCta }: { secondary?: Cta | null
         <p className={styles.statement}>{hero.statement}</p>
         <div className={styles.actions}>
           <ButtonLink href={hero.primaryCta.href}>{hero.primaryCta.label}</ButtonLink>
-          {secondary ? (
-            <a className={styles.second} href={secondary.href}>
-              {secondary.label}
-            </a>
-          ) : null}
+          {secondary ? <SecondLink cta={secondary} /> : null}
         </div>
       </div>
     </section>
