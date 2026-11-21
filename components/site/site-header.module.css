@@ -1,0 +1,95 @@
+/* The header (design.md §4.1). Without scripts it is absolute and transparent
+   and scrolls away; with them (.js) it is fixed and turns solid on scroll. */
+.header {
+  position: absolute;
+  inset-block-start: 0;
+  inset-inline: 0;
+  z-index: 10;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--s-4);
+  block-size: var(--header);
+  padding-inline: var(--m);
+  background-color: transparent;
+}
+
+:global(.js) .header {
+  position: fixed;
+}
+
+.header[data-stuck="true"] {
+  background-color: var(--bg);
+}
+
+/* An 8px strip at the very top of the document, outside the header. The header
+   is fixed once scripts run, so the strip scrolls out of view and flips the state. */
+.sentinel {
+  position: absolute;
+  inset-block-start: 0;
+  inset-inline-start: 0;
+  inline-size: 1px;
+  block-size: 0.5rem;
+  pointer-events: none;
+}
+
+.brand {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--s-2);
+  min-block-size: var(--control-small);
+  font-weight: 500;
+  text-decoration: none;
+}
+
+.list {
+  display: flex;
+  align-items: center;
+  gap: var(--s-5);
+}
+
+.link {
+  display: inline-flex;
+  align-items: center;
+  min-block-size: var(--control-small);
+  text-decoration: none;
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .link:hover {
+    text-decoration: underline;
+  }
+}
+
+/* The hero carries the button until the header is solid. */
+.header[data-stuck="false"] .cta {
+  visibility: hidden;
+  opacity: 0;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .header {
+    transition: background-color var(--t-ui) var(--ease-out);
+  }
+
+  .header .cta {
+    transition:
+      opacity var(--t-ui) var(--ease-out),
+      visibility var(--t-ui),
+      transform var(--t-press) var(--ease-out),
+      background-color var(--t-hover) ease;
+  }
+}
+
+@media (max-width: 47.4375rem) {
+  .nav {
+    display: none;
+  }
+}
+
+/* Storybook only: a dark block to lay the transparent header over. */
+.storyBlock {
+  position: relative;
+  min-block-size: 16rem;
+  background: var(--surface);
+}
