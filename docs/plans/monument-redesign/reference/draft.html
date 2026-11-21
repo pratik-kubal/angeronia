@@ -1,0 +1,197 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Option C in Imbue · The name as a monument · Angeronia Labs</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Imbue:opsz,wght@10..100,400&family=Albert+Sans:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root {
+  color-scheme: dark;
+  --bg: #0c0a08; --surface: #181512; --ink: #ffffff; --muted: #8f8a84; --accent: #c9a45a; --accent-ink: #0c0a08;
+  --m: clamp(20px, 2.2vw, 32px);
+  --body: clamp(1.0625rem, 1rem + 0.25vw, 1.1875rem);
+  --lead: clamp(1.25rem, 1.1rem + 0.7vw, 1.625rem);
+}
+* { box-sizing: border-box; margin: 0; }
+body { font: 400 var(--body)/1.55 "Albert Sans", system-ui, sans-serif; color: var(--ink); background: var(--bg); }
+a { color: inherit; }
+.black { font-family: "Imbue", "Times New Roman", serif; font-weight: 400; font-optical-sizing: auto; text-transform: uppercase; letter-spacing: -0.01em; line-height: 0.9; }
+.btn { display: inline-flex; align-items: center; min-height: 48px; padding: 0 22px; background: var(--accent); color: var(--accent-ink); font-weight: 500; text-decoration: none; transition: transform 120ms ease-out; }
+.btn:hover { transform: translateY(-2px); }
+.btn:active { transform: translateY(1px); }
+:focus-visible { outline: 3px solid var(--accent); outline-offset: 3px; }
+
+/* ── Hero: the film title on the bottom edge of one photograph ── */
+.hero { position: relative; height: 100svh; min-height: 620px; overflow: hidden; }
+.hero img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; object-position: 50% 34%; }
+.hero .scrim { position: absolute; left: 0; right: 0; bottom: 0; height: 66%; background: linear-gradient(to top, rgba(12, 10, 8, 0.96) 0%, rgba(12, 10, 8, 0.88) 46%, rgba(12, 10, 8, 0)); }
+.top { position: absolute; left: var(--m); right: var(--m); top: var(--m); display: flex; align-items: center; justify-content: space-between; }
+.mark { font-weight: 500; text-decoration: none; }
+.top nav { display: flex; gap: 28px; }
+.top nav a { text-decoration: none; }
+.top nav a:hover { text-decoration: underline; text-underline-offset: 0.18em; }
+.title { position: absolute; left: var(--m); right: var(--m); bottom: 26px; }
+.above { display: flex; align-items: flex-end; justify-content: space-between; gap: 24px; margin-bottom: 18px; }
+.above p { font-size: 20px; line-height: 1.35; max-width: 30ch; }
+.name { display: inline-block; white-space: nowrap; font-size: 17vw; }
+
+/* ── After the hero the page is small and calm ── */
+.calm { display: grid; grid-template-columns: 15vw minmax(0, 340px) minmax(0, 1fr); column-gap: var(--m); padding: clamp(96px, 11vw, 160px) var(--m); align-items: start; }
+.col { grid-column: 2; }
+.col h2 { font-size: clamp(2.4rem, 3.9vw, 3.75rem); line-height: 0.95; }
+.col p { margin-top: 22px; color: var(--muted); }
+.col p b { color: var(--ink); font-weight: 500; }
+.col p.last { color: var(--ink); font-weight: 500; }
+.panel { grid-column: 3; justify-self: end; width: min(100%, 640px); background: var(--surface); padding: 28px; }
+.panel h3 { font-size: 15px; font-weight: 500; color: var(--muted); }
+.phases { display: flex; flex-wrap: wrap; gap: 6px 24px; margin-top: 14px; font-size: 15px; }
+.turn { margin-top: 16px; }
+.turn i { font-style: normal; font-size: 14px; color: var(--muted); }
+.turn p { margin-top: 6px; padding: 14px 16px; background: var(--bg); }
+
+/* ── One plan as a sentence ── */
+.offer { padding: clamp(72px, 9vw, 130px) var(--m); background: var(--surface); }
+.offer h2 { font-size: clamp(2.6rem, 8.6vw, 8.25rem); }
+.offer h2 span { display: block; white-space: nowrap; }
+.offer h2 span + span { margin-top: 0.16em; }
+.offer h2 mark { display: inline-block; line-height: 1; background: var(--accent); color: var(--accent-ink); padding: 0.06em 0.15em 0; }
+.offer .base { margin-top: 64px; display: grid; grid-template-columns: minmax(0, 6fr) minmax(0, 3fr) minmax(0, 3fr); column-gap: var(--m); align-items: start; }
+.offer .base p { font-size: 20px; line-height: 1.4; max-width: 44ch; }
+.offer .others { grid-column: 3; display: grid; gap: 14px; justify-items: start; }
+.offer .others a { text-underline-offset: 0.18em; }
+
+/* ── Invitation over a cropped name, in the inverse colours ── */
+.close { position: relative; background: var(--ink); color: var(--bg); min-height: min(100svh, 62vw + 300px); overflow: hidden; padding: clamp(64px, 7vw, 110px) var(--m) 0; }
+.close h2 { font-size: clamp(2.5rem, 7vw, 6.75rem); }
+.close h2 span { display: block; white-space: nowrap; }
+.close .btn { margin-top: 28px; background: var(--bg); color: var(--ink); }
+.close .links { position: absolute; right: var(--m); top: clamp(64px, 7vw, 110px); display: grid; gap: 10px; text-align: right; }
+.close .legal { position: absolute; left: var(--m); right: var(--m); bottom: 23vw; display: flex; justify-content: space-between; font-size: 14px; }
+.close .crop { position: absolute; left: var(--m); bottom: 0; font-size: 33vw; white-space: nowrap; transform: translateY(30%); }
+
+@media (max-width: 1000px) {
+  .calm { grid-template-columns: minmax(0, 1fr); row-gap: 40px; }
+  .col, .panel { grid-column: 1; }
+  .panel { justify-self: start; }
+}
+@media (max-width: 760px) {
+  .top nav { display: none; }
+  .above { flex-direction: column; align-items: flex-start; }
+  .above p { font-size: 18px; }
+  .close h2 { font-size: 11vw; }
+  .calm { grid-template-columns: minmax(0, 1fr); row-gap: 40px; }
+  .col, .panel { grid-column: 1; }
+  .col { max-width: 78%; }
+  .offer .base { grid-template-columns: minmax(0, 1fr); row-gap: 24px; }
+  .offer .others { grid-column: 1; }
+  .close .links { position: static; text-align: left; margin-top: 32px; }
+  .close .crop { font-size: 40vw; }
+  .close .legal { bottom: 28vw; }
+}
+@media (prefers-reduced-motion: reduce) { .btn { transition: none; } }
+/* Two candidate photographs. ?photo=towers shows the first draft's picture, turned the right way round. */
+.hero img.river { object-position: 40% 50%; }
+.hero img.towers { display: none; object-position: 50% 34%; transform: scaleX(-1); }
+html[data-photo="towers"] .hero img.river { display: none; }
+html[data-photo="towers"] .hero img.towers { display: block; }
+html[data-photo="river"] .hero .scrim { height: 60%; background: linear-gradient(to top, rgba(12, 10, 8, 0.93) 0%, rgba(12, 10, 8, 0.72) 48%, rgba(12, 10, 8, 0)); }
+@media (max-width: 760px) { .hero img.river { object-position: 45% 50%; } }
+</style>
+<script>document.documentElement.dataset.photo = new URLSearchParams(location.search).get("photo") === "towers" ? "towers" : "river";</script>
+</head>
+<body>
+
+<header class="hero" id="top">
+  <img class="river" src="assets/schuylkill-night.jpg" width="2803" height="1536" alt="The Philadelphia skyline at night from the South Street Bridge, its lights reflected in the Schuylkill River.">
+  <img class="towers" src="assets/philadelphia-dusk.jpg" width="1920" height="1467" alt="Philadelphia at night from above: two lit towers over a grid of gold street lights." loading="lazy">
+  <div class="scrim"></div>
+  <div class="top">
+    <a class="mark" href="#top">Philadelphia</a>
+    <nav aria-label="Primary"><a href="#offers">Offers</a><a href="#proof">Proof</a><a href="#process">Process</a><a href="#faq">FAQ</a></nav>
+  </div>
+  <div class="title">
+    <div class="above">
+      <p>A working AI agent in your stack in three weeks. Tested, cost-modelled, handed off.</p>
+      <a class="btn" href="#offers">Book a 20-minute call</a>
+    </div>
+    <h1 class="black"><span class="name" data-fit>Angeronia Labs</span></h1>
+  </div>
+</header>
+
+<main>
+<section class="calm" id="problems">
+  <div class="col">
+    <h2 class="black">Why agent projects stall</h2>
+    <p><b>The demo works. Production doesn't.</b> There is no eval set, so nobody knows whether the agent is getting better or worse.</p>
+    <p><b>The bill is a surprise.</b> Nobody modelled cost per task, so margins erode after launch.</p>
+    <p><b>Nobody owns it.</b> The prototype sits in a branch because the team is busy shipping the core product.</p>
+    <p class="last">I scope around these three problems from day one.</p>
+  </div>
+  <div class="panel" data-ui>
+    <h3>Code.Socratic, the tutor I built. It asks before it tells.</h3>
+    <div class="phases"><span>Approach, done</span><span>Complexity, done</span><span>Code, in progress</span></div>
+    <div class="turn"><i>You</i><p>Two pointers, one at each end. Each step I move the shorter post inward.</p></div>
+    <div class="turn"><i>Tutor</i><p>Why the shorter one? Say what you throw away when you move it.</p></div>
+    <div class="turn"><i>You</i><p>Every pair that used that post. The width only shrinks from here, and that post already caps the height.</p></div>
+  </div>
+</section>
+
+<section class="offer" id="offers">
+  <h2 class="black"><span>One agent, three weeks,</span><span><mark>$6,000 to $8,000</mark></span></h2>
+  <div class="base">
+    <p>A fixed price for one agent workflow with up to two tool integrations, about 20 eval cases and an agreed pass threshold, deployed in your environment, with a handoff document, one revision round and a cost-per-task model.</p>
+    <a class="btn" href="#close">Book a call</a>
+    <div class="others">
+      <a href="#close">Fractional AI engineer, from $4,000 a month</a>
+      <a href="#close">AI engineering sprint, $1,800 for one week</a>
+    </div>
+  </div>
+</section>
+
+<footer class="close" id="close">
+  <h2 class="black"><span>Have a workflow you want</span><span>an agent to run?</span></h2>
+  <a class="btn" href="#top">Book a call</a>
+  <div class="links"><a href="#top">Email</a><a href="#top">Code.Socratic</a><a href="#top">Privacy</a></div>
+  <p class="legal"><span>© 2026 Angeronia Labs LLC, Philadelphia</span><span>Independent and not affiliated with Anthropic</span></p>
+  <p class="black crop" aria-hidden="true">Angeronia</p>
+</footer>
+</main>
+
+<script>
+// The name is fitted to the width by measurement, never by a guessed size.
+(() => {
+  const fit = () => document.querySelectorAll("[data-fit]").forEach((el) => {
+    el.style.fontSize = "100px";
+    const available = el.parentElement.clientWidth;
+    el.style.fontSize = Math.floor((100 * available) / el.getBoundingClientRect().width * 0.97) + "px";
+  });
+  // The web font arrives after the first measure, and it is wider than the fallback.
+  if (document.fonts) {
+    document.fonts.ready.then(fit);
+    document.fonts.addEventListener("loadingdone", fit);
+  }
+  addEventListener("resize", fit);
+  addEventListener("load", fit);
+  // The available width can settle after the first measure (a late scrollbar, a resized frame).
+  new ResizeObserver(fit).observe(document.querySelector("[data-fit]").parentElement);
+  fit();
+})();
+</script>
+<script>
+// A preview frame asks for a section with ?at=<id>. Scrolling this document directly keeps the page
+// that embeds the frame where it is; a #fragment would scroll that page too.
+(() => {
+  const at = new URLSearchParams(location.search).get("at");
+  const target = at && document.getElementById(at);
+  if (!target) return;
+  const go = () => window.scrollTo(0, target.getBoundingClientRect().top + window.scrollY);
+  go();
+  addEventListener("load", go);
+  if (document.fonts) document.fonts.ready.then(go);
+})();
+</script>
+</body>
+</html>
