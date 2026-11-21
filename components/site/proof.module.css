@@ -1,0 +1,138 @@
+/* Proof of work (design.md §4.6). The stacked layout below is the default: it
+   is what a tablet, a phone and a browser without :has() get, every panel
+   under its claim and nothing to choose. The exhibit (claims at the left, the
+   chosen claim's panel at the right) exists only from 1000px, and only where
+   :has() does. */
+
+.heading {
+  grid-column: 1 / 9;
+}
+
+.intro {
+  grid-column: 1 / 8;
+  max-inline-size: 44ch;
+  margin-block-start: var(--s-4);
+  color: var(--ink);
+}
+
+.exhibit {
+  grid-column: 1 / -1;
+  margin: var(--s-7) 0 0;
+  padding: 0;
+  border: 0;
+  min-inline-size: 0;
+}
+
+.claims {
+  display: grid;
+  row-gap: var(--s-6);
+}
+
+.radio {
+  display: none;
+}
+
+.built {
+  display: block;
+  font-weight: 500;
+  font-size: var(--step-body);
+  color: var(--ink);
+}
+
+.why {
+  margin-block-start: var(--s-1);
+  font-size: var(--step-body);
+  color: var(--ink);
+}
+
+.panel {
+  margin-block-start: var(--s-4);
+}
+
+.assets {
+  grid-column: 1 / -1;
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--s-2) var(--s-5);
+  margin-block-start: var(--s-6);
+}
+
+.disclaimer {
+  grid-column: 1 / -1;
+  margin-block-start: var(--s-6);
+}
+
+@supports selector(:has(*)) {
+  @media (min-width: 62.5rem) {
+    .claims {
+      position: relative;
+      row-gap: var(--s-2);
+      min-block-size: 30rem;
+    }
+
+    /* Five twelfths, less a gutter: the claims hold columns 1 to 5. */
+    .claim {
+      inline-size: calc(41.667% - var(--gutter));
+      padding: var(--s-3) var(--s-4);
+    }
+
+    /* A claim's rise (styles/motion.css) moves it with a transform, and a
+       transformed box becomes the containing block of the absolutely placed
+       panel inside it: until the rise ended, the chosen panel would sit on
+       top of its own claim, then jump to the right. Here the claims arrive by
+       opacity alone. */
+    .claim[data-reveal] {
+      transform: none !important;
+    }
+
+    /* Visually hidden but focusable: the global .visually-hidden declarations. */
+    .radio {
+      display: inline-block;
+      position: absolute;
+      inline-size: 1px;
+      block-size: 1px;
+      margin: -1px;
+      padding: 0;
+      overflow: hidden;
+      clip-path: inset(50%);
+      white-space: nowrap;
+      border: 0;
+    }
+
+    /* A claim with a panel is a choice; the one without reads as text. */
+    label.built {
+      cursor: pointer;
+    }
+
+    .claim:has(.radio:checked) {
+      background: var(--surface);
+      box-shadow: inset var(--bar) 0 0 var(--ink);
+    }
+
+    .claim:has(.radio:focus-visible) {
+      outline: var(--focus) solid var(--accent);
+      outline-offset: var(--focus);
+    }
+
+    .panel {
+      position: absolute;
+      inset-block-start: 0;
+      inset-inline-end: 0;
+      inline-size: calc(50% - var(--gutter) / 2);
+      margin-block-start: 0;
+      visibility: hidden;
+    }
+
+    .claim:has(.radio:checked) .panel {
+      visibility: visible;
+    }
+  }
+}
+
+@supports selector(:has(*)) {
+  @media (min-width: 62.5rem) and (hover: hover) and (pointer: fine) {
+    .claim:has(.radio):hover {
+      background: var(--surface);
+    }
+  }
+}
