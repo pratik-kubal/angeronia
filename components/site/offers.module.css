@@ -1,0 +1,181 @@
+/* The offers (design.md §4.5). Ground --surface; tokens only. */
+.offers {
+  background: var(--surface);
+}
+
+.intro {
+  grid-column: 1 / 8;
+  max-inline-size: 46ch;
+}
+
+/* The lead offer as one sentence. Two authored lines that never wrap. */
+.statement {
+  grid-column: 1 / -1;
+  margin-block-start: var(--s-5);
+}
+
+.line {
+  display: block;
+  white-space: nowrap;
+}
+
+.line + .line {
+  margin-block-start: 0.16em;
+}
+
+/* The line reveal slides its text up from under this edge. */
+.clip {
+  overflow: clip;
+}
+
+/* The price is the same face and size as line one; the block is what marks it. */
+.price {
+  display: inline-block;
+  padding: 0.06em 0.15em 0;
+  line-height: 1;
+  background: var(--accent);
+  color: var(--accent-ink);
+}
+
+.leadOffer {
+  grid-column: 1 / -1;
+  margin-block-start: var(--s-7);
+  display: grid;
+  grid-template-columns: subgrid;
+}
+
+/* Spans both rows so the button lands directly under the terms. */
+.what {
+  grid-column: 1 / 8;
+  grid-row: 1 / span 2;
+}
+
+.leadOffer > .terms {
+  grid-column: 8 / 13;
+  grid-row: 1;
+}
+
+.book {
+  grid-column: 8 / 13;
+  grid-row: 2;
+  justify-self: start;
+  margin-block-start: var(--s-5);
+}
+
+.offers .name {
+  font-weight: 500;
+}
+
+.priceLabel {
+  margin-block-start: var(--s-1);
+}
+
+.bullets {
+  margin-block-start: var(--s-4);
+  padding-inline-start: 1.1em;
+  list-style: square;
+}
+
+.bullets li + li {
+  margin-block-start: var(--s-1);
+}
+
+.bullets li::marker {
+  color: var(--muted);
+}
+
+.terms dd {
+  margin: 0;
+}
+
+.terms > div + div {
+  margin-block-start: var(--s-4);
+}
+
+.others {
+  grid-column: 1 / -1;
+  margin-block-start: var(--s-7);
+  display: grid;
+  grid-template-columns: subgrid;
+}
+
+.fractional {
+  grid-column: 1 / 7;
+}
+
+.sprint {
+  grid-column: 8 / 13;
+}
+
+.offer .terms {
+  margin-block-start: var(--s-4);
+}
+
+.tiers {
+  margin-block-start: var(--s-4);
+  font-variant-numeric: tabular-nums;
+}
+
+.tier {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  column-gap: var(--s-4);
+}
+
+/* Hours and price are two columns where they fit, and stack where they do not. */
+.tier dt,
+.tier dd {
+  white-space: nowrap;
+}
+
+.tier + .tier {
+  margin-block-start: var(--s-1);
+}
+
+.tier dd {
+  margin: 0;
+  font-weight: 500;
+}
+
+.body {
+  margin-block-start: var(--s-4);
+}
+
+.after {
+  grid-column: 1 / -1;
+  margin-block-start: var(--s-7);
+}
+
+/* Below desktop the tiers stack, so give each pair more air than a row has. */
+@media (max-width: 62.4375rem) {
+  .tier + .tier {
+    margin-block-start: var(--s-3);
+  }
+}
+
+@media (max-width: 47.4375rem) {
+  .intro,
+  .leadOffer,
+  .others,
+  .after {
+    grid-column: 1 / -1;
+  }
+
+  .what,
+  .leadOffer > .terms,
+  .book,
+  .fractional,
+  .sprint {
+    grid-column: 1 / -1;
+    grid-row: auto;
+  }
+
+  .leadOffer > .terms {
+    margin-block-start: var(--s-5);
+  }
+
+  .others {
+    row-gap: var(--s-6);
+  }
+}
