@@ -80,19 +80,17 @@ export function Close({ variant = "full" }: { variant?: "full" | "compact" }) {
           </ul>
         </nav>
       </Reveal>
-      <div className={`frame ${styles.legalRow}`}>
-        <p className={styles.legal}>
-          {footer.legal.map((line) => (
-            <span key={line}>{line}</span>
-          ))}
-          <span>
-            <ExternalLink href={photoCredit.href}>{photoCredit.text}</ExternalLink>
-          </span>
-          <span>
-            <ExternalLink href={photoCredit.licenseHref}>{photoCredit.license}</ExternalLink>
-          </span>
-        </p>
-      </div>
+      <p className={`frame small ${styles.legal}`}>
+        {footer.legal.map((line) => (
+          <span key={line}>{line}</span>
+        ))}
+        <span>
+          <ExternalLink href={photoCredit.href}>{photoCredit.text}</ExternalLink>
+        </span>
+        <span>
+          <ExternalLink href={photoCredit.licenseHref}>{photoCredit.license}</ExternalLink>
+        </span>
+      </p>
       <div className={styles.crop} aria-hidden="true">
         <p className={`display ${styles.wordmark}`}>{close.wordmark}</p>
       </div>

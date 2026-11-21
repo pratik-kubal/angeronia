@@ -17,6 +17,9 @@ const meta = {
 export default meta;
 type Story = StoryObj<typeof meta>;
 
+/** As the home page renders it, with no props. */
+export const Default: Story = {};
+
 /** The home page's close: the ask, both link lists, the legal row and the name. */
 export const Full: Story = { args: { variant: "full" } };
 

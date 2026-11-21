@@ -60,18 +60,14 @@
   margin-block-start: var(--s-1);
 }
 
-.legalRow {
+/* The legal row is `.frame small` (the margins and the small size), laid out as
+   a wrapping row in the white field's muted ink. The element name outranks the
+   studio's `.frame` grid and `.small` ink without leaning on source order. */
+.close > p.legal {
   grid-row: 3;
-}
-
-/* Not .small: that class sets the muted ink for the dark ground. */
-.legal {
-  grid-column: 1 / -1;
   display: flex;
   flex-wrap: wrap;
   gap: var(--s-1) var(--s-5);
-  font-size: var(--step-small);
-  line-height: 1.45;
   color: var(--inv-muted);
 }
 
