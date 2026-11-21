@@ -36,13 +36,6 @@ jobs:
       - name: Unit tests
         run: npm test
 
-      # Compiles the production stylesheet, checks that every token the brand
-      # override assigns is one Carbon defines, and asserts WCAG AA across every
-      # pairing the override creates in both themes — plus the favicon against
-      # the teal ramp and the committed theme report.
-      - name: Theme gate
-        run: npm run check:theme
-
       - name: Next build (strict)
         run: npm run build
 

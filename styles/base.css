@@ -1,0 +1,185 @@
+/* Global to every route, the games included. Keep it to what cannot be scoped:
+   everything else is under .studio or in a CSS Module (ADR-019, ADR-023). */
+body {
+  margin: 0;
+}
+
+/* The root layout's wrapper. The games sit inside it too, as a flex child. */
+.site-root {
+  display: flex;
+  flex-direction: column;
+  min-block-size: 100dvh;
+}
+
+.visually-hidden {
+  position: absolute;
+  inline-size: 1px;
+  block-size: 1px;
+  margin: -1px;
+  padding: 0;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+  border: 0;
+}
+
+/* System colours, because this link also serves the games, which have no tokens. */
+.skip-link:focus {
+  position: fixed;
+  z-index: 9000;
+  inset-block-start: 1rem;
+  inset-inline-start: 1rem;
+  inline-size: auto;
+  block-size: auto;
+  margin: 0;
+  padding: 0.75rem 1rem;
+  overflow: visible;
+  clip-path: none;
+  white-space: normal;
+  background: Canvas;
+  color: CanvasText;
+  font: 1rem/1.5 system-ui, sans-serif;
+  outline: 3px solid Highlight;
+}
+
+/* ── The studio's own base. Nothing below reaches a game. ─────────────────── */
+html:has(.studio) {
+  background: var(--bg);
+  color-scheme: dark;
+  scroll-padding-block-start: calc(var(--header) + 1rem);
+  -webkit-text-size-adjust: 100%;
+  text-size-adjust: 100%;
+}
+
+.studio {
+  flex: 1 0 auto;
+  display: flex;
+  flex-direction: column;
+  background: var(--bg);
+  color: var(--ink);
+  font-family: var(--text);
+  font-size: var(--step-body);
+  line-height: 1.55;
+  font-kerning: normal;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+}
+
+.studio *,
+.studio *::before,
+.studio *::after {
+  box-sizing: border-box;
+}
+
+.studio :where(h1, h2, h3, h4, p, ul, ol, dl, dd, figure, blockquote, fieldset, pre) {
+  margin: 0;
+}
+
+.studio :where(ul, ol) {
+  padding: 0;
+  list-style: none;
+}
+
+.studio :where(h1, h2, h3, h4) {
+  font: inherit;
+  text-wrap: balance;
+}
+
+.studio :where(p) {
+  text-wrap: pretty;
+}
+
+.studio :where(img, picture, svg) {
+  display: block;
+  max-inline-size: 100%;
+}
+
+.studio :where(a) {
+  color: inherit;
+  text-underline-offset: 0.18em;
+  text-decoration-thickness: 0.07em;
+}
+
+.studio :where(mark) {
+  background: none;
+  color: inherit;
+}
+
+.studio :focus-visible {
+  outline: var(--focus) solid var(--accent);
+  outline-offset: var(--focus);
+}
+
+.studio ::selection {
+  background: var(--accent);
+  color: var(--accent-ink);
+}
+
+.studio main {
+  flex: 1 0 auto;
+}
+
+/* ── Helpers every section uses. ──────────────────────────────────────────── */
+.studio .frame {
+  display: grid;
+  grid-template-columns: repeat(12, minmax(0, 1fr));
+  column-gap: var(--gutter);
+  padding-inline: var(--m);
+}
+
+.studio .section {
+  padding-block: var(--section);
+}
+
+.studio .display {
+  font-family: var(--display);
+  font-weight: 400;
+  font-optical-sizing: auto;
+  text-transform: uppercase;
+  letter-spacing: -0.01em;
+  line-height: 0.9;
+}
+
+.studio .h-head {
+  font-family: var(--display);
+  font-weight: 400;
+  font-optical-sizing: auto;
+  text-transform: uppercase;
+  letter-spacing: -0.01em;
+  line-height: 0.9;
+  font-size: var(--step-head);
+}
+
+.studio .h-statement {
+  font-family: var(--display);
+  font-weight: 400;
+  font-optical-sizing: auto;
+  text-transform: uppercase;
+  letter-spacing: -0.01em;
+  line-height: 0.9;
+  font-size: var(--step-statement);
+}
+
+.studio .lines > span {
+  display: block;
+  white-space: nowrap;
+}
+
+.studio .lead {
+  font-size: var(--step-lead);
+  line-height: 1.35;
+}
+
+.studio .small {
+  font-size: var(--step-small);
+  line-height: 1.45;
+  color: var(--muted);
+}
+
+/* On a phone a section's own children take the whole width. Rows that use
+   subgrid set their inner columns themselves. */
+@media (max-width: 47.4375rem) {
+  .studio .frame > * {
+    grid-column: 1 / -1;
+  }
+}

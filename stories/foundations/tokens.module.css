@@ -1,0 +1,33 @@
+/* The Foundations/Tokens board: flat swatches, and each type step at its size. */
+.board {
+  display: grid;
+  row-gap: var(--s-7);
+  padding: var(--m);
+}
+
+.swatches {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(12rem, 1fr));
+  gap: var(--s-4);
+}
+
+.swatch {
+  display: grid;
+  row-gap: var(--s-1);
+}
+
+.chip {
+  display: block;
+  block-size: var(--s-7);
+  background: var(--swatch);
+}
+
+.sizes {
+  display: grid;
+  row-gap: var(--s-4);
+}
+
+.size {
+  font-size: var(--size);
+  overflow-wrap: anywhere;
+}

@@ -3,13 +3,15 @@
 Every architectural decision behind the site's design system, and every
 deviation from the plan that produced it.
 
-The log spans two migrations, in order:
+The log spans three migrations, in order:
 
 * **§1–§4** — the SLDS 2 redesign ([`slds2-redesign-plan.md`](../plans/slds2-redesign-plan.md)),
   landed 2026-09-04. D1–D11, O1–O12 and ADR-001 … ADR-014.
 * **ADR-015 … ADR-018** — the move off SLDS 2 onto IBM Carbon
   ([`carbon-migration-plan.md`](../plans/carbon-migration-plan.md)), landed
   2026-09-08.
+* ADR-023 … ADR-028 (2026-11-20): the studio site leaves Carbon for a dealt art
+  direction. **Read ADR-023 first for the current state.**
 
 ADR-019 (2026-10-23) is later: the games that moved here from `../portfolio`
 keep their own look, outside the design system. ADR-020 (the same day) links
@@ -17,10 +19,10 @@ them from the home page, and ADR-021 moves them under `/games`, behind a
 launcher. ADR-022 (2026-10-27) adds a third game, Color Tap, whose pictures are
 converted from JPGs at build time.
 
-**Read ADR-015 first if you want the current state.** It supersedes D1, D2, D3,
-D7, D8 and ADR-004 / 006 / 008 / 011, and it says what the site is built on
-today. Everything above it is the record of how it got there, not a description
-of what ships.
+**ADR-015 is now history.** It superseded D1, D2, D3, D7, D8 and ADR-004 / 006
+/ 008 / 011, and it said what the site was built on from 2026-09-08 until
+ADR-023 replaced it on 2026-11-20. Everything above ADR-023 is the record of how
+the site got there, not a description of what ships.
 
 **Rule:** record a deviation here *before* acting on it. Entries are append-only;
 supersede rather than rewrite.
@@ -961,6 +963,113 @@ puzzle. A retired puzzle is deleted only when its photo is removed.
 built on Sudoku's synth (`unlockAudio`, `tone`, `haptic` from
 `components/sudoku/feedback.ts`), not Sudoku's voice. Both games stay free of
 `components/site/`, `components/ui/` and `styles/`.
+
+### ADR-023 — The studio site leaves Carbon; the look is a dealt art direction
+
+**Recorded 2026-11-20, before the code, per the rule at the top of this file.**
+
+The owner's ruling: "Break away from Carbon and prioritize design taste skill.
+You have permission to start a new." The site is becoming a consulting
+credibility page for fixed-scope AI agent work, and its look is now set by the
+`design-taste-frontend` skill, not by a component library.
+
+**What ships.** The direction "The name as a monument" (draw seed 54426271),
+chosen by the owner from built drafts: the studio name fitted to the full width
+of the first screen over a night photograph of Philadelphia, then a small, calm
+page. Type is Imbue in capitals for the name and titles and Albert Sans for
+text, redrawn from the dealt Epilogue by the owner after a side-by-side
+comparison. The palette is the dealt "Warm black, gold". The full specification
+is `docs/plans/monument-redesign/design.md`.
+
+**What this supersedes.**
+
+| Superseded | By |
+|---|---|
+| ADR-015's choice of `@carbon/react` as the design system | No component library. Plain CSS: `styles/tokens.css`, `base.css`, `motion.css`, and one CSS Module per component. |
+| ADR-016 (the grid wrapper, the card grid) | One 12-column `.frame` in `styles/base.css`. |
+| ADR-017 (Carbon ships whole) | Carbon ships not at all. |
+| ADR-018 (`check:theme`) | `check:contrast`, which checks the new tokens' pairings. |
+| D10 and O12 (Carbon icons) | The studio pages use no icon set. One inline arrow marks an external link. |
+| D11 and O11 (IBM Plex) | Imbue and Albert Sans, self-hosted through `next/font`. |
+| Design rules 1 to 9 and 12 as written | `DESIGN-RULES.md`, rewritten the same day. |
+
+**What it costs.** The site no longer shares a typeface, a hue or a geometry
+with Code.Socratic; that convergence (ADR-015, C5) is given up on purpose.
+Every component is now the site's own to maintain. And a contrast or layout
+fault is caught by the axe pass, `check:contrast` and the skill's inspector,
+not by a vendor's tokens.
+
+**What does not change.** Storybook as the place a component is seen first
+(D4), with axe failing the run. Copy in `data/angeronia.ts`. Next.js 15. No
+`@salesforce-ux/*` package, ever. The games and their boundary (ADR-019).
+
+### ADR-024 — The home page no longer lists the games
+
+**Recorded 2026-11-20, before the code.** Supersedes ADR-020. ADR-019, ADR-021
+and ADR-022 stand unchanged.
+
+The home page argues for one thing now, and asks for one action. "Games for a
+break" is removed from it. The games stay at `/games`, reachable by anyone with
+the link or the saved home-screen app; nothing on the studio site links to
+them, they stay out of the header, the footer and `sitemap.ts`, and they stay
+`noindex`. `games` stays in `data/angeronia.ts` because the launcher reads it.
+
+### ADR-025 — The Möbius and the session replica are retired
+
+**Recorded 2026-11-20, before the code.** Supersedes ADR-012, ADR-013 and
+ADR-014.
+
+The first screen is a photograph and a name, so the hand-drawn Möbius has no
+place; the owner chose to retire it. `mobius-figure.tsx`, its stories, its two
+colour tokens and the `roughjs` dependency are deleted, and with them the
+autoplay waiver.
+
+The Code Socratic session replica is replaced by four small product panels in
+Proof of work (`proof-panels.tsx`). They are rebuilt in HTML in the product's
+current look, dark aubergine and blush, with every word taken from the
+product's own public pages. The replica it replaces copied a preview the
+product itself removed on 2026-11-07, which is the drift ADR-014 warned about.
+The panels carry the product's palette locally; that one file is the exception
+to "tokens only".
+
+### ADR-026 — One colour scheme
+
+**Recorded 2026-11-20, before the code.** Supersedes O4.
+
+The dealt direction is a dark page with one white closing section, and the
+owner chose not to design a light variant. The light/dark switch, the
+`ThemeProvider`, `lib/theme.ts` and `next-themes` are removed. `color-scheme:
+dark` is set on the studio pages only, so the games keep following the device.
+
+### ADR-027 — Motion returns
+
+**Recorded 2026-11-20, before the code.** Supersedes design rule 8 and the part
+of D5 that removed enter-reveals.
+
+The page gets a motion layer: the first screen settles in 1.2 seconds, the
+photograph drifts slowly, the parts of each section arrive once as they enter
+view, and every control answers the hand. Transform, opacity and clip-path
+only. Nothing is tied to scroll position, nothing replays, and with
+JavaScript off or reduced motion on the page is simply in its finished state.
+The dealt signature move, a crossfade between photographs of one framing,
+needs photographs that do not exist; it was redrawn to the settle and drift of
+the one photograph.
+
+### ADR-028 — The first-screen photograph is found, credited and self-hosted
+
+**Recorded 2026-11-20, before the code.**
+
+The studio has no photographs of its own. The first screen uses "Philadelphia
+Skyline" by Andrew Parlette, taken from the South Street Bridge on 2023-03-13,
+under CC BY 2.0. It is cropped (the left 27% is removed, where a tower carries
+a company's sign), the crop is committed at
+`scripts/sources/hero-schuylkill-night.jpg`, and `scripts/build-hero.mjs`
+makes the served sizes. The credit, the licence and the word "cropped" are in
+the page footer, as the licence requires.
+
+The first photograph tried was a Library of Congress scan that turned out to
+be mirrored, 20 to 30 years old, and showing a bank's sign. Check any found
+photograph for mirroring, age and visible brand names before using it.
 
 ---
 

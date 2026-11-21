@@ -1,0 +1,66 @@
+/* The studio's tokens. Scoped to the studio so nothing here reaches a game:
+   the games define their own --bg and --ink (ADR-019). */
+html:has(.studio),
+.studio {
+  /* Colour: the dealt "Warm black, gold" palette. One ground, one ink, one accent. */
+  --bg: #0c0a08;
+  --surface: #181512;        /* one tone step from the ground */
+  --ink: #ffffff;
+  --muted: #8f8a84;          /* secondary notes only, never running text */
+  --accent: #c9a45a;         /* the action, and one price */
+  --accent-strong: #dcbd7a;  /* hover: raises contrast */
+  --accent-ink: #0c0a08;
+  --photo-ground: #17120d;   /* sampled from the photograph; shows while it loads */
+
+  /* The inverse field: the closing section only. */
+  --inv-bg: #ffffff;
+  --inv-ink: #0c0a08;
+  --inv-muted: #5f5a54;
+
+  /* Type. The two families arrive as variables from next/font (app/layout.tsx). */
+  --display: var(--font-display), "Times New Roman", serif;
+  --text: var(--font-text), system-ui, -apple-system, "Segoe UI", sans-serif;
+  --step-small: clamp(0.8125rem, 0.79rem + 0.1vw, 0.875rem);     /* 13 to 14px */
+  --step-body: clamp(1.0625rem, 1rem + 0.25vw, 1.1875rem);       /* 17 to 19px */
+  --step-lead: clamp(1.25rem, 1.1rem + 0.7vw, 1.625rem);         /* 20 to 26px */
+  --step-head: clamp(2.5rem, 1.6rem + 3vw, 4.25rem);             /* 40 to 68px */
+  --step-statement: clamp(2.6rem, 8.6vw, 8.25rem);               /* 42 to 132px */
+
+  /* Space. */
+  --m: clamp(1.25rem, 2.2vw, 2rem);            /* the outer margin, 20 to 32px */
+  --gutter: clamp(0.75rem, 1.4vw, 1.5rem);
+  --section: clamp(6rem, 12vw, 11rem);         /* between sections, 96 to 176px */
+  --s-1: 0.5rem;
+  --s-2: 0.75rem;
+  --s-3: 1rem;
+  --s-4: 1.5rem;
+  --s-5: 2rem;
+  --s-6: 3rem;
+  --s-7: 4.5rem;
+  --measure: 62ch;
+  --measure-narrow: 34ch;
+  --control: 3.25rem;                          /* button height, 52px */
+  --control-small: 2.75rem;                    /* 44px, the smallest touch target */
+  --header: 4.5rem;
+  --bar: 0.25rem;                              /* a thick bar is a graphic element; a hairline is banned */
+  --focus: 0.1875rem;                          /* 3px focus ring */
+
+  /* Motion. */
+  --ease-out: cubic-bezier(0.22, 1, 0.36, 1);
+  --ease-expo: cubic-bezier(0.16, 1, 0.3, 1);
+  --ease-in-out: cubic-bezier(0.76, 0, 0.24, 1);
+  --ease-soft: cubic-bezier(0.33, 1, 0.68, 1);
+  --t-press: 140ms;
+  --t-hover: 180ms;
+  --t-ui: 240ms;
+  --t-reveal: 800ms;
+  --stagger-line: 90ms;
+  --stagger-item: 70ms;
+}
+
+@media (max-width: 47.4375rem) {
+  html:has(.studio),
+  .studio {
+    --header: 3.5rem;
+  }
+}

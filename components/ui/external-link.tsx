@@ -1,34 +1,29 @@
-"use client";
-
 import type * as React from "react";
-import { Launch } from "@carbon/icons-react";
-import { Link } from "@carbon/react";
 import { copy } from "@/data/angeronia";
+import { cx } from "@/lib/cx";
+import styles from "./external-link.module.css";
 
 /**
- * A Carbon `Link` that opens in a new tab, and says so.
- *
- * Carbon's `Link` takes `renderIcon` and draws the launch glyph in the right
- * place, but it has no opinion about the rest of the external-link contract:
- * `target`, a safe `rel`, and — the part an arrow glued to a label cannot do —
- * announcing "opens in a new tab" to a screen reader. That is all this adds.
- *
- * `"use client"` is load-bearing: `renderIcon` takes a *component*, and a
- * function cannot cross the server/client boundary. Handing `Launch` to Carbon
- * from a server component fails the prerender, so the handover happens here,
- * already on the client side.
+ * A link that leaves the site: it opens in a new tab, says so to a screen
+ * reader, and marks it with one small arrow (design.md §5.2). A server
+ * component; there is no icon library and nothing to pass across the boundary.
  */
-export interface ExternalLinkProps
-  extends Omit<React.AnchorHTMLAttributes<HTMLAnchorElement>, "children"> {
+export function ExternalLink({
+  href,
+  className,
+  children,
+}: {
   href: string;
+  className?: string;
   children: React.ReactNode;
-}
-
-export function ExternalLink({ href, children, ...rest }: ExternalLinkProps) {
+}) {
   return (
-    <Link {...rest} href={href} target="_blank" rel="noreferrer noopener" renderIcon={Launch}>
+    <a href={href} target="_blank" rel="noreferrer noopener" className={cx(styles.link, className)}>
       {children}
-      <span className="cds--visually-hidden"> ({copy.externalLink})</span>
-    </Link>
+      <span className="visually-hidden"> ({copy.externalLink})</span>
+      <svg className={styles.arrow} viewBox="0 0 10 10" aria-hidden="true" focusable="false">
+        <path d="M2 8 L8 2 M3.5 2 H8 V6.5" />
+      </svg>
+    </a>
   );
 }
