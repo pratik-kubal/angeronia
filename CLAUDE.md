@@ -52,15 +52,15 @@ paint by numbers, was made here (2026-10-27) at `/games/paint-by-numbers`
 by `predev` and `prebuild`; the output is committed, and CI's `--check` fails a
 PR with a bad or unconverted photo). They keep their
 own look — their own CSS, tokens, type, motion and Phosphor icons — and the
-contract above does not govern them: **ADR-019** draws the line (rule 10, rule
-12's typecheck and build gates, and rule 14 still apply), and the launcher sits
+contract above does not govern them: **ADR-019** draws the line (rule 9, the typecheck
+and build gates, and rule 14 still apply), and the launcher sits
 on their side of it. Nothing on the studio site
 links to them (**ADR-024**). They are not
 in the header, the footer or `sitemap.ts`, and they are `noindex`.
 
 * **A new game** goes at `app/games/<slug>/` with its own `apple-icon.png`
-  (180 × 180, opaque), plus one entry in `games` in `data/angeronia.ts`; both
-  launchers read that list. Then `npm run games:icon` to redraw the launcher's
+  (180 × 180, opaque), plus one entry in `games` in `data/angeronia.ts`; the
+  `/games` launcher reads that list. Then `npm run games:icon` to redraw the launcher's
   own icon, and give the game a link back to `/games` (there is no back button
   in a saved web app).
 
@@ -79,8 +79,8 @@ in the header, the footer or `sitemap.ts`, and they are `noindex`.
 * Their gates are `npm test` (Vitest, node) and `npm run test:e2e` (Playwright:
   desktop Chromium, and an iPhone and an iPad in WebKit), on top of typecheck
   and build.
-* They render under the root layout. The studio's global CSS is three rules
-  (`body`, `.site-root`, the skip link); everything else is scoped to `.studio`,
+* They render under the root layout. The studio's global CSS is four rules
+  (`body`, `.site-root`, `.visually-hidden`, the skip link); everything else is scoped to `.studio`,
   so nothing reaches them.
   `components/games/base.css` puts back the browser defaults they were built
   on; keep its selectors at `html body :where(...)` and never use `:is()` there

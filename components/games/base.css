@@ -6,8 +6,9 @@
    page and by the /games launcher (DECISIONS.md ADR-019, ADR-021, ADR-022).
 
    The root layout used to give the games Carbon's reset and default type.
-   Since ADR-023 the studio's global CSS is three rules (`body`, `.site-root`,
-   the skip link) and everything else is scoped to `.studio`. The values below
+   Since ADR-023 the studio's global CSS is four rules (`body`, `.site-root`,
+   `.visually-hidden`, the skip link) and everything else is scoped to
+   `.studio`. The values below
    reproduce what the games were measured against before that change
    (`npm run games:parity`), Carbon's <body> included.
 
@@ -35,20 +36,22 @@ html body :where(.sdk-shell, .sdk-shell *, .sol-shell, .sol-shell *, .gml-shell,
   margin: 0;
   padding: 0;
   border: 0 solid;
-  /* Carbon writes "liga" on each element, which would drop a parent's own features (tnum). */
+  /* Carbon wrote "liga" on each element, which dropped a parent's own features (tnum). */
   font-feature-settings: inherit;
 }
 
-/* Carbon sets these on <body>; the games start from the browser's. */
+/* Carbon set these on <body>; the games start from the browser's. */
 html body :where(.sdk-shell, .sol-shell, .gml-shell, .ctp-shell) {
   font-feature-settings: normal;
   text-rendering: auto;
 }
 
 /* Carbon's <body> smoothed all text, and the games were measured with it. Sudoku, Solitaire
-   and Color Tap set it on their own shells; the launcher relied on <body>. */
+   and Color Tap set the WebKit property on their own shells; the launcher relied on <body>.
+   No game sets the Firefox one, so all four relied on <body> for it. */
 html body :where(.sdk-shell, .sol-shell, .gml-shell, .ctp-shell) {
   -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
 }
 
 html body :where(.sdk-shell, .sol-shell, .gml-shell, .ctp-shell) :where(h1, h2, h3, h4, h5, h6, p) {

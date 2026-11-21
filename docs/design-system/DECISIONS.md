@@ -13,7 +13,7 @@ The log spans three migrations, in order:
 * ADR-023 … ADR-028 (2026-11-20): the studio site leaves Carbon for a dealt art
   direction. **Read ADR-023 first for the current state.**
 
-ADR-019 (2026-10-23) is later: the games that moved here from `../portfolio`
+ADR-019 (2026-10-23) came between the move onto Carbon and ADR-023: the games that moved here from `../portfolio`
 keep their own look, outside the design system. ADR-020 (the same day) links
 them from the home page, and ADR-021 moves them under `/games`, behind a
 launcher. ADR-022 (2026-10-27) adds a third game, Color Tap, whose pictures are
@@ -22,7 +22,8 @@ converted from JPGs at build time.
 **ADR-015 is now history.** It superseded D1, D2, D3, D7, D8 and ADR-004 / 006
 / 008 / 011, and it said what the site was built on from 2026-09-08 until
 ADR-023 replaced it on 2026-11-20. Everything above ADR-023 is the record of how
-the site got there, not a description of what ships.
+the site got there, not a description of what ships, except ADR-019, ADR-021
+and ADR-022, which still govern the games.
 
 **Rule:** record a deviation here *before* acting on it. Entries are append-only;
 supersede rather than rewrite.
@@ -1070,6 +1071,20 @@ the page footer, as the licence requires.
 The first photograph tried was a Library of Congress scan that turned out to
 be mirrored, 20 to 30 years old, and showing a bank's sign. Check any found
 photograph for mirroring, age and visible brand names before using it.
+
+### ADR-029 — A shared game link previews as the game
+
+**Recorded 2026-11-20, by the owner, after Phase A.** It leaves ADR-019's
+boundary as it is: it touches only the games' own `metadata`.
+
+The game routes set a title and a description but no `openGraph` or `twitter`,
+so a shared link inherited the root layout's. Before ADR-023 that previewed a
+Sudoku link as "Angeronia Labs" with the studio logo; after it, the same link
+would preview as the consulting pitch, "A working AI agent in three weeks",
+with the skyline card. The owner ruled that each game, and the `/games`
+launcher, previews as itself: its own title and description, and its own
+180 × 180 home-screen icon as a `summary` card. Each `app/games/**/page.tsx`
+sets both objects; nothing else in the games changed.
 
 ---
 

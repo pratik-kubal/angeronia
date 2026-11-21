@@ -4,7 +4,7 @@
    "Games" and every game opens inside it. So it looks like a home screen, not
    like the studio site: each game's own icon, rounded the way iOS rounds an app
    icon, its name under it in the system font, on the system's grouped ground in
-   light and dark (the device's scheme, not the site's data-theme, as the games
+   light and dark (the device's scheme, as the games
    do). Outside the design system with the games (ADR-019); every rule is scoped
    to html:has(.gml-shell) or a .gml-* class. Imported by app/games/page.tsx
    alone, after components/games/base.css.

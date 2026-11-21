@@ -1,17 +1,25 @@
 import type { Metadata, Viewport } from "next";
 import { SolitaireGame } from "@/components/solitaire/solitaire-game";
-// The browser defaults the game was built on, in place of Carbon's reset (ADR-019).
+// The browser defaults the game was built on (ADR-019).
 import "@/components/games/base.css";
 import "@/components/solitaire/solitaire.css";
 
 // Solitaire (Klondike, turn three) on green felt, dealt only from deals proven winnable, for a
 // phone on its side first and upright too. Served at /solitaire and, through a rewrite in
-// next.config.mjs, at /Solitaire. Linked from the home page (ADR-020), but not in the nav or
-// sitemap.ts, and noindex.
+// next.config.mjs, at /Solitaire. On the /games launcher (ADR-021); nothing on the studio site
+// links to it (ADR-024), and it is not in sitemap.ts, and noindex.
+const title = "Solitaire";
+const description = "Klondike, turn three, on green felt. Every deal can be won.";
+const icon = { url: "/games/solitaire/apple-icon.png", width: 180, height: 180, alt: "" };
+
 export const metadata: Metadata = {
-  title: "Solitaire",
-  description: "Klondike, turn three, on green felt. Every deal can be won.",
+  title,
+  description,
   robots: { index: false, follow: false },
+  // A shared link previews as this page, with its own icon, not as the studio site that the
+  // root layout describes (its title, its pitch and its social image would otherwise apply).
+  openGraph: { type: "website", url: "/games/solitaire", title, description, images: [icon] },
+  twitter: { card: "summary", title, description, images: [icon] },
   // Add to Home Screen opens it full screen, like an app (Chrome on iOS offers it too).
   appleWebApp: { capable: true, title: "Solitaire", statusBarStyle: "black-translucent" },
   other: { "apple-mobile-web-app-capable": "yes" },
