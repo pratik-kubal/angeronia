@@ -2,69 +2,10 @@ import { Meta } from "@storybook/addon-docs/blocks";
 
 <Meta title="Foundations/Introduction" />
 
-# Angeronia Design System
+# angeronia.com
 
-The UI for [angeronia.com](https://angeronia.com), built on **IBM Carbon v11**
-under the White and Gray 100 themes, with one brand override: Carbon Teal in
-place of Carbon Blue. IBM Plex is the typeface and `@carbon/icons-react` the
-icon set.
+The site of Angeronia Labs LLC: one page that sells fixed-scope AI agent work on the Claude API, plus the privacy and terms pages. Every section is seen here, as a story, before it is part of a page; `Pages/Home` is the page itself.
 
-This Storybook is the source of truth. A component exists here before it
-appears on a page, and the page itself is a story — so `Pages/Home` and
-`app/page.tsx` compose the same list of sections and cannot drift.
+The contract is `docs/design-system/DESIGN-RULES.md`. Every decision, and every deviation from it, is in `docs/design-system/DECISIONS.md`.
 
-## The contract
-
-The full rules are in [`docs/design-system/DESIGN-RULES.md`](https://github.com/pratik-kubal/angeronia/blob/main/docs/design-system/DESIGN-RULES.md).
-The ones that shape almost every decision:
-
-1. **One design system.** Carbon, plus the brand override in
-   `styles/_themes.scss`. No other CSS framework, utility library or icon set.
-2. **The selection ladder.** A `@carbon/react` component → a Carbon token in a
-   `site-*` rule → a `--site-*` value declared at the top of `_site.scss`.
-   Anything below that rung is a decision, not a shortcut, and says which
-   Carbon gap it is filling.
-3. **Never hard-code, never re-assign.** No literal colours, spacing, type sizes
-   or durations. `styles/_themes.scss` is the only file allowed to *assign* a
-   `--cds-*` token; everywhere else they are referenced. `.cds--*` selectors are
-   never overridden — a `site-*` class goes beside them.
-4. **Colour by role, in pairs.** Text on a ground uses that ground's paired ink.
-   Links are `$link-primary`, headings `$text-primary`. The `support-*` family
-   means status and nothing else. Brand teal reaches the page only through the
-   tokens the override reassigns.
-
-## Adding a component
-
-1. Check `@carbon/react` first — it probably already exists there.
-2. If it does not, ask whether it is a *composition* of Carbon parts (a `Card`
-   is a `Tile` plus three rows) or something Carbon genuinely has no word for
-   (a media object, an avatar, a cluster). Both go in `components/ui/`; nothing
-   else does.
-3. Write `<name>.stories.tsx`: Default, every variant and size, states, long
-   content, dark. The dark story is not optional; half the contrast surprises
-   only appear there.
-4. Run the gates: `npm run typecheck`, `npm run check:theme`,
-   `npm run test:storybook`.
-
-A component is **done** when the story exists, a11y is clean, `check:theme` is
-clean, it has been reviewed in both themes, and it is used on a page.
-
-## Boards
-
-- **Brand** — the teal ramp against Carbon's blue, where the teal actually
-  lands, and the live contrast matrix `check:theme` asserts in CI.
-- **Color** — the semantic roles, Carbon's layer model, and the ink pairs.
-- **Typography** — families, the type styles in use with their computed sizes,
-  and the measures. Reports whether the real IBM Plex faces loaded, so a board
-  never lies about its own metrics.
-- **Spacing, Shape & Motion** — the spacing scale, the square geometry, the
-  site's own values, and what moves.
-- **Icons** — every glyph the site uses and what it means here.
-
-## What is deliberately absent
-
-No radius, no elevation, no density toggle. Carbon 11 is square and has no
-shadow scale, and the site takes both as they come rather than re-skinning them
-back to something rounder — that decision, and the licence decision behind the
-whole migration, are ADR-015 in
-[`DECISIONS.md`](https://github.com/pratik-kubal/angeronia/blob/main/docs/design-system/DECISIONS.md).
+The specification the pages were built from is `docs/plans/monument-redesign/`: `design.md` for the look, `content.md` for every word.

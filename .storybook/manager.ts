@@ -2,24 +2,30 @@ import { addons } from "storybook/manager-api";
 import { create } from "storybook/theming";
 
 /**
- * Storybook's own chrome, coloured from the design system so the shell around
- * a component does not fight the component.
+ * Storybook's own chrome, in the site's palette so the shell around a
+ * component does not fight the component.
  *
- * These are literal hexes on purpose: the manager iframe is outside the
- * document the theme styles, so it cannot read `--cds-*`. The values are the
- * resolved Carbon White tokens and the Angeronia teal.
+ * These are literal hexes on purpose: the manager is a separate document that
+ * never loads styles/tokens.css, so it cannot read the custom properties. The
+ * values are copied from that file: warm black, white and gold.
  */
 addons.setConfig({
   theme: create({
-    base: "light",
-    brandTitle: "Angeronia Design System",
+    base: "dark",
+    brandTitle: "Angeronia Labs",
     brandUrl: "https://angeronia.com",
-    colorPrimary: "#007d79", // Teal 60 — $background-brand
-    colorSecondary: "#005d5d", // Teal 70 — $link-primary-hover
-    appBg: "#f4f4f4", // Gray 10 — $layer-01
-    appContentBg: "#ffffff", // White — $background
-    textColor: "#161616", // Gray 100 — $text-primary
-    fontBase: '"IBM Plex Sans", system-ui, sans-serif',
-    fontCode: '"IBM Plex Mono", Consolas, monospace',
+    colorPrimary: "#c9a45a", // --accent
+    colorSecondary: "#c9a45a", // --accent: the selected story and the active tab
+    appBg: "#0c0a08", // --bg
+    appContentBg: "#181512", // --surface
+    appPreviewBg: "#0c0a08", // --bg
+    barBg: "#181512", // --surface
+    textColor: "#ffffff", // --ink
+    textMutedColor: "#8f8a84", // --muted
+    barTextColor: "#8f8a84", // --muted
+    barSelectedColor: "#c9a45a", // --accent
+    textInverseColor: "#0c0a08", // --accent-ink: text on a gold fill
+    fontBase: '"Albert Sans", system-ui, -apple-system, "Segoe UI", sans-serif',
+    fontCode: 'ui-monospace, "SF Mono", Menlo, Consolas, monospace',
   }),
 });

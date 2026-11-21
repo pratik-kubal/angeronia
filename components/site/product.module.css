@@ -1,0 +1,41 @@
+/* Also from Angeronia Labs. Small on purpose: no statement-size type, and a
+   shorter section than the ones around it. Ground is the surface tone. */
+.product {
+  padding-block: calc(var(--section) * 0.6);
+  background: var(--surface);
+}
+
+.heading {
+  grid-column: 1 / 7;
+}
+
+.about {
+  grid-column: 8 / 13;
+  align-self: end;
+}
+
+.blurb {
+  max-inline-size: 42ch;
+  font-size: var(--step-body);
+  color: var(--ink);
+}
+
+.links {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--s-2) var(--s-5);
+  margin-block-start: var(--s-4);
+}
+
+/* A 44px touch target (design.md §7). */
+.links a {
+  display: inline-flex;
+  align-items: center;
+  min-block-size: var(--control-small);
+}
+
+@media (max-width: 47.4375rem) {
+  .about {
+    margin-block-start: var(--s-5);
+  }
+}

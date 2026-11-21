@@ -1,0 +1,7 @@
+/* Storybook only, so none of it ships in the page's CSS. */
+/* A dark block to lay the transparent header over. */
+.storyBlock {
+  position: relative;
+  min-block-size: calc(var(--header) + var(--section));
+  background: var(--surface);
+}

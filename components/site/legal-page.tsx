@@ -1,60 +1,42 @@
-import { Column } from "@carbon/react";
-import { Grid } from "@/components/ui/grid";
-import { Heading, Body } from "@/components/ui/text";
+import { Fragment } from "react";
 import { SiteHeader } from "@/components/site/site-header";
-import { SiteFooter } from "@/components/site/site-footer";
-import type { LegalDocument } from "@/data/angeronia";
+import { Close } from "@/components/site/close";
+import { copy, type LegalDocument } from "@/data/angeronia";
+import styles from "./legal-page.module.css";
 
 /**
- * A legal document as a page: the privacy policy and the terms both render
- * through here, so the two cannot drift apart in layout or in type.
- *
- * The measure is 60ch rather than the page's full width — these are the only
- * pages on the site that are read as continuous prose, and a 1200px line is
- * unreadable at that length.
- *
- * The updated date is a `<time>` with a machine-readable `dateTime`, because a
- * legal document's date is the notice: it should be as legible to a crawler or
- * a reader-mode as it is on the page.
+ * A legal document (design.md §4.11): a reading column from column 4, under the
+ * solid header, with the compact close beneath. One `h1`, then `h2` per section.
  */
-export function LegalPage({ document: doc }: { document: LegalDocument }) {
+export function LegalPage({ document }: { document: LegalDocument }) {
   return (
-    <>
-      <SiteHeader />
-      <main id="main">
-        <section className="site-section" aria-labelledby="legal-heading">
-          <Grid className="site-container">
-            <Column sm={4} md={8} lg={16}>
-              <Heading level={1} size="display" id="legal-heading" className="site-measure_heading">
-                {doc.title}
-              </Heading>
-              <p className="site-legal__updated">
-                Last updated <time dateTime={doc.updatedIso}>{doc.updated}</time>
-              </p>
-              <Body className="site-legal__lede">{doc.lede}</Body>
-
-              <div className="site-legal">
-                {doc.sections.map((section) => (
-                  <section key={section.heading}>
-                    <h2 className="site-legal__heading">{section.heading}</h2>
-                    {section.paragraphs.map((paragraph) => (
-                      <p key={paragraph}>{paragraph}</p>
-                    ))}
-                    {section.bullets ? (
-                      <ul className="site-legal__list">
-                        {section.bullets.map((bullet) => (
-                          <li key={bullet}>{bullet}</li>
-                        ))}
-                      </ul>
-                    ) : null}
-                  </section>
-                ))}
-              </div>
-            </Column>
-          </Grid>
-        </section>
+    <div className="studio">
+      <SiteHeader variant="solid" />
+      <main id="main" className={`frame ${styles.legal}`}>
+        <h1 className={`h-head ${styles.title}`}>{document.title}</h1>
+        <p className={`small ${styles.updated}`}>
+          {copy.updated} <time dateTime={document.updatedIso}>{document.updated}</time>
+        </p>
+        <p className={`lead ${styles.lede}`}>{document.lede}</p>
+        <div className={styles.body}>
+          {document.sections.map((section) => (
+            <Fragment key={section.heading}>
+              <h2>{section.heading}</h2>
+              {section.paragraphs.map((paragraph) => (
+                <p key={paragraph}>{paragraph}</p>
+              ))}
+              {section.bullets ? (
+                <ul>
+                  {section.bullets.map((bullet) => (
+                    <li key={bullet}>{bullet}</li>
+                  ))}
+                </ul>
+              ) : null}
+            </Fragment>
+          ))}
+        </div>
       </main>
-      <SiteFooter />
-    </>
+      <Close variant="compact" />
+    </div>
   );
 }

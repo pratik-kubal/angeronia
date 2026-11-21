@@ -1,36 +1,5 @@
-import { SiteHeader } from "@/components/site/site-header";
-import { Hero } from "@/components/site/hero";
-import { Philosophy } from "@/components/site/philosophy";
-import { Services } from "@/components/site/services";
-import { Process } from "@/components/site/process";
-import { ProductSpotlight } from "@/components/site/product-spotlight";
-import { About } from "@/components/site/about";
-import { Games } from "@/components/site/games";
-import { Contact } from "@/components/site/contact";
-import { SiteFooter } from "@/components/site/site-footer";
-import { games } from "@/data/angeronia";
+import { HomePage } from "@/components/site/home-page";
 
-/**
- * The home page: a composition of storied sections and nothing else.
- *
- * `Pages/Home` in Storybook renders exactly this list, so the two cannot drift
- * (design rule 11).
- */
 export default function Home() {
-  return (
-    <>
-      <SiteHeader />
-      <main id="main">
-        <Hero />
-        <ProductSpotlight />
-        <Services />
-        <Philosophy />
-        <Process />
-        <About />
-        <Games games={games} />
-        <Contact />
-      </main>
-      <SiteFooter />
-    </>
-  );
+  return <HomePage />;
 }

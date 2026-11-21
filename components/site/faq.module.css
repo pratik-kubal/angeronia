@@ -1,0 +1,63 @@
+/* FAQ: large questions with the answer beside. Every answer is open; nothing
+   collapses on any width (design.md 4.8). The ground is the page's --bg, which
+   .studio already sets, so this section declares none. */
+
+.heading {
+  grid-column: 1 / 7;
+}
+
+/* .rows and .row are both subgrids, so the twelve columns of .frame reach the
+   question and the answer. */
+.rows {
+  grid-column: 1 / -1;
+  display: grid;
+  grid-template-columns: subgrid;
+  row-gap: var(--s-7);
+  margin-block-start: var(--s-7);
+}
+
+.row {
+  grid-column: 1 / -1;
+  display: grid;
+  grid-template-columns: subgrid;
+  align-items: baseline;
+}
+
+.q {
+  grid-column: 1 / 7;
+  max-inline-size: 24ch;
+  font-weight: 500;
+  font-size: var(--step-lead);
+  line-height: 1.2;
+  text-wrap: balance;
+}
+
+.a {
+  grid-column: 8 / 13;
+  max-inline-size: 42ch;
+  font-size: var(--step-body);
+  color: var(--ink);
+}
+
+/* On desktop the questions hang from L2, column 4, as the problem titles do,
+   so a question and its answer are near each other (ADR-030). */
+@media (min-width: 62.5rem) {
+  .q {
+    grid-column: 4 / 8;
+  }
+}
+
+@media (max-width: 47.4375rem) {
+  .rows {
+    row-gap: var(--s-6);
+  }
+
+  .row {
+    row-gap: var(--s-2);
+  }
+
+  .q,
+  .a {
+    grid-column: 1 / -1;
+  }
+}

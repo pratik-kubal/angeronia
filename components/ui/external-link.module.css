@@ -1,0 +1,26 @@
+/* A link that leaves the site (design.md §5.2): underlined, with one arrow. */
+.link {
+  text-decoration-line: underline;
+  text-decoration-color: color-mix(in srgb, currentColor 45%, transparent);
+}
+
+/* A diagonal line with an arrowhead, 0.7em square, a 2px stroke in the text's colour. */
+.link .arrow {
+  display: inline-block;
+  inline-size: 0.7em;
+  block-size: 0.7em;
+  margin-inline-start: 0.3em;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 2px;
+}
+
+.link .arrow path {
+  vector-effect: non-scaling-stroke;
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .link:hover {
+    text-decoration-color: currentColor;
+  }
+}

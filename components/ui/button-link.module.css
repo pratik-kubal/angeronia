@@ -1,0 +1,44 @@
+/* The page's one button shape: square corners, flat fill (design.md §5.1). */
+.button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-block-size: var(--control);
+  padding-inline: var(--s-4);
+  font-family: var(--text);
+  font-weight: 500;
+  font-size: var(--step-body);
+  text-decoration: none;
+  transition:
+    transform var(--t-press) var(--ease-out),
+    background-color var(--t-hover) ease;
+}
+
+.button.accent {
+  background-color: var(--accent);
+  color: var(--accent-ink);
+}
+
+.button.ink {
+  background-color: var(--inv-ink);
+  color: var(--inv-bg);
+}
+
+.button.sm {
+  min-block-size: var(--control-small);
+  padding-inline: var(--s-3);
+}
+
+.button:active {
+  transform: scale(0.97);
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .button.accent:hover {
+    background-color: var(--accent-strong);
+  }
+
+  .button.ink:hover {
+    background-color: color-mix(in srgb, var(--inv-ink) 82%, var(--inv-bg));
+  }
+}

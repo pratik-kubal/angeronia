@@ -1,91 +1,93 @@
 import type { Meta, StoryObj } from "@storybook/nextjs-vite";
 import { expect, within } from "storybook/test";
-import { SiteHeader } from "@/components/site/site-header";
-import { SkipLink } from "@/components/site/skip-link";
-import { Hero } from "@/components/site/hero";
-import { Philosophy } from "@/components/site/philosophy";
-import { Services } from "@/components/site/services";
-import { Process } from "@/components/site/process";
-import { ProductSpotlight } from "@/components/site/product-spotlight";
-import { About } from "@/components/site/about";
-import { Games } from "@/components/site/games";
-import { Contact } from "@/components/site/contact";
-import { SiteFooter } from "@/components/site/site-footer";
-import { games } from "@/data/angeronia";
+import { HomePage } from "@/components/site/home-page";
+import { PRICES, copy } from "@/data/angeronia";
 
 /**
- * The whole page, in the same order `app/page.tsx` composes it — the two lists
- * are the deliverable of design rule 11, so a section that changes here
- * changes there.
+ * The whole page: the same `HomePage` that `app/page.tsx` renders, so the two
+ * cannot drift (design rule 10). Its play test checks what no single section's
+ * story can: the page's heading outline, its links and its words.
  */
-function Home() {
-  return (
-    <>
-      <SkipLink />
-      <SiteHeader />
-      <main id="main">
-        <Hero />
-        <ProductSpotlight />
-        <Services />
-        <Philosophy />
-        <Process />
-        <About />
-        <Games games={games} />
-        <Contact />
-      </main>
-      <SiteFooter />
-    </>
-  );
-}
-
 const meta = {
   title: "Pages/Home",
-  component: Home,
-  parameters: {
-    layout: "fullscreen",
-    docs: {
-      description: {
-        component:
-          "`app/page.tsx` composes exactly this list of storied sections and " +
-          "nothing else, so the page and its story cannot drift.",
-      },
-    },
-  },
-} satisfies Meta<typeof Home>;
+  component: HomePage,
+  parameters: { layout: "fullscreen" },
+} satisfies Meta<typeof HomePage>;
 
 export default meta;
 type Story = StoryObj<typeof meta>;
 
-export const Light: Story = {
+/** Every section's h2, as a screen reader names it: words, with real spaces between the lines. */
+const SECTION_HEADINGS = [
+  "I’m Pratik, a solo AI engineer in Philadelphia.",
+  "Why agent projects stall",
+  "Proof of work",
+  "Process",
+  "FAQ",
+  "Also from Angeronia Labs",
+  "Have a workflow you want an agent to run?",
+];
+
+/** The in-page links the header carries, each to a section that must exist. */
+const NAV_TARGETS = ["#offers", "#proof", "#process", "#faq"];
+
+/** Words the page must never say (README §2.3, content.md §1). */
+const BANNED = /\[CONFIRM|Try it|shipped|in production|trusted by/i;
+
+const escape = (text: string) => text.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+
+export const Default: Story = {
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
 
-    // One h1, and the section headings under it — the outline the page
-    // promises assistive technology.
-    await expect(canvasElement.querySelectorAll("h1")).toHaveLength(1);
+    // 1. One h1, and it is the name.
+    const h1s = canvasElement.querySelectorAll("h1");
+    await expect(h1s).toHaveLength(1);
+    await expect(h1s[0]).toHaveAccessibleName("Angeronia Labs");
 
-    for (const name of [
-      "Our Principles",
-      "What we take on",
-      "How we work",
-      "Right Now, One Person Team",
-      "Games for a break",
-    ]) {
+    // 2. A level-2 heading for every section. The Offers statement is named by
+    //    its price, which is a [CONFIRM] value, so it is read from PRICES.
+    for (const name of SECTION_HEADINGS) {
       await expect(canvas.getByRole("heading", { level: 2, name })).toBeInTheDocument();
     }
+    await expect(
+      canvas.getByRole("heading", { level: 2, name: new RegExp(escape(PRICES.mvpRange)) }),
+    ).toBeInTheDocument();
 
-    // The skip link is the first thing in the tab order.
-    const first = canvasElement.querySelector("a");
-    await expect(first).toHaveTextContent("Skip to main content");
-
-    // No heading level is skipped.
-    const levels = [...canvasElement.querySelectorAll("h1,h2,h3,h4,h5,h6")].map((h) =>
+    // 3. No heading level is skipped on the way down.
+    const levels = [...canvasElement.querySelectorAll("h1, h2, h3, h4, h5, h6")].map((h) =>
       Number(h.tagName.slice(1)),
     );
-    for (let i = 1; i < levels.length; i++) {
-      await expect(levels[i] - levels[i - 1]).toBeLessThanOrEqual(1);
+    for (let index = 1; index < levels.length; index++) {
+      await expect(levels[index] - levels[index - 1]).toBeLessThanOrEqual(1);
+    }
+
+    // 4. Ten questions, all open.
+    await expect(canvasElement.querySelectorAll("#faq h3")).toHaveLength(10);
+
+    // 5. Every link that opens a new tab withholds the referrer.
+    for (const link of canvasElement.querySelectorAll('a[target="_blank"]')) {
+      await expect(link.getAttribute("rel") ?? "").toContain("noreferrer");
+    }
+
+    // 6. No dead link.
+    for (const link of canvasElement.querySelectorAll("a")) {
+      const href = (link.getAttribute("href") ?? "").trim();
+      await expect(href).not.toBe("");
+      await expect(href).not.toBe("#");
+    }
+
+    // 7. Nothing untrue or unconfirmed in the page's words.
+    const main = canvasElement.querySelector("main");
+    await expect(main).not.toBeNull();
+    await expect(main?.textContent ?? "").not.toMatch(BANNED);
+
+    // 8. The header's four links, each to a section that is there. The nav is
+    //    hidden on a phone, so it is found whatever the canvas width.
+    const nav = canvas.getByRole("navigation", { name: copy.navLabel, hidden: true });
+    for (const target of NAV_TARGETS) {
+      await expect(nav.querySelector(`a[href="${target}"]`)).not.toBeNull();
+      await expect(canvasElement.querySelector(target)).not.toBeNull();
     }
   },
 };
-
-export const Dark: Story = { globals: { colorScheme: "dark" } };

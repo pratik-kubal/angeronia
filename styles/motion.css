@@ -1,0 +1,17 @@
+@media (prefers-reduced-motion: no-preference) {
+  .js .studio [data-reveal-root]:not([data-in]) [data-reveal="rise"] { opacity: 0; transform: translateY(1.5rem); }
+  .js .studio [data-reveal="rise"] {
+    transition: opacity 700ms var(--ease-out), transform 900ms var(--ease-out);
+    transition-delay: calc(var(--i, 0) * var(--stagger-item));
+  }
+  .js .studio [data-reveal-root]:not([data-in]) [data-reveal="line"] { transform: translateY(105%); }
+  .js .studio [data-reveal="line"] {
+    display: inline-block;
+    transition: transform var(--t-reveal) var(--ease-expo);
+    transition-delay: calc(var(--i, 0) * var(--stagger-line));
+  }
+  .js .studio [data-reveal-root]:not([data-in]) [data-reveal="wipe"] { clip-path: inset(0 100% 0 0); }
+  .js .studio [data-reveal="wipe"] { transition: clip-path 700ms var(--ease-in-out) 500ms; }
+  .js .studio [data-reveal-root]:not([data-in]) [data-reveal="shutter"] { clip-path: inset(0 0 100% 0); }
+  .js .studio [data-reveal="shutter"] { transition: clip-path 1100ms var(--ease-in-out); }
+}

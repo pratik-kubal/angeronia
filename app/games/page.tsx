@@ -1,6 +1,6 @@
 import type { Metadata, Viewport } from "next";
 import { games } from "@/data/angeronia";
-// The browser defaults the games were built on, in place of Carbon's reset (ADR-019).
+// The browser defaults the games were built on (ADR-019).
 import "@/components/games/base.css";
 import "@/components/games/launcher.css";
 
@@ -9,10 +9,18 @@ import "@/components/games/launcher.css";
 // and every game opens inside it; each game links back here. Games-side, like the games: its own
 // look, noindex, and not in sitemap.ts. Its home-screen icon, app/games/apple-icon.png, is made
 // by `npm run games:icon`.
+const title = "Games";
+const description = "Sudoku, Solitaire, Color Tap and whatever comes next, in one place.";
+const icon = { url: "/games/apple-icon.png", width: 180, height: 180, alt: "" };
+
 export const metadata: Metadata = {
-  title: "Games",
-  description: "Sudoku, Solitaire, Color Tap and whatever comes next, in one place.",
+  title,
+  description,
   robots: { index: false, follow: false },
+  // A shared link previews as this page, with its own icon, not as the studio site that the
+  // root layout describes (its title, its pitch and its social image would otherwise apply).
+  openGraph: { type: "website", url: "/games", title, description, images: [icon] },
+  twitter: { card: "summary", title, description, images: [icon] },
   // Add to Home Screen opens it full screen, like an app. The default status bar keeps every
   // page below the clock, tinted by its own theme-color (ADR-021).
   appleWebApp: { capable: true, title: "Games", statusBarStyle: "default" },

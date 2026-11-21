@@ -1,74 +1,51 @@
 import type React from "react";
 import type { Metadata } from "next";
-import { IBM_Plex_Sans, IBM_Plex_Mono } from "next/font/google";
-import { ThemeProvider } from "@/components/site/theme-provider";
+import { Albert_Sans, Imbue } from "next/font/google";
 import { SkipLink } from "@/components/site/skip-link";
-import { BRAND, LINKS, SITE_URL } from "@/data/angeronia";
-import "@/styles/globals.scss";
+import { BRAND, LINKS, SITE_URL, product, seo } from "@/data/angeronia";
+import "@/styles/tokens.css";
+import "@/styles/base.css";
+import "@/styles/motion.css";
 
-const siteUrl = SITE_URL;
-
-// IBM Plex, self-hosted by next/font — no request reaches Google at runtime,
-// and the generated size-adjusted fallback keeps the swap from shifting layout.
-// The two CSS variables are consumed by Carbon's `$font-families` map in
-// `styles/_config.scss` and nowhere else (D11, design rule 5).
-const plexSans = IBM_Plex_Sans({
+// Self-hosted by next/font: no request reaches Google at runtime. The two CSS
+// variables are read by styles/tokens.css and nowhere else.
+const display = Imbue({
   subsets: ["latin"],
-  weight: ["300", "400", "600", "700"],
-  variable: "--font-plex-sans",
+  axes: ["opsz"],
+  variable: "--font-display",
   display: "swap",
 });
 
-const plexMono = IBM_Plex_Mono({
+const text = Albert_Sans({
   subsets: ["latin"],
-  weight: ["400"],
-  variable: "--font-plex-mono",
+  variable: "--font-text",
   display: "swap",
 });
-
-const description =
-  "Angeronia Labs is a boutique software engineering studio in Philadelphia. We turn ambiguous problems into shipped, tested, owned software — AI/LLM product engineering, cloud microservices, and full-stack builds. Makers of Code Socratic.";
 
 export const metadata: Metadata = {
-  metadataBase: new URL(siteUrl),
-  title: {
-    default: "Angeronia Labs",
-    template: "%s | Angeronia Labs",
-  },
-  description,
-  keywords: [
-    "Angeronia Labs",
-    "software engineering consultancy",
-    "Philadelphia software studio",
-    "AI engineering",
-    "LLM product engineering",
-    "AWS microservices",
-    "Next.js consultancy",
-    "Code Socratic",
-    "FinTech engineering",
-  ],
-  authors: [{ name: BRAND.legal, url: siteUrl }],
+  metadataBase: new URL(SITE_URL),
+  title: { default: seo.title, template: `%s | ${BRAND.name}` },
+  description: seo.description,
+  authors: [{ name: BRAND.legal, url: SITE_URL }],
   creator: BRAND.legal,
   openGraph: {
     type: "website",
-    url: siteUrl,
-    title: "Angeronia Labs",
-    description,
+    url: SITE_URL,
+    title: seo.ogTitle,
+    description: seo.ogDescription,
     siteName: BRAND.name,
-    images: [{ url: "/angeronia-logo-light.png", width: 500, height: 500, alt: BRAND.name }],
   },
   twitter: {
     card: "summary_large_image",
-    title: "Angeronia Labs",
-    description,
-    images: ["/angeronia-logo-light.png"],
+    title: seo.ogTitle,
+    description: seo.ogDescription,
   },
   robots: {
     index: true,
     follow: true,
     googleBot: { index: true, follow: true, "max-image-preview": "large", "max-snippet": -1 },
   },
-  alternates: { canonical: siteUrl },
+  alternates: { canonical: SITE_URL },
 };
 
 const jsonLd = {
@@ -76,9 +53,9 @@ const jsonLd = {
   "@type": "ProfessionalService",
   name: BRAND.legal,
   alternateName: BRAND.name,
-  url: siteUrl,
+  url: SITE_URL,
   email: LINKS.email,
-  description,
+  description: seo.description,
   areaServed: "Worldwide",
   address: {
     "@type": "PostalAddress",
@@ -86,24 +63,13 @@ const jsonLd = {
     addressRegion: "PA",
     addressCountry: "US",
   },
-  founder: {
-    "@type": "Person",
-    name: "Pratik Kubal",
-    url: LINKS.linkedin,
-  },
-  knowsAbout: [
-    "AI/LLM product engineering",
-    "AWS microservices",
-    "Next.js",
-    "FinTech",
-    "DevOps",
-    "Cloud architecture",
-  ],
+  founder: { "@type": "Person", name: BRAND.founder, url: LINKS.linkedin },
+  knowsAbout: ["AI agents", "Claude API", "LLM evaluation", "Agent cost modelling"],
   makesOffer: {
     "@type": "Offer",
     itemOffered: {
       "@type": "SoftwareApplication",
-      name: "Code Socratic",
+      name: product.name,
       applicationCategory: "EducationalApplication",
       url: LINKS.codeSocratic,
     },
@@ -111,28 +77,23 @@ const jsonLd = {
   sameAs: [LINKS.linkedin, LINKS.github],
 };
 
-export default function RootLayout({
-  children,
-}: Readonly<{
-  children: React.ReactNode;
-}>) {
+// Motion is gated on this class. If the page's scripts never run, it comes off
+// again, so nothing can stay hidden (design.md §6.1).
+const GATE = `document.documentElement.classList.add("js");setTimeout(function(){if(!window.__angReady)document.documentElement.classList.remove("js")},3000);`;
+
+export default function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
   return (
-    <html
-      lang="en"
-      suppressHydrationWarning
-      className={`${plexSans.variable} ${plexMono.variable}`}
-    >
+    <html lang="en" suppressHydrationWarning className={`${display.variable} ${text.variable}`}>
       <head>
+        <script dangerouslySetInnerHTML={{ __html: GATE }} />
         <script
           type="application/ld+json"
           dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
         />
       </head>
       <body>
-        <ThemeProvider>
-          <SkipLink />
-          <div className="site-root">{children}</div>
-        </ThemeProvider>
+        <SkipLink />
+        <div className="site-root">{children}</div>
       </body>
     </html>
   );

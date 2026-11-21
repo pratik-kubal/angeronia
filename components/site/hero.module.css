@@ -1,0 +1,200 @@
+/* The first screen (design.md §4.2): a photograph, two scrims, and the title
+   block along the bottom edge. */
+.hero {
+  position: relative;
+  block-size: 100svh;
+  min-block-size: 38.75rem;
+  max-block-size: 75rem;
+  overflow: hidden;
+  isolation: isolate;
+  background: var(--photo-ground);
+}
+
+.photo {
+  position: absolute;
+  inset: 0;
+}
+
+.photo img {
+  position: absolute;
+  inset: 0;
+  inline-size: 100%;
+  block-size: 100%;
+  object-fit: cover;
+  object-position: 40% 50%;
+}
+
+/* The one permitted gradient, neutral: the sentence reads over the lower city. */
+.scrim {
+  position: absolute;
+  inset-inline: 0;
+  inset-block-end: 0;
+  block-size: 60%;
+  background: linear-gradient( /* taste-skill-ignore: the neutral scrim over the photograph (design.md §4.2, §8) */
+    to top,
+    rgb(12 10 8 / 0.93) 0%,
+    rgb(12 10 8 / 0.72) 48%,
+    rgb(12 10 8 / 0)
+  );
+}
+
+/* So the header reads over the clouds. */
+.scrimTop {
+  position: absolute;
+  inset-inline: 0;
+  inset-block-start: 0;
+  block-size: 24%;
+  background: linear-gradient(to bottom, rgb(12 10 8 / 0.6), rgb(12 10 8 / 0)); /* taste-skill-ignore: the neutral scrim (design.md §4.2, §8) */
+}
+
+.title {
+  position: absolute;
+  inset-inline: var(--m);
+  inset-block-end: clamp(1.25rem, 1.8vw, 1.625rem);
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  grid-template-areas:
+    "statement actions"
+    "name name";
+  align-items: end;
+  row-gap: var(--s-3);
+  column-gap: var(--s-5);
+}
+
+/* The leading and the size beat the global .display (two classes) by name. The
+   size is the pre-script estimate that spans the width; FitText then measures. */
+.hero .title .name {
+  grid-area: name;
+  margin: 0;
+  min-inline-size: 0;
+  overflow: clip;
+  line-height: 0.86;
+  white-space: nowrap;
+  font-size: calc((100vw - 2 * var(--m)) / 4.457);
+}
+
+/* FitText has no stylesheet of its own: the span it renders is a box here, so
+   the entrance can move it and the measurement is of one line. */
+.name > span {
+  display: inline-block;
+}
+
+.statement {
+  grid-area: statement;
+  max-inline-size: 30ch;
+  font-weight: 500;
+  font-size: var(--step-lead);
+  line-height: 1.3;
+  color: var(--ink);
+}
+
+.actions {
+  grid-area: actions;
+  display: flex;
+  align-items: center;
+  gap: var(--s-4);
+}
+
+.second {
+  display: inline-flex;
+  align-items: center;
+  min-block-size: var(--control-small);
+  font-size: var(--step-body);
+}
+
+@media (max-width: 47.4375rem) {
+  .title {
+    inset-block-end: 1.25rem;
+    grid-template-columns: minmax(0, 1fr);
+    grid-template-areas:
+      "statement"
+      "actions"
+      "name";
+    align-items: start;
+  }
+
+  .photo img {
+    object-position: 50% 50%;
+  }
+
+  .actions {
+    flex-wrap: wrap;
+    justify-self: start;
+  }
+}
+
+/* ── The entrance, CSS only. Settled by 1.2s; the start state exists only
+   while an animation runs (fill-mode both). ─────────────────────────────── */
+@media (prefers-reduced-motion: no-preference) {
+  .photo img {
+    animation: settle 1100ms var(--ease-expo) 100ms both;
+  }
+
+  .name > span {
+    animation: name-rise var(--t-reveal) var(--ease-expo) 150ms both;
+  }
+
+  .statement {
+    animation: arrive 500ms var(--ease-out) 420ms both;
+  }
+
+  .actions {
+    animation: arrive 500ms var(--ease-out) 480ms both;
+  }
+
+  /* The slow drift only runs where scripts can also pause it: once the page has
+     scrolled, the header is stuck and the picture stands still. */
+  :global(.js) .photo img {
+    animation:
+      settle 1100ms var(--ease-expo) 100ms both,
+      drift 40s var(--ease-soft) 1300ms infinite alternate;
+  }
+
+  :global(.js) :global(.studio) [data-stuck="true"] ~ main .photo img {
+    animation-play-state: running, paused;
+  }
+}
+
+@keyframes settle {
+  from {
+    transform: scale(1.06);
+  }
+
+  to {
+    transform: none;
+  }
+}
+
+@keyframes drift {
+  from {
+    transform: none;
+  }
+
+  to {
+    transform: translate3d(-1.2%, 0, 0) scale(1.04);
+  }
+}
+
+@keyframes name-rise {
+  from {
+    opacity: 0;
+    transform: translateY(16%);
+  }
+
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+@keyframes arrive {
+  from {
+    opacity: 0;
+    transform: translateY(var(--s-2));
+  }
+
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}

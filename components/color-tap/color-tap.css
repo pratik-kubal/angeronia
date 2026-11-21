@@ -29,7 +29,7 @@ html:has(.ctp-shell) {
   --font: -apple-system, BlinkMacSystemFont, "SF Pro Text", system-ui, sans-serif;
 
   background: var(--ground-deep);
-  /* !important: next-themes writes the site's color-scheme inline on <html>. */
+  /* !important: the game's own scheme wins over anything the site writes on <html>. */
   color-scheme: dark !important;
 }
 

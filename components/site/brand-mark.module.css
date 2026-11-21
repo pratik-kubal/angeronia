@@ -1,0 +1,8 @@
+/* The disc in the accent, the cursor in the ink that sits on it (design.md §5.3). */
+.disc {
+  fill: var(--accent);
+}
+
+.cursor {
+  fill: var(--accent-ink);
+}

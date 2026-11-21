@@ -1,16 +1,5 @@
-/*
- * Storybook-only font wiring.
- *
- * Stories do not render `app/layout.tsx`, so nothing sets the `--font-plex-*`
- * variables that `next/font` provides in production and that Carbon's
- * `$font-families` map consumes (`styles/_config.scss`). Defining them here
- * from the self-hosted `@fontsource` faces means a story renders in the same
- * IBM Plex the site does — never silently in the system fallback.
- *
- * This file is Storybook chrome, not site CSS: it assigns no design-system
- * token.
- */
-:root {
-  --font-plex-sans: "IBM Plex Sans";
-  --font-plex-mono: "IBM Plex Mono";
+/* The same two families next/font serves in production, wired up for stories. */
+.studio {
+  --font-display: "Imbue Variable";
+  --font-text: "Albert Sans";
 }

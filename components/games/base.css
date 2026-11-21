@@ -1,17 +1,21 @@
 /* ══════════════════════════════════════════════════════════════════════════
    THE GAMES' BASE — the browser defaults the games were built on.
-   They were written in ../portfolio over Tailwind v4's preflight (MIT), and
-   here the root layout gives them Carbon's reset and default type instead
-   (an h1 at heading-06, body line-height 1, buttons at the browser's 13.33px
-   with its padding, links in link-primary, i not italic, SVGs on the
-   baseline). This puts back the parts of the preflight they rely on, scoped
-   to a game's shell, so nothing here reaches the studio pages. Imported by
-   each game's page and by the /games launcher (DECISIONS.md ADR-019, ADR-021, ADR-022).
+   They were written in ../portfolio over Tailwind v4's preflight (MIT). This
+   puts back the parts of the preflight they rely on, scoped to a game's
+   shell, so nothing here reaches the studio pages. Imported by each game's
+   page and by the /games launcher (DECISIONS.md ADR-019, ADR-021, ADR-022).
+
+   The root layout used to give the games Carbon's reset and default type.
+   Since ADR-023 the studio's global CSS is four rules (`body`, `.site-root`,
+   `.visually-hidden`, the skip link) and everything else is scoped to
+   `.studio`. The values below
+   reproduce what the games were measured against before that change
+   (`npm run games:parity`), Carbon's <body> included.
 
    Specificity is the whole trick: `html body` then a `:where()` (0,0,2, or
-   0,0,3 on a pseudo-element) beats Carbon's bare-element rules (0,0,1) and
-   loses to every game rule, all of which carry a class (0,1,0 and up), the
-   way a preflight in a cascade layer did. Element lists go in `:where()`, not
+   0,0,3 on a pseudo-element) beats bare-element rules (0,0,1) and loses to
+   every game rule, all of which carry a class (0,1,0 and up), the way a
+   preflight in a cascade layer did. Element lists go in `:where()`, not
    `:is()`: the build prefixes `:is()` as `:-webkit-any()`, which counts as a
    class and would win.
    ══════════════════════════════════════════════════════════════════════════ */
@@ -32,14 +36,22 @@ html body :where(.sdk-shell, .sdk-shell *, .sol-shell, .sol-shell *, .gml-shell,
   margin: 0;
   padding: 0;
   border: 0 solid;
-  /* Carbon writes "liga" on each element, which would drop a parent's own features (tnum). */
+  /* Carbon wrote "liga" on each element, which dropped a parent's own features (tnum). */
   font-feature-settings: inherit;
 }
 
-/* Carbon sets these on <body>; the games start from the browser's. */
+/* Carbon set these on <body>; the games start from the browser's. */
 html body :where(.sdk-shell, .sol-shell, .gml-shell, .ctp-shell) {
   font-feature-settings: normal;
   text-rendering: auto;
+}
+
+/* Carbon's <body> smoothed all text, and the games were measured with it. Sudoku, Solitaire
+   and Color Tap set the WebKit property on their own shells; the launcher relied on <body>.
+   No game sets the Firefox one, so all four relied on <body> for it. */
+html body :where(.sdk-shell, .sol-shell, .gml-shell, .ctp-shell) {
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
 }
 
 html body :where(.sdk-shell, .sol-shell, .gml-shell, .ctp-shell) :where(h1, h2, h3, h4, h5, h6, p) {

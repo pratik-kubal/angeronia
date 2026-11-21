@@ -1,0 +1,118 @@
+/* The closing ask and the footer: the one white field on the page. The button
+   is ink-filled because gold on white is 2.4 : 1. */
+/* As tall as its content: a full-screen minimum left a hole of empty white
+   between the links and the legal line wherever the content was shorter than
+   the screen (ADR-030). */
+.close {
+  display: grid;
+  grid-template-rows: auto minmax(var(--s-7), 1fr) auto auto;
+  padding-block-start: var(--section);
+  overflow: hidden;
+  background: var(--inv-bg);
+  color: var(--inv-ink);
+}
+
+.close[data-variant="compact"] {
+  padding-block-start: var(--s-7);
+}
+
+/* The ring goes ink on the white ground. The extra element name outranks the
+   studio's own :focus-visible rule without reaching for source order. */
+.close a:focus-visible {
+  outline-color: var(--inv-ink);
+}
+
+.top {
+  grid-row: 1;
+}
+
+.ask {
+  grid-column: 1 / 10;
+}
+
+/* The heading is two authored lines that never wrap. The wrapper clips the
+   line while it rises into place. */
+.line {
+  overflow: clip;
+}
+
+.body {
+  max-inline-size: 40ch;
+  margin-block-start: var(--s-5);
+}
+
+.actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--s-3) var(--s-4);
+  margin-block-start: var(--s-5);
+}
+
+.links {
+  grid-column: 10 / 13;
+  display: grid;
+  gap: var(--s-5);
+  align-content: start;
+  font-size: var(--step-body);
+}
+
+/* Every link here is a 44px touch target (design.md §7); the rows are the
+   targets' own height, with nothing added between them. */
+.links a,
+.actions span a,
+.close > p.legal a {
+  display: inline-flex;
+  align-items: center;
+  min-block-size: var(--control-small);
+}
+
+/* The legal row is `.frame small` (the margins and the small size), laid out as
+   a wrapping row in the white field's muted ink. The element name outranks the
+   studio's `.frame` grid and `.small` ink without leaning on source order. */
+.close > p.legal {
+  grid-row: 3;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--s-1) var(--s-5);
+  color: var(--inv-muted);
+}
+
+/* The name again, fitted margin to margin like the one over the city, and
+   standing on the page's bottom edge: the span is cut at its baseline (0.8em
+   at line-height 0.9), so the letters are whole and nothing hangs below them.
+   Any bleed off the right edge left a sliver of a letter (ADR-030). */
+.crop {
+  grid-row: 4;
+  margin-block-start: var(--s-3);
+  padding-inline: var(--m);
+  overflow: hidden;
+}
+
+.wordmark {
+  /* Close to the fitted size before FitText measures it, and with scripts off. */
+  font-size: calc((100vw - 2 * var(--m)) / 3);
+  white-space: nowrap;
+}
+
+/* No line of its own below the cut span. The extra class outranks the global
+   `.studio .display` line-height without leaning on source order. */
+.crop > .wordmark {
+  line-height: 0;
+}
+
+.wordmark > span {
+  display: inline-block;
+  vertical-align: top;
+  block-size: 0.8em;
+  overflow: hidden;
+  line-height: 0.9;
+}
+
+@media (max-width: 47.4375rem) {
+  .links {
+    grid-template-columns: 1fr 1fr;
+    margin-block-start: var(--s-6);
+  }
+}
