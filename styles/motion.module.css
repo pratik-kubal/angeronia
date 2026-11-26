@@ -6,10 +6,11 @@
    The finished page is the default. A block hides only once the spine's script
    is running (`html.spine-live`, added by components/site/spine.tsx), which
    first marks everything already on screen as revealed; then it waits, hidden,
-   until the script sets `data-in` on it. No script, a failed script, a story, or
-   reduced motion: nothing here applies (ADR-031). */
+   until the script sets `data-in` on it. No script, a failed script, a story,
+   reduced motion, or paper: nothing here applies (ADR-031). Screen only, so a
+   printed page never leaves out a block the reader had not scrolled to. */
 
-@media (prefers-reduced-motion: no-preference) {
+@media screen and (prefers-reduced-motion: no-preference) {
   :global(html.js.spine-live) .reveal:not([data-in]) {
     opacity: 0;
     transform: translateY(var(--space-5));
@@ -27,6 +28,14 @@
   :global(html.js.spine-live) .reveal:focus-within {
     opacity: 1;
     transform: none;
+    transition: none;
+  }
+}
+
+/* A block still fading in when printing starts is finished at once: a running
+   transition otherwise carries on into the printed page. */
+@media print {
+  .reveal {
     transition: none;
   }
 }

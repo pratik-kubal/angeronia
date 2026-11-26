@@ -58,6 +58,15 @@
   object-position: 50% 16%;
 }
 
+/* On paper the photographs rest unmoved, wherever the drift had them.
+   !important: it has to outrank the transform Spine writes on the element
+   (ADR-035). */
+@media print {
+  .photo {
+    transform: none !important;
+  }
+}
+
 .caption {
   margin-top: var(--space-3);
   color: var(--band-soft);

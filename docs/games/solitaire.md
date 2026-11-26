@@ -22,7 +22,7 @@ Playing Cards (the traditional court art), Windows Standard scoring, unlimited p
 phone on its side first and upright too, and for Chrome on iPhone and iPad (WebKit) and on Mac. **Every deal can be
 won**: the game deals only from a bank of seeds a solver proved. Tapping a card flies it to its best place (its
 foundation first, then the first column it fits); cards also drag. Each win plays the next of four win shows. Its
-own look (`solitaire.css`, every rule under `html:has(.sol-shell)` / `.sol-*`), not the studio site's Carbon.
+own look (`solitaire.css`, every rule under `html:has(.sol-shell)` / `.sol-*`), not the studio site's.
 
 - **Domain (`lib/solitaire/`, pure, relative imports):** `cards.ts` (a card is 0–51 = suit × 13 + rank − 1, suits
   ♥ ♠ ♦ ♣, also the fixed foundation order; `cardCode` "QS" / "TH" names the face files), `deal.ts` (`deal(seed)`:

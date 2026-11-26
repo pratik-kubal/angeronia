@@ -91,6 +91,9 @@ export const shareImage = {
   wordmark: "Angeronia Labs",
   foot: "Philadelphia, PA",
   alt: "Angeronia Labs. One engineer, screen to server. Philadelphia, PA.",
+  /** The card's size, read by app/social-card.tsx and the legal pages' metadata. */
+  width: 1200,
+  height: 630,
 } as const;
 
 // ── Statements on the spine ──────────────────────────────────────────────────

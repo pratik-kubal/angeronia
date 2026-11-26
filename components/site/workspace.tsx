@@ -87,13 +87,15 @@ function FileTab({ name }: { name: string }) {
   );
 }
 
-function TutorPanel() {
+function TutorPanel({ ready }: { ready: boolean }) {
   const scrollRef = React.useRef<HTMLDivElement>(null);
-  // Open on the newest turn, the way the live panel does.
+  // Open on the newest turn, the way the live panel does. Again once the tabs
+  // are live: if the script came late, the stalled-script layout had the
+  // exchange at its full height, with nothing to scroll, when this first ran.
   React.useEffect(() => {
     const el = scrollRef.current;
     if (el) el.scrollTop = el.scrollHeight;
-  }, []);
+  }, [ready]);
 
   return (
     <>
@@ -231,7 +233,7 @@ export function Workspace({ className }: { className?: string }) {
   const panelId = (key: string) => `${base}-panel-${key}`;
 
   const panels: Record<(typeof TABS)[number]["key"], { body: React.ReactNode; className: string; focusable: boolean }> = {
-    tutor: { body: <TutorPanel />, className: styles.tutorPanel, focusable: false },
+    tutor: { body: <TutorPanel ready={ready} />, className: styles.tutorPanel, focusable: false },
     instructions: { body: <InstructionsPanel />, className: styles.prose, focusable: true },
     tests: {
       body: (

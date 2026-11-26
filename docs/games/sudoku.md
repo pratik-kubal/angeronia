@@ -12,7 +12,7 @@ On the `/games` launcher and the home page's Games section, both of which show t
 
 A relaxed Sudoku built for an iPhone held upright: one screen, no page scroll, with its **own look**, "Aurora"
 (a pastel dawn in light, an indigo night with teal and magenta neon in dark, the iOS system font; the page ignores
-the studio site's Carbon tokens and its `data-theme`). There are no mistakes and no losing: a digit that
+the studio site's tokens). There are no mistakes and no losing: a digit that
 doesn't fit is simply refused (accepted: a player can try digits until one fits). Every solved board wins one of
 **100 collectible trophies**. **Themes**: Aurora is the default (the owner's ruling); Candy (all year, the owner's
 reference look: every digit a tile in its colour until all nine are placed), Beach, Halloween, Snow Day and Blossom,

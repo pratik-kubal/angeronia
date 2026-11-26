@@ -21,9 +21,19 @@
   pointer-events: none;
 }
 
-/* With script, Spine draws the line in pieces into the track instead. */
-:global(html.spine-live) .band::before {
-  display: none;
+/* With script, Spine draws the line in pieces into the track instead. On screen
+   only: the pieces are placed for the screen's layout, so paper gets the whole
+   line, broken by the words' ground patches, as without script. */
+@media screen {
+  :global(html.spine-live) .band::before {
+    display: none;
+  }
+}
+
+@media print {
+  .track {
+    display: none;
+  }
 }
 
 /* Scripted, with motion allowed: hold the whole line back until the script

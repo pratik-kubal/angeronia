@@ -14,7 +14,7 @@ import { hero, shareImage, type StatementLine } from "@/data/angeronia";
  * here, each named after the token it copies from styles/tokens.css. The face
  * is Hanken Grotesk from `assets/og/` (OFL): the renderer reads TTF, not WOFF2.
  */
-export const SOCIAL_CARD = { width: 1200, height: 630 } as const;
+export const SOCIAL_CARD = { width: shareImage.width, height: shareImage.height } as const;
 
 const PAPER = "#f1f1ef"; // --palette-paper
 const INK = "#1c1c1c"; // --palette-ink

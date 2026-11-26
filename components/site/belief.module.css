@@ -24,8 +24,12 @@
    paint under html.js, on exactly the screens where Spine holds the scene, so
    the page's height never changes when the script starts and a link to a
    section below lands where it points (ADR-032). Spine only marks the scene
-   data-live and moves the halves. */
-@media (min-width: 900px) and (prefers-reduced-motion: no-preference) {
+   data-live and moves the halves. Screen only: on paper the band rests closed.
+
+   The stage is at least a screen tall, not exactly one: on a wide, short window
+   (1920 x 400) the statement is taller than the screen, and a fixed height would
+   clip words the reader could never scroll to. */
+@media screen and (min-width: 900px) and (prefers-reduced-motion: no-preference) {
   :global(html.js) .belief {
     height: calc((var(--hold) + 1) * 100svh);
   }
@@ -33,7 +37,7 @@
   :global(html.js) .stage {
     position: sticky;
     top: 0;
-    height: 100svh;
+    min-height: 100svh;
     padding-block: 0;
     overflow: clip; /* clip, not hidden: hidden would make the stage a scroll container */
     contain: layout paint;
@@ -42,11 +46,7 @@
   /* The statement sits a little above the middle of the held screen. */
   :global(html.js) .inner {
     justify-content: center;
-    height: 100svh;
+    min-height: 100svh;
     padding-bottom: 4vh;
   }
-}
-
-.belief[data-live] [data-seam] {
-  will-change: transform;
 }

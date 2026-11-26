@@ -36,6 +36,11 @@ export function startSpine(): () => void {
   const reduce = matchMedia("(prefers-reduced-motion: reduce)");
   const narrow = matchMedia("(max-width: 899px)");
   const clamp = (v: number, lo: number, hi: number) => Math.min(hi, Math.max(lo, v));
+  /** A length or duration read from CSS, in its own unit; `fallback` only when there is none (0 is a value). */
+  const read = (value: string, fallback: number) => {
+    const n = parseFloat(value);
+    return Number.isNaN(n) ? fallback : n;
+  };
 
   /** No piece of the line shorter than this between two breaks. */
   const MIN_PIECE = 40;
@@ -44,7 +49,19 @@ export function startSpine(): () => void {
   /** Air above and below type that crosses it, in its own em. */
   const TYPE_AIR = 0.14;
   /** The line is drawn down the first screen in this time (--dur-arrive). */
-  const DRAW_MS = parseFloat(getComputedStyle(html).getPropertyValue("--dur-arrive")) || 1150;
+  const DRAW_MS = read(getComputedStyle(html).getPropertyValue("--dur-arrive"), 1150);
+  /**
+   * Whether the page is still holding the no-script line back for the script
+   * (band.module.css's wait on the band's ::before). If the script came after
+   * --dur-script-wait, the whole line is already on screen: keep it whole
+   * rather than hide it and draw it down again.
+   */
+  const heldBack =
+    typeof bands[0].getAnimations !== "function" ||
+    bands[0].getAnimations({ subtree: true }).some((a) => {
+      const effect = a.effect as KeyframeEffect | null;
+      return effect?.target === bands[0] && effect.pseudoElement === "::before";
+    });
   const t0 = performance.now();
 
   let stopped = false;
@@ -98,7 +115,10 @@ export function startSpine(): () => void {
   const collect = () => {
     // Undo what this script moved, so every measurement reads the page at rest.
     for (const el of pulled()) el.style.transform = "";
-    for (const s of seam) s.el.style.transform = "";
+    for (const s of seam) {
+      s.el.style.transform = "";
+      s.el.style.willChange = "";
+    }
 
     masks = [
       ...document.querySelectorAll<HTMLElement>(
@@ -140,11 +160,14 @@ export function startSpine(): () => void {
       if (sceneLive) {
         const stage = scene.querySelector<HTMLElement>("[data-scene-stage]") ?? scene;
         const sr = stage.getBoundingClientRect();
-        const pad = parseFloat(getComputedStyle(stage).paddingLeft) || 0;
+        const pad = read(getComputedStyle(stage).paddingLeft, 0);
         for (const el of scene.querySelectorAll<HTMLElement>("[data-seam]")) {
           const r = el.getBoundingClientRect();
           // Open: "your" side out to the left margin, the studio's to the right one.
           const dx = el.dataset.seam === "l" ? -Math.max(0, r.left - (sr.left + pad)) : Math.max(0, sr.right - pad - r.right);
+          // The sides move every frame while the scene is held: a layer each
+          // (set here, by the script that moves them, not by Belief's CSS: ADR-035).
+          el.style.willChange = "transform";
           seam.push({ el, dx, x: Number.NaN });
         }
       }
@@ -152,7 +175,9 @@ export function startSpine(): () => void {
   };
 
   // ── The frame ───────────────────────────────────────────────────────────
-  let tipDoc = 0; // the line's tip, in page coordinates
+  // The line's tip, in page coordinates: at the top, to be drawn down, unless
+  // the whole line is already showing (see heldBack).
+  let tipDoc = heldBack ? 0 : Number.POSITIVE_INFINITY;
   let queued = false;
   let raf = 0;
   /** Until then, keep drawing: something that moves a break is in motion. */
@@ -170,7 +195,7 @@ export function startSpine(): () => void {
     let tip = Number.POSITIVE_INFINITY;
     if (!reduce.matches) {
       const target = sy + H + 2;
-      const k = clamp((performance.now() - t0) / DRAW_MS, 0, 1);
+      const k = heldBack ? clamp((performance.now() - t0) / DRAW_MS, 0, 1) : 1;
       if (k < 1) {
         tipDoc = Math.max(tipDoc, (1 - Math.pow(1 - k, 3)) * target);
         again = true;
@@ -185,7 +210,7 @@ export function startSpine(): () => void {
     // 2. The pull: a crossing statement low on the screen is open at the axis,
     //    closed from 45% of the screen up; quick near the close, so a still shows
     //    it open or shut.
-    const M = parseFloat(getComputedStyle(bands[0]).paddingLeft) || 16;
+    const M = read(getComputedStyle(bands[0]).paddingLeft, 16);
     const moves = pulls.map((p) => {
       const r = p.st.getBoundingClientRect();
       if (r.bottom < -40 || r.top > H + 160) return [0, 0];
@@ -233,7 +258,7 @@ export function startSpine(): () => void {
     }
 
     // 4. The breaks: wherever anything crosses the axis, measured as it is now.
-    const axisVw = parseFloat(getComputedStyle(html).getPropertyValue("--axis")) || 38;
+    const axisVw = read(getComputedStyle(html).getPropertyValue("--axis"), 38);
     const axisX = (axisVw / 100) * W;
     const win0 = sy - 140;
     const win1 = sy + H + 140;
@@ -409,7 +434,10 @@ export function startSpine(): () => void {
     cancelAnimationFrame(raf);
     for (const fn of undo) fn();
     for (const el of pulled()) el.style.transform = "";
-    for (const s of seam) s.el.style.transform = "";
+    for (const s of seam) {
+      s.el.style.transform = "";
+      s.el.style.willChange = "";
+    }
     for (const img of drifts) img.style.transform = "";
     scene?.removeAttribute("data-live");
     for (const pool of pools) for (const el of pool.els) el.remove();

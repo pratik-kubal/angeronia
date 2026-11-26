@@ -10,10 +10,11 @@
 }
 
 /* The tiles hang from the axis and wrap: a new game is one more entry in the
-   data and nothing else (ADR-020). 15rem is a tile's narrowest. */
+   data and nothing else (ADR-020). 15rem is a tile's narrowest, unless the list
+   itself is narrower (a 320px screen), when a tile takes the list's width. */
 .tiles {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(15rem, 1fr));
+  grid-template-columns: repeat(auto-fill, minmax(min(100%, 15rem), 1fr));
   gap: var(--space-l) var(--space-m);
   margin-top: var(--space-2xl);
   margin-left: var(--hang);

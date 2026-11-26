@@ -320,14 +320,12 @@
 }
 
 /* If the tabs are still not live after --dur-script-wait (the script failed or
-   stalled), take the no-script layout below instead, so no panel stays out of
-   reach behind a tab that does nothing (ADR-032). Zero-length animations,
-   delayed, that hold their end state: a timer, not motion, so this applies
-   under reduced motion too. Once the tabs go live, none of it matches. */
-:global(html.js) .workspace:not([data-ready]) {
-  animation: stalledWorkspace 0s var(--dur-script-wait) forwards;
-}
-
+   stalled), drop the tabs and show every panel under its name, so no panel
+   stays out of reach behind a tab that does nothing (ADR-032). They stack
+   inside the pane at the pane's own height, which scrolls, so neither this nor
+   a script that comes later changes the page's height (ADR-035). Zero-length
+   animations, delayed, that hold their end state: a timer, not motion, so this
+   applies under reduced motion too. Once the tabs go live, none of it matches. */
 :global(html.js) .workspace:not([data-ready]) .pane {
   animation: stalledPane 0s var(--dur-script-wait) forwards;
 }
@@ -344,22 +342,19 @@
   animation: stalledLabel 0s var(--dur-script-wait) forwards;
 }
 
-@keyframes stalledWorkspace {
-  to {
-    align-items: start;
-    height: auto;
-  }
-}
-
 @keyframes stalledPane {
   to {
-    height: auto;
+    overflow-y: auto;
   }
 }
 
+/* Out of the flow and invisible, not display: none: WebKit never undoes an
+   animated display: none, so after a slow load the live tabs stayed hidden in
+   Safari (ADR-035). */
 @keyframes stalledTabs {
   to {
-    display: none;
+    position: absolute;
+    visibility: hidden;
   }
 }
 
@@ -527,6 +522,12 @@
 
 .prose p {
   max-width: 62ch;
+}
+
+/* A <strong> is the browser's bolder (700); Hanken Grotesk stops at 600 here
+   as everywhere (DESIGN-RULES.md §5). */
+.prose strong {
+  font-weight: 600;
 }
 
 .prose code,

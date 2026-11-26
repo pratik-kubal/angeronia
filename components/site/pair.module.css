@@ -29,6 +29,15 @@
   grid-row: 1;
 }
 
+/* On paper the belief's sides rest closed, wherever the held scene had them.
+   !important: it has to outrank the transform Spine writes on the element. */
+@media print {
+  .yours,
+  .mine {
+    transform: none !important;
+  }
+}
+
 /* The narrow layout: the sides stack, hanging from the axis. */
 @media (max-width: 899px) {
   .pair {

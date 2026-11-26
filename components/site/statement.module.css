@@ -44,10 +44,23 @@
   background: var(--band-ground);
 }
 
-/* With script the line is drawn in pieces between the words instead. */
-:global(html.spine-live) .part::before,
-:global(html.spine-live) .centre::before {
-  display: none;
+/* With script the line is drawn in pieces between the words instead (on screen;
+   paper gets the no-script line, band.module.css). */
+@media screen {
+  :global(html.spine-live) .part::before,
+  :global(html.spine-live) .centre::before {
+    display: none;
+  }
+}
+
+/* On paper every statement rests closed, wherever the pull or the held scene
+   had it when printing began. !important: it has to outrank the transform
+   Spine writes on the element itself. */
+@media print {
+  .line,
+  .part {
+    transform: none !important;
+  }
 }
 
 @media (min-width: 900px) {

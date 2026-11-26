@@ -28,7 +28,9 @@ legal pages share its masthead, line and footer, and `Spine` moves the line.
   fixes after its review (no layout change on hydration, the replica's
   fallback for a stalled script, `Pair`'s mine-first DOM order).
   ADR-033 is the owner's review of the built site (the rulings below);
-  ADR-034 moves the fonts into the repo (`next/font/local`).
+  ADR-034 moves the fonts into the repo (`next/font/local`); ADR-035 the fixes
+  after PR #11's code review (a still replica on a slow load, print, the
+  engine's inline transforms).
 
 Record any deviation in `DECISIONS.md` **before** writing the code that
 deviates.
@@ -42,7 +44,9 @@ For the studio site. The games are outside it; see **Games** below.
    focus). Every component has a CSS Module beside it (`<name>.module.css`,
    camelCase classes, joined with `cx()` from `lib/cx.ts`). No CSS framework,
    utility library, CSS-in-JS, Sass or icon set. No inline `style` except a
-   custom property whose value is data (`style={{ "--i": 1 }}`, ADR-005).
+   custom property whose value is data (`style={{ "--i": 1 }}`, ADR-005), and
+   the `transform`/`will-change` the spine engine writes at runtime on what it
+   moves (ADR-035).
 2. Where a style goes: a token → a type step from `styles/type.module.css` →
    a rule in the component's module → a new token in `tokens.css` (a new colour
    needs its contrast pairs declared). A component never styles another's

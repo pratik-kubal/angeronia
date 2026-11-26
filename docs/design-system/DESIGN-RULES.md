@@ -35,7 +35,9 @@ the games; rule 10, rule 12's TypeScript and strict-build gates, and rule 14 do.
 * **No inline `style`**, with one carve-out (ADR-005): the `style` attribute may
   carry a custom property whose value is *data* (a delay index, a measured
   length set by script), e.g. `style={{ "--i": 1 }}`. Never a colour, a size or a
-  layout property.
+  layout property. The second carve-out (ADR-035): the spine engine writes
+  `transform` and `will-change`, at runtime only, on the elements it moves, and
+  clears them when it stops. Print rules that must outrank it use `!important`.
 * `:global` in a module only to key off one of three classes on `<html>`
   (rule 8): `html.js` (script is on), `html.spine-live` (the spine's script is
   running) and `html:not(.js)` (no script). Never to reach into another
@@ -240,10 +242,14 @@ Scroll-linked motion is allowed for the spine (ADR-025). The conditions:
   `--dur-arrive-lead` 1050ms, `--dur-arrive` 1150ms, `--stagger` 80ms;
   `--ease-out`, `--ease-expo`. `--dur-script-wait` (2.5s) is not motion: it is
   how long the page waits for the script before it shows what the script would
-  have drawn (the whole line, the replica's every panel; ADR-031, ADR-032).
-* **No layout change when the script starts.** Anything the script will hold
-  in place (the belief's height) is reserved by CSS from the first paint, so a
-  link to a section lands where it points (ADR-032).
+  have drawn (the whole line, the replica's every panel, stacked inside the
+  pane at its own height; ADR-031, ADR-032, ADR-035).
+* **No layout change when the script starts**, or when it is late. Anything
+  the script will hold in place (the belief's height) is reserved by CSS from
+  the first paint, so a link to a section lands where it points (ADR-032); the
+  replica's stalled-script fallback keeps the replica's size (ADR-035).
+* **Motion is for the screen.** Reveals, the held scene and the drawn line sit
+  under `@media screen`; paper gets the finished page (ADR-035).
 * **Press feedback is motion too:** a press scale or an underline sweep sits
   inside `prefers-reduced-motion: no-preference`.
 * **No loop that plays on its own.** Nothing autoplays.

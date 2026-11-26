@@ -1,5 +1,6 @@
 import type React from "react";
-import { copy, LINKS, type LegalDocument, type StatementLine } from "@/data/angeronia";
+import type { Metadata } from "next";
+import { BRAND, copy, LINKS, shareImage, site, type LegalDocument, type StatementLine } from "@/data/angeronia";
 import { cx } from "@/lib/cx";
 import typeStyles from "@/styles/type.module.css";
 import { Band } from "./band";
@@ -9,6 +10,39 @@ import { SiteHeader } from "./site-header";
 import { Spine } from "./spine";
 import { Statement } from "./statement";
 import styles from "./legal-page.module.css";
+
+/**
+ * A legal page's metadata: its title, lede and address, also as the page's own
+ * Open Graph and Twitter card. A page's `openGraph` and `twitter` replace the
+ * layout's rather than merge with them, so both are set whole; without them a
+ * shared link to /privacy or /terms previewed as the home page (ADR-035). That
+ * also drops the card app/opengraph-image.tsx and twitter-image.tsx give the
+ * root, so the same two images are named here by their routes.
+ */
+export function legalMetadata(doc: LegalDocument): Metadata {
+  const path = `/${doc.slug}`;
+  const shareTitle = site.titleTemplate.replace("%s", doc.title);
+  const card = { width: shareImage.width, height: shareImage.height, alt: shareImage.alt, type: "image/png" };
+  return {
+    title: doc.title,
+    description: doc.lede,
+    alternates: { canonical: path },
+    openGraph: {
+      type: "website",
+      url: path,
+      title: shareTitle,
+      description: doc.lede,
+      siteName: BRAND.name,
+      images: [{ url: "/opengraph-image", ...card }],
+    },
+    twitter: {
+      card: "summary_large_image",
+      title: shareTitle,
+      description: doc.lede,
+      images: [{ url: "/twitter-image", ...card }],
+    },
+  };
+}
 
 /** The title crosses the axis at its last word space: "Privacy | Policy". */
 function titleLines(title: string): StatementLine[] {

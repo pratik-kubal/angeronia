@@ -1586,6 +1586,62 @@ depended on what Google chose to send each machine.
 * **To update a face**, replace the file in `assets/fonts/` (and its licence if
   it changed), then check the pages and the games' parity gate.
 
+### ADR-035 — After PR #11's code review: a still replica, paper, and the engine's transforms
+
+**Recorded 2026-11-25, before the code.** A code review of PR #11 found twelve
+faults, most confirmed in a browser. This entry records the fixes that change a
+rule or a building block of ADR-031 and ADR-032; the rest are plain bugs fixed
+in place (a chat that opened on its oldest turn after a slow load, a `<strong>`
+at weight 700, game tiles wider than their list at 320px, a token of 0 read as
+missing, games notes still naming Carbon).
+
+1. **The replica's stalled-script fallback keeps the replica's size** (amends
+   ADR-032 item 2). It took the no-script layout at its natural height, so on a
+   slow load the replica grew by more than a screen at `--dur-script-wait` and
+   shrank back when the tabs went live, moving everything below it twice
+   (1280px: 560 → 1731 → 560px), against "no layout change when the script
+   starts". Now, after the wait, the tabs hide and every panel shows under its
+   name, stacked **inside the pane at the pane's own height, which scrolls**.
+   Every panel is still in reach, and neither the timer nor a late script
+   changes the page's height. Without script the replica keeps the no-script
+   layout at natural height, as before. The stalled tabs are hidden as the
+   panels are (out of the flow, `visibility: hidden`), never with an animated
+   `display: none`: WebKit never undoes that one, so in Safari the tabs stayed
+   hidden after a slow load even once they were live (found while checking
+   this fix, and there before it).
+2. **A late script keeps the line whole.** If the script arrives after
+   `--dur-script-wait`, the page has already shown the whole line; the engine
+   no longer hides it and draws it down again from the top. It knows by asking
+   whether the band's hold-back animation is still running.
+3. **The held belief's stage is at least a screen tall**, not exactly one:
+   on a wide, short window (1920 × 400) the statement is taller than the
+   screen, and the fixed height clipped words no scroll could reach.
+4. **Paper gets the finished page.** Printing, or saving a PDF, left every block
+   the reader had not scrolled to at opacity 0 and printed the line as the
+   pieces placed for the screen. Reveals, the held scene's height and the
+   drawn line now apply on screen only. Paper gets the no-script line with its
+   word patches, and every statement, belief side and photograph rests in
+   place. A reveal still fading in when printing starts finishes at once.
+   Those print rules use `!important`, the one way a stylesheet outranks the
+   transform the engine writes on the element.
+5. **The engine may write `transform` and `will-change` inline** (a second
+   carve-out beside ADR-005's). It writes them at runtime only, on the elements
+   it moves (statement halves, the belief's sides, the line's pieces, the two
+   photographs), and clears them when it stops. Nothing in markup and no other
+   script does. A per-frame, scroll-linked position is data, and the direct
+   write is what keeps the pull cheap; moving it through custom properties
+   would rework the approved motion for no visible gain. So **Belief no longer
+   sets `will-change` on Statement's and Pair's elements** (rule 2): the engine
+   sets it on the belief's sides while the scene is live and clears it after.
+6. **The legal pages share as themselves.** They inherited the home page's
+   `og:url` and "Angeronia Labs" title, so a shared link to `/privacy` or
+   `/terms` previewed as the home page. Each now sets its own Open Graph and
+   Twitter title, description and URL (`legalMetadata` beside `LegalPage`).
+   Setting them drops the root's file-made card, so `legalMetadata` names the
+   same two images by route (`/opengraph-image`, `/twitter-image`), with the
+   card's size moved into `shareImage` so the component need not import the
+   card's renderer.
+
 ---
 
 ## 4. Plan closure
