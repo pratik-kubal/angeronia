@@ -1,19 +1,18 @@
 import { copy } from "@/data/angeronia";
+import styles from "./skip-link.module.css";
 
 /**
- * The first focusable thing on the page: a link that jumps past the header to
- * `#main` (design rule 10).
+ * The first focusable thing on every page: a link that jumps past the masthead
+ * to `<main id="main">` (DESIGN-RULES.md §10). Rendered by app/layout.tsx, so
+ * the games get it too, and each game's container is a `<main id="main">`.
  *
- * `cds--visually-hidden` is Carbon's own hide-from-sight-not-from-the-tree
- * utility; unlike the SLDS pairing it replaces, it sets no `!important`, so the
- * revealed treatment is a plain `:focus` rule in `styles/_site.scss` on the
- * same element rather than on an inner span.
- *
- * It renders on the server, so it works before hydration.
+ * It sits above the top of the screen until it has keyboard focus, then drops
+ * into the page's top-left corner in inverted ink. It renders on the server, so
+ * it works before hydration and without script.
  */
 export function SkipLink() {
   return (
-    <a href="#main" className="cds--visually-hidden site-skip-link">
+    <a href="#main" className={styles.skip}>
       {copy.skipLink}
     </a>
   );

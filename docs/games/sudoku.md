@@ -12,7 +12,7 @@ On the `/games` launcher and the home page's Games section, both of which show t
 
 A relaxed Sudoku built for an iPhone held upright: one screen, no page scroll, with its **own look**, "Aurora"
 (a pastel dawn in light, an indigo night with teal and magenta neon in dark, the iOS system font; the page ignores
-the studio site's Carbon tokens and its `data-theme`). There are no mistakes and no losing: a digit that
+the studio site's tokens). There are no mistakes and no losing: a digit that
 doesn't fit is simply refused (accepted: a player can try digits until one fits). Every solved board wins one of
 **100 collectible trophies**. **Themes**: Aurora is the default (the owner's ruling); Candy (all year, the owner's
 reference look: every digit a tile in its colour until all nine are placed), Beach, Halloween, Snow Day and Blossom,
@@ -87,7 +87,8 @@ your own digit by weight (700 against 500; Candy's tiles 900 against 700).
   `<html>` before paint, the two switches the stylesheets read, and tints `theme-color`; `EMBLEM_STYLE` draws the
   theme's title emblem in place of the 3×3 mark until the game loads), `sudoku.css` (the Aurora
   tokens, the defaults (the digit colours `--d1…--d9` among them): light then one dark block keyed on `data-sdk-scheme`; `color-scheme` is `!important`
-  because next-themes writes the site's inline; the scene and overlay layers (the game lets taps through
+  (it was there because next-themes wrote the site's inline; next-themes is gone since ADR-024, and the rule stays as
+  it was, ADR-029); the scene and overlay layers (the game lets taps through
   its gaps only); imported by the page only, so it never reaches the studio pages' CSS).
 - **Theme skins (`components/sudoku/themes/`):** `types.ts` (`SceneProps`: finished `boxes` as a 9-bit mask,
   `filled`, the latest `beat`, the `cue` to play; `Skin`: an optional Backdrop, Overlay and voice), `index.ts`

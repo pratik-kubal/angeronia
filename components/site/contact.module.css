@@ -1,0 +1,51 @@
+.contact {
+  padding: var(--section-space) var(--margin);
+}
+
+.pair {
+  --pair-yours: 15em;
+  margin-top: var(--space-l);
+}
+
+.reach {
+  --pair-mine: none;
+  margin-top: var(--space-2xl);
+}
+
+/* The button's top meets the address's cap height. */
+.action {
+  padding-top: 0.25em;
+}
+
+.address {
+  white-space: nowrap;
+}
+
+/* A finer underline at heading size, as the draft. Scoped under .address so it
+   outranks TextLink's own rule. */
+.address .addressLink {
+  text-decoration-thickness: 0.05em;
+  text-underline-offset: 0.14em;
+}
+
+.links {
+  display: flex;
+  gap: var(--space-6);
+  margin-top: var(--space-5);
+}
+
+@media (max-width: 899px) {
+  .action {
+    padding-top: 0;
+  }
+
+  /* Narrow, the address drops to the lead step: scoped under .reach so it
+     outranks the head step's class on the same element. */
+  .reach .address {
+    font-size: var(--step-lead);
+    font-weight: var(--weight-medium);
+    letter-spacing: var(--tracking-lead);
+    white-space: normal;
+    overflow-wrap: anywhere;
+  }
+}

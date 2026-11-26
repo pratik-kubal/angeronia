@@ -1,0 +1,12 @@
+.about {
+  padding: var(--section-space) var(--margin);
+}
+
+.pair {
+  --pair-mine: 23em;
+  margin-top: var(--space-l);
+}
+
+.statement {
+  margin-top: var(--space-3xl);
+}

@@ -1,50 +1,53 @@
 # angeronia.com
 
-Marketing site for **Angeronia Labs LLC** — a software engineering studio in
-Philadelphia, and the maker of [Code Socratic](https://code-socratic.angeronia.com/).
+Marketing site for **Angeronia Labs LLC**, a software engineering studio in
+Philadelphia, and the maker of [Code.Socratic](https://www.code-socratic.com).
 
-Built on **IBM Carbon v11** under an Angeronia brand override: Carbon Teal in
-place of Carbon Blue, IBM Plex as the typeface, Carbon for icons. Storybook is
-the source of truth for the UI — every component has a story before it appears
-on a page, and the page itself is a story.
+Built on **the spine**: plain CSS, Hanken Grotesk, near-black ink on off-white
+paper, and one 2px line down the page that every statement steps across. The
+owner chose the design on 2026-11-25
+([`DECISIONS.md`](docs/design-system/DECISIONS.md) ADR-023). Storybook is the
+source of truth for the UI: every component has a story before it appears on a
+page, and the page itself is a story.
+
+> The port of the draft is in place (ADR-031) and Carbon is gone.
 
 ## Stack
 
 | | |
 |---|---|
 | Framework | Next.js 15 (App Router), React 19, TypeScript — statically prerendered, no backend |
-| Design system | [`@carbon/react`](https://www.npmjs.com/package/@carbon/react) 1.115 + `styles/_themes.scss` |
-| Icons | [`@carbon/icons-react`](https://www.npmjs.com/package/@carbon/icons-react) |
-| Type | IBM Plex Sans / Mono, self-hosted via `next/font` |
-| Themes | Carbon White / Gray 100, switched by `data-theme` via `next-themes` |
+| Styles | Plain CSS: `styles/tokens.css` + `styles/base.css`, and a CSS Module per component |
+| Type | Hanken Grotesk 400/500/600; IBM Plex Mono 400 for code only — self-hosted via `next/font` |
+| Colour | One scheme: paper and ink, one charcoal band, sage only on buttons |
 | Storybook | 10.x with `@storybook/nextjs-vite`, `addon-a11y`, `addon-vitest` |
 
-No CSS framework, no utility library, no second icon set. Carbon's own classes
-and tokens are the whole vocabulary — for the studio site. The games below are
-the one exception.
+No CSS framework, no utility library, no CSS-in-JS, no Sass and no icon set on
+the studio site. The games below are the one exception.
 
 ## Develop
 
 ```bash
 npm install
-npm run dev              # http://localhost:3000
+npm run dev              # http://localhost:3000 (npm run dev -- --port <n> if it is taken)
 npm run storybook        # http://localhost:6006
 npm run build            # production build (fully static)
 ```
 
 ### Gates
 
-All three must pass to merge, and CI runs them on every pull request.
+All four must pass to merge, and CI runs them on every pull request.
 
 ```bash
 npm run typecheck        # tsc --noEmit, strict
-npm run check:theme      # token parity, contrast matrix, favicon
+npm run check:contrast   # every colour pair declared in styles/tokens.css, at AA, in every band
 npm run test:storybook   # every story in Chromium, axe violations fail
+npm run build            # the strict build
 ```
 
-There is no CSS linter. `slds-linter` was retired with SLDS rather than replaced
-— the axe pass over every story is the gate that catches real problems. See
-[`DECISIONS.md`](docs/design-system/DECISIONS.md) ADR-018.
+There is no CSS linter: the axe pass over every story is the gate that catches
+real problems ([`DECISIONS.md`](docs/design-system/DECISIONS.md) ADR-018,
+ADR-030).
 
 ### The games
 
@@ -74,51 +77,36 @@ To add a picture to Color Tap, drop a JPG (or PNG) into `public/paint-by-numbers
 `npm run dev` once (it converts it, about 20 s), look at it, and commit the photo with what the
 conversion wrote (`public/paint-by-numbers/puzzles/` and `lib/color-tap/pictures.ts`).
 
-### Generated artifacts
+A change to anything global (`styles/`, `app/layout.tsx`, `app/fonts.ts`,
+`components/games/base.css`) must leave the games exactly as they were. Prove it
+against a production server:
 
 ```bash
-npm run build:favicon    # app/icon.svg re-tinted onto the teal ramp
-npm run build:logos      # public/angeronia-logo-*.{svg,png} — OG/social lockups
+npm run build && npx next start -p 3417
+npm run games:parity -- baseline   # on the tree before the change
+npm run games:parity -- compare    # after it: fails if anything inside a game moved
 ```
 
-Both, and `check:theme`, resolve their colours by compiling
-`styles/globals.scss` and reading the custom properties back out
-(`scripts/carbon-tokens.mjs`). Nothing is duplicated in JavaScript, so a raster
-or a contrast assertion cannot drift from the stylesheet the site ships.
+## The tokens
 
-## The theme layer
+`styles/tokens.css` is the **only** file that assigns a design value. It holds
+the palette (private to the file), the band roles components read
+(`--band-ground`, `--band-ink`, `--band-soft`, `--band-spine`, `--band-focus`,
+`--band-frame`), the button's colours, five type steps, the space scale, the
+spine's geometry and the motion durations. A band sets `data-band="paper"` or
+`data-band="dark"` and its components never need to know which.
 
-`styles/_themes.scss` is the **only** file allowed to assign a `--cds-*` token.
-Everywhere else they are referenced and never re-valued. It does three things:
-
-* Emits Carbon's **White** token set on `:root` and **Gray 100** on
-  `:root[data-theme="dark"]`, plus a `prefers-color-scheme` fallback for the
-  no-JS case.
-* Applies the **brand override** — 21 tokens moved from Carbon's Blue 60 family
-  to Teal. Teal 60/40 are luminance twins of Blue 60/40, which is what lets the
-  swap keep every contrast pairing Carbon designed around blue. Everything else
-  keeps its stock value; `support-*` is deliberately untouched, because a brand
-  colour that can be mistaken for "success" is a colour-only meaning waiting to
-  happen.
-* Declares the handful of `--site-*` values that vary by theme: the hero
-  Möbius's lit and shaded faces, and the four syntax colours in the Code
-  Socratic replica.
-
-`npm run check:theme` checks that every token the override assigns is one Carbon
-actually defines, and asserts WCAG 2.2 across 40 pairings in both themes. The
-current matrix is committed at
-[`docs/design-system/theme-report.md`](docs/design-system/theme-report.md).
+Every colour pair is declared beside the tokens as an `@contrast` line, and
+`npm run check:contrast` checks each one in every band against WCAG 2.2 AA.
 
 ## Adding a component
 
-1. Check `@carbon/react` — it probably already exists there.
-2. If not, ask whether what you need is a *composition* of Carbon parts (a
-   `Card` is a `Tile` plus three rows) or something Carbon genuinely has no word
-   for (a media object, an avatar, a cluster). Both go in `components/ui/`;
-   nothing else does.
-3. Write `<name>.stories.tsx`: Default, every variant and size, states, long
-   content, dark. The dark story is not optional.
-4. Run the three gates.
+1. Find it in the draft (`.taste-skill/round2/type-only-statement/`, kept
+   outside git): the spine's components are already drawn there.
+2. Build `components/site/<name>.tsx` with `<name>.module.css`, reading only
+   tokens, and `<name>.stories.tsx`: default, variants, long content, and the
+   `phone` viewport where it changes under 900px.
+3. Run the gates.
 
 The full contract is
 [`docs/design-system/DESIGN-RULES.md`](docs/design-system/DESIGN-RULES.md).
@@ -129,24 +117,27 @@ Every decision and every deviation is recorded in
 
 ```
 app/
-  layout.tsx              fonts, metadata, JSON-LD, providers, skip link
+  layout.tsx              fonts, tokens + base, metadata, JSON-LD, skip link, page frame
+  fonts.ts                next/font: Hanken Grotesk, IBM Plex Mono
   page.tsx                composes storied sections and nothing else
-  icon.svg                favicon, on the teal ramp
+  privacy/  terms/        the legal pages, through components/site/legal-page.tsx
+  icon.svg                favicon: the spine's mark (ADR-031)
+  opengraph-image.tsx  twitter-image.tsx   the social image, both drawn by social-card.tsx
   robots.ts  sitemap.ts
+assets/og/                Hanken Grotesk TTFs (OFL) for the social image
+public/name/              the footer's two photographs (credited in the footer)
 styles/
-  _config.scss            Carbon configured once — fonts, CSS grid only
-  _themes.scss            THE theme layer: White + Gray 100 + the teal override
-  _site.scss              site composition only, Carbon tokens throughout
-  globals.scss            config -> carbon -> themes -> site
+  tokens.css              every design value, and the contrast pairs
+  base.css                reset, body type, focus ring, selection
+  type.module.css         the five type steps as classes
 components/
-  ui/                     only what Carbon does not provide, each with a story
-  site/                   page sections, built from @carbon/react and ui/
-lib/                      cx(), theme helpers
+  site/                   the studio's components, each with a CSS Module and a story
+lib/cx.ts                 class names joined
 data/angeronia.ts         every string the site renders
-scripts/                  token resolver, contrast gate, favicon, logos
-stories/foundations/      Brand, Color, Typography, Spacing/Shape/Motion, Icons
+scripts/                  the contrast gate, the games parity gate, the games' tools
+stories/foundations/      Tokens
 stories/pages/            the whole page, as a story
-docs/design-system/       DESIGN-RULES.md, DECISIONS.md, theme-report.md
+docs/design-system/       DESIGN-RULES.md, DECISIONS.md
 ```
 
 The games sit outside that tree's rules (ADR-019):
@@ -178,38 +169,32 @@ docs/games/               each game's design and test notes
 
 ## Accessibility
 
-WCAG 2.2 AA in both themes, and it is enforced rather than asserted:
-`check:theme` covers the brand override's own pairings without a browser, and
-`test:storybook` runs axe over every story — including the whole page in both
-themes — with violations failing the run rather than reporting.
+WCAG 2.2 AA, enforced rather than asserted: `check:contrast` covers every
+declared colour pair without a browser, and `test:storybook` runs axe over every
+story, including the whole page, with violations failing the run.
 
-Semantic HTML throughout, a skip link that works before hydration, Carbon's own
-focus ring, every icon either labelled or `aria-hidden`, and no meaning carried
-by colour alone.
+Semantic HTML throughout, a skip link that works before hydration, a visible
+focus ring, every SVG either labelled or `aria-hidden`, no meaning carried by
+colour alone, and the whole page without script or with reduced motion.
 
 ## Licensing and third-party assets
 
-* **IBM Carbon** (`@carbon/react`, `@carbon/styles`, `@carbon/themes`,
-  `@carbon/icons-react`, `@carbon/colors`) is Apache-2.0. Glyphs are used
-  unmodified. No UI attribution is required; the notices stay in `node_modules`.
-* **IBM Plex** is SIL OFL 1.1, self-hosted through `next/font`.
+* **Hanken Grotesk** and **IBM Plex Mono** are SIL OFL 1.1, self-hosted through
+  `next/font`.
 * **Phosphor Icons** (`@phosphor-icons/react`, MIT) draw the games' icons, and
   only theirs.
 * Solitaire's card faces are rendered from Byron Knoll's **Vector Playing
   Cards**, released into the public domain.
+* The footer's photographs are credited on the page:
+  "N06 Angerona, Schönbrunn (03)" by Herzi Pinki (CC BY-SA 4.0) and the Fasti
+  Antiates by Fabrizio Garrisi (CC0), both via Wikimedia Commons.
 
-No IBM trademark, wordmark or product artwork ships in this product, and this
-project is not affiliated with or endorsed by IBM. `cds--*` class names and
-`--cds-*` custom properties do appear in the markup and CSS: they are the API of
-the stylesheet, not trademark use.
-
-**On Salesforce Lightning Design System.** This site ran on SLDS 2 until
-2026-09-08. It no longer does, and no `@salesforce-ux/*` package remains: the
-SLDS 2 Terms of Use are not an OSI licence, and their indemnity clause covers
-claims arising from *any application you develop with the Software* — which is
-this site's own content, uncapped, running to a company. The reasoning, and what
-the move cost, are in
-[`DECISIONS.md`](docs/design-system/DECISIONS.md) ADR-015 and in
-[`docs/plans/carbon-migration-plan.md`](docs/plans/carbon-migration-plan.md).
+**On earlier design systems.** This site ran on Salesforce Lightning Design
+System 2 until 2026-09-08 and on IBM Carbon until 2026-11-25. Neither remains.
+No `@salesforce-ux/*` package may come back: the SLDS 2 Terms of Use are not an
+OSI licence, and their indemnity clause covers claims arising from *any
+application you develop with the Software*
+([`DECISIONS.md`](docs/design-system/DECISIONS.md) ADR-015). Carbon left by the
+owner's choice of a new design, not for its licence (ADR-023).
 
 © 2026 Angeronia Labs LLC.

@@ -1,0 +1,46 @@
+.button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--button);
+  color: var(--button-ink);
+  font-weight: var(--weight-medium);
+  letter-spacing: var(--tracking-ui);
+  text-decoration: none;
+  white-space: nowrap;
+  transition: background-color var(--dur-hover) var(--ease-out);
+}
+
+/* The press is motion: only with motion allowed (DESIGN-RULES.md §8). */
+@media (prefers-reduced-motion: no-preference) {
+  .button {
+    transition:
+      transform var(--dur-press) var(--ease-out),
+      background-color var(--dur-hover) var(--ease-out);
+  }
+
+  .button:active {
+    transform: scale(0.97);
+  }
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .button:hover {
+    background: var(--button-hover);
+  }
+}
+
+/* The button's own block, in rem and em as the draft: a touch target of at
+   least 44px at either size. */
+.body {
+  min-height: 3.25rem;
+  padding: 0 1.6rem;
+  font-size: var(--step-body);
+}
+
+.lead {
+  min-height: 1.9em;
+  padding: 0 0.9em;
+  font-size: var(--step-lead);
+  letter-spacing: var(--tracking-lead);
+}

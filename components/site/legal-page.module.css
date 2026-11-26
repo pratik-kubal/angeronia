@@ -1,0 +1,57 @@
+.document {
+  padding: var(--space-xl) var(--margin) var(--section-space);
+}
+
+.updated {
+  margin-top: var(--space-m);
+  margin-left: var(--hang);
+  color: var(--band-soft);
+}
+
+/* The lede's measure, as the services' intro. */
+.lede {
+  max-width: 28em;
+  margin-top: var(--space-4);
+  margin-left: var(--hang);
+}
+
+.sections {
+  margin-top: var(--space-3xl);
+}
+
+/* Each section is a pair: its heading on your side, its text on the studio's,
+   held to the running-text measure. */
+.section {
+  --pair-yours: 14em;
+  --pair-mine: var(--measure);
+}
+
+.section + .section {
+  margin-top: var(--space-l);
+}
+
+/* Scoped under .section so it outranks the lead step's weight on the same element. */
+.section .heading {
+  font-weight: var(--weight-medium);
+}
+
+/* The email address, kept on one line. */
+.nowrap {
+  white-space: nowrap;
+}
+
+.body > * + * {
+  margin-top: var(--space-4);
+}
+
+/* Legal bullets keep their markers: base.css removes them from every list. */
+.list {
+  padding-left: var(--space-5);
+  list-style: disc;
+}
+
+@media (max-width: 899px) {
+  .lede {
+    max-width: var(--measure);
+  }
+}

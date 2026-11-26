@@ -39,3 +39,7 @@ next-env.d.ts
 /test-results/
 /playwright-report/
 /playwright/.cache/
+
+# games parity baseline (scripts/games-parity.ts) and the design drafts
+.parity/
+.taste-skill/

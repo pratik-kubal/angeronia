@@ -1,19 +1,25 @@
 /* ══════════════════════════════════════════════════════════════════════════
    THE GAMES' BASE — the browser defaults the games were built on.
-   They were written in ../portfolio over Tailwind v4's preflight (MIT), and
-   here the root layout gives them Carbon's reset and default type instead
-   (an h1 at heading-06, body line-height 1, buttons at the browser's 13.33px
-   with its padding, links in link-primary, i not italic, SVGs on the
-   baseline). This puts back the parts of the preflight they rely on, scoped
-   to a game's shell, so nothing here reaches the studio pages. Imported by
-   each game's page and by the /games launcher (DECISIONS.md ADR-019, ADR-021, ADR-022).
+   They were written in ../portfolio over Tailwind v4's preflight (MIT). This
+   puts back the parts of the preflight they rely on, scoped to a game's
+   shell, so nothing here reaches the studio pages. Imported by each game's
+   page and by the /games launcher (DECISIONS.md ADR-019, ADR-021, ADR-022).
+
+   The root layout gives the games the studio's global CSS. Until 2026-11-25
+   that was Carbon's reset, its <body> and a page frame set in body-02; since
+   ADR-023 it is the spine's tokens.css and base.css (its own reset, and a
+   <body> in Hanken Grotesk at a fluid size). The games must render exactly as
+   they were measured under Carbon, so the rules below also pin, on each
+   shell, the inherited values that frame gave them (ADR-029). Proved by
+   `npm run games:parity` (scripts/games-parity.ts): run `baseline` before a
+   change to anything global and `compare` after.
 
    Specificity is the whole trick: `html body` then a `:where()` (0,0,2, or
-   0,0,3 on a pseudo-element) beats Carbon's bare-element rules (0,0,1) and
-   loses to every game rule, all of which carry a class (0,1,0 and up), the
-   way a preflight in a cascade layer did. Element lists go in `:where()`, not
-   `:is()`: the build prefixes `:is()` as `:-webkit-any()`, which counts as a
-   class and would win.
+   0,0,3 on a pseudo-element) beats the studio's element rules (0,0,1 and
+   below) and loses to every game rule, all of which carry a class (0,1,0 and
+   up), the way a preflight in a cascade layer did. Element lists go in
+   `:where()`, not `:is()`: the build prefixes `:is()` as `:-webkit-any()`,
+   which counts as a class and would win.
    ══════════════════════════════════════════════════════════════════════════ */
 html:has(.sdk-shell, .sol-shell, .gml-shell, .ctp-shell) {
   line-height: 1.5;
@@ -32,14 +38,31 @@ html body :where(.sdk-shell, .sdk-shell *, .sol-shell, .sol-shell *, .gml-shell,
   margin: 0;
   padding: 0;
   border: 0 solid;
-  /* Carbon writes "liga" on each element, which would drop a parent's own features (tnum). */
+  /* Each element inherits its parent's features (tnum), as it did when Carbon wrote "liga" on every element. */
   font-feature-settings: inherit;
 }
 
-/* Carbon sets these on <body>; the games start from the browser's. */
+/* The studio's <body> sets these; the games start from the browser's. */
 html body :where(.sdk-shell, .sol-shell, .gml-shell, .ctp-shell) {
   font-feature-settings: normal;
   text-rendering: auto;
+}
+
+/* What the page frame gave every shell when the games were measured (Carbon's
+   body-02 frame: 16px, line height 1.5, no tracking, 400, smoothed), pinned
+   here so the studio's <body> type (Hanken Grotesk at --step-body, its own
+   tracking and kerning) never reaches a game. A shell that sets any of these
+   itself still wins. */
+html body :where(.sdk-shell, .sol-shell, .gml-shell, .ctp-shell) {
+  font-size: 1rem;
+  font-weight: 400;
+  line-height: 1.5;
+  letter-spacing: normal;
+  font-kerning: auto;
+  /* Sudoku, Solitaire and Color Tap set the WebKit one on their own shells; the
+     launcher relied on <body>. No game sets the Firefox one. */
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
 }
 
 html body :where(.sdk-shell, .sol-shell, .gml-shell, .ctp-shell) :where(h1, h2, h3, h4, h5, h6, p) {
@@ -48,6 +71,8 @@ html body :where(.sdk-shell, .sol-shell, .gml-shell, .ctp-shell) :where(h1, h2, 
   line-height: inherit;
   letter-spacing: inherit;
 }
+/* The studio sets text-wrap: pretty on every paragraph; in a game it inherits. */
+html body :where(.sdk-shell, .sol-shell, .gml-shell, .ctp-shell) p { text-wrap: inherit; }
 html body :where(.sdk-shell, .sol-shell, .gml-shell, .ctp-shell) :where(b, strong) { font-weight: bolder; }
 html body :where(.sdk-shell, .sol-shell, .gml-shell, .ctp-shell) small { font-size: 80%; }
 html body :where(.sdk-shell, .sol-shell, .gml-shell, .ctp-shell) :where(i, em) { font-style: italic; }

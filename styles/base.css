@@ -1,0 +1,102 @@
+/* ══════════════════════════════════════════════════════════════════════════
+   base.css — the reset, the page's type and focus (DESIGN-RULES.md).
+
+   Ported from the spine draft's css/page.css (ADR-023). Imported once, after
+   tokens.css, by app/layout.tsx.
+
+   It reaches the games too (they render under the same layout), so it is
+   written to stay out of their way (ADR-029):
+   * element rules sit in :where(), specificity 0, so any game rule wins, and
+     components/games/base.css puts back what the games were measured with;
+   * the focus ring and the selection colour are scoped to [data-band], which
+     every studio band carries and no game does.
+   Change anything here and run the games parity gate (`npm run games:parity`).
+   ══════════════════════════════════════════════════════════════════════════ */
+
+/* ── Reset ─────────────────────────────────────────────────────────────── */
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html {
+  -webkit-text-size-adjust: 100%;
+  text-size-adjust: 100%;
+  background: var(--band-ground);
+}
+
+body {
+  margin: 0;
+  background: var(--band-ground);
+  color: var(--band-ink);
+  font-family: var(--font-sans);
+  font-size: var(--step-body);
+  font-weight: var(--weight-text);
+  line-height: var(--leading-body);
+  letter-spacing: var(--tracking-body);
+  font-kerning: normal;
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
+
+:where(h1, h2, h3, h4, h5, h6, p, figure, blockquote, ul, ol, dl, dd, pre) {
+  margin: 0;
+}
+
+/* A heading's look comes from a type step, never from its level (§5). */
+:where(h1, h2, h3, h4, h5, h6) {
+  font-size: inherit;
+  font-weight: inherit;
+}
+
+:where(ul, ol) {
+  padding: 0;
+  list-style: none;
+}
+
+:where(img) {
+  display: block;
+  max-width: 100%;
+  height: auto;
+}
+
+:where(a) {
+  color: inherit;
+}
+
+:where(button, input, select, textarea) {
+  font: inherit;
+  color: inherit;
+}
+
+:where(p) {
+  text-wrap: pretty;
+}
+
+:where(:target) {
+  scroll-margin-top: var(--space-6);
+}
+
+/* ── Focus and selection, on the studio's bands only ───────────────────── */
+:where([data-band] :focus-visible, [data-band]:focus-visible) {
+  outline: var(--focus-width) solid var(--band-focus);
+  outline-offset: var(--focus-offset);
+}
+
+:where([data-band]) ::selection,
+:where([data-band])::selection {
+  background: var(--band-ink);
+  color: var(--band-ground);
+}
+
+/* ── Utilities ─────────────────────────────────────────────────────────── */
+/* Hidden from sight, not from the accessibility tree. */
+.visually-hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+}

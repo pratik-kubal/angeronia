@@ -1,6 +1,6 @@
 /* ══════════════════════════════════════════════════════════════════════════
    SUDOKU (/sudoku) — "Aurora": an iOS-native Sudoku lit by the sky, with a look
-   of its own (not the studio site's Carbon tokens; DECISIONS.md ADR-019). Light is a pastel dawn, dark
+   of its own (not the studio site's tokens; DECISIONS.md ADR-019). Light is a pastel dawn, dark
    an indigo night with teal and magenta neon. Imported by app/sudoku/page.tsx
    only, so none of it reaches the studio pages' render-blocking CSS. Light is the
    base; dark is one block keyed on data-sdk-scheme, which LOOK_SCRIPT and the
@@ -94,8 +94,8 @@ html:has(.sdk-shell) {
   --font: -apple-system, BlinkMacSystemFont, "SF Pro Text", system-ui, sans-serif;
 
   background: var(--bg);
-  /* !important: next-themes writes the site's color-scheme inline on <html>, which would
-     otherwise draw native controls and scrollbars for the wrong theme. */
+  /* !important: the game's own scheme wins over anything the site writes on <html>, so native
+     controls and scrollbars are always drawn for the game's theme. */
   color-scheme: light !important;
 }
 html[data-sdk-scheme="dark"]:has(.sdk-shell) {

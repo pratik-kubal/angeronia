@@ -1,7 +1,7 @@
 import type { Metadata, Viewport } from "next";
 import { SudokuGame } from "@/components/sudoku/sudoku-game";
 import { EMBLEM_STYLE, LOOK_SCRIPT } from "@/components/sudoku/storage";
-// The browser defaults the game was built on, in place of Carbon's reset (ADR-019).
+// The browser defaults the game was built on, in place of the studio's reset (ADR-019, ADR-029).
 import "@/components/games/base.css";
 import "@/components/sudoku/sudoku.css";
 // Every theme's tokens and scene styles, after the base so a theme's tokens win. Keep in step
@@ -14,7 +14,7 @@ import "@/components/sudoku/themes/snow/snow.css";
 import "@/components/sudoku/themes/blossom/blossom.css";
 
 // Sudoku, built for a phone held upright, with its own look (its own themes, each in light and
-// dark, not the studio site's Carbon tokens; DECISIONS.md ADR-019). Linked from the home page
+// dark, not the studio site's tokens; DECISIONS.md ADR-019). Linked from the home page
 // (ADR-020), but not in the nav or sitemap.ts, and noindex.
 export const metadata: Metadata = {
   title: "Sudoku",

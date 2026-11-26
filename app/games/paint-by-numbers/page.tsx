@@ -1,11 +1,11 @@
 import type { Metadata, Viewport } from "next";
 import { ColorTapGame } from "@/components/color-tap/color-tap-game";
-// The browser defaults the game was built on, in place of Carbon's reset (ADR-019).
+// The browser defaults the game was built on, in place of the studio's reset (ADR-019, ADR-029).
 import "@/components/games/base.css";
 import "@/components/color-tap/color-tap.css";
 
 // Color Tap: paint by numbers, made from the photos in public/paint-by-numbers/ at build time
-// (DECISIONS.md ADR-022), in a dark studio of its own (not the studio site's Carbon tokens;
+// (DECISIONS.md ADR-022), in a dark studio of its own (not the studio site's tokens;
 // ADR-019). On the /games launcher and the home page's Games section (ADR-020, ADR-021), but not in
 // the nav or sitemap.ts, and noindex.
 export const metadata: Metadata = {

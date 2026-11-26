@@ -1,42 +1,50 @@
-import { Bot, CloudServices, Rocket, Meter } from "@carbon/icons-react";
-import { Tag } from "@carbon/react";
-import { Card } from "@/components/ui/card";
-import { Cluster } from "@/components/ui/cluster";
-import { Section } from "@/components/ui/section";
-import { services, servicesHeading, servicesLabel } from "@/data/angeronia";
-
-const ICONS = [Bot, CloudServices, Rocket, Meter];
+import { services } from "@/data/angeronia";
+import { cx } from "@/lib/cx";
+import motionStyles from "@/styles/motion.module.css";
+import typeStyles from "@/styles/type.module.css";
+import { Band } from "./band";
+import { Mine, Pair, Yours } from "./pair";
+import { Statement } from "./statement";
+import styles from "./services.module.css";
 
 /**
- * What the studio takes on: four cards, two by two from `md`.
- *
- * The technology tags are Carbon `Tag`s in the neutral `outline` type. Design
- * rule 4 reserves the coloured types for meaning, and a technology tag means
- * nothing beyond itself.
+ * Four kinds of work, a stepped ledger on the spine: each area's name crosses,
+ * hangs from or is pushed past the axis, then its pair, your need on the left
+ * and the studio's build on the right, with its four parts as a real list,
+ * shown inline.
  */
 export function Services() {
   return (
-    <Section id="services" kicker={servicesLabel} heading={servicesHeading}>
-      <div className="site-cards site-cards_2">
-        {services.map((service, index) => (
-          <Card
-            key={service.title}
-            heading={service.title}
-            icon={ICONS[index]}
-            footer={
-              <Cluster>
-                {service.tags.map((tag) => (
-                  <Tag key={tag} type="outline" size="sm">
-                    {tag}
-                  </Tag>
-                ))}
-              </Cluster>
-            }
-          >
-            <p>{service.blurb}</p>
-          </Card>
+    <Band as="section" band="paper" id="services" aria-labelledby="services-title" className={styles.services}>
+      <Statement as="h2" id="services-title" size="display" lines={services.lines} motion="pull" />
+      <p className={cx(typeStyles.lead, styles.intro, motionStyles.reveal)}>{services.intro}</p>
+
+      <div className={styles.areas}>
+        {services.areas.map((area) => (
+          <article key={area.yours} className={styles.area}>
+            <Statement
+              as="h3"
+              size="head"
+              lines={area.lines}
+              // A name with a crossing line is pulled open; one that only hangs reveals.
+              motion={area.lines.some((line) => "cross" in line) ? "pull" : "reveal"}
+            />
+            <Pair as="div" narrowOrder="yours-first" className={styles.pair}>
+              <Yours as="p" reveal={0}>
+                {area.yours}
+              </Yours>
+              <Mine as="div" reveal={1}>
+                <p>{area.mine}</p>
+                <ul className={styles.parts} role="list" aria-label={services.partsLabel}>
+                  {area.parts.map((part) => (
+                    <li key={part}>{part}</li>
+                  ))}
+                </ul>
+              </Mine>
+            </Pair>
+          </article>
         ))}
       </div>
-    </Section>
+    </Band>
   );
 }

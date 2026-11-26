@@ -1,0 +1,52 @@
+.belief {
+  /* Screens of scroll the stage is held for (the draft's hold: 0.8). */
+  --hold: 0.8;
+}
+
+.stage {
+  position: relative;
+  padding: var(--section-space) var(--margin);
+}
+
+.inner {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2xl);
+}
+
+.pair {
+  --pair-yours: 13em;
+  --pair-mine: 15em;
+}
+
+/* Held (desktop, motion allowed, with script): the band is (hold + 1) screens
+   tall and its stage sticks to the screen for the hold. Reserved from the first
+   paint under html.js, on exactly the screens where Spine holds the scene, so
+   the page's height never changes when the script starts and a link to a
+   section below lands where it points (ADR-032). Spine only marks the scene
+   data-live and moves the halves. Screen only: on paper the band rests closed.
+
+   The stage is at least a screen tall, not exactly one: on a wide, short window
+   (1920 x 400) the statement is taller than the screen, and a fixed height would
+   clip words the reader could never scroll to. */
+@media screen and (min-width: 900px) and (prefers-reduced-motion: no-preference) {
+  :global(html.js) .belief {
+    height: calc((var(--hold) + 1) * 100svh);
+  }
+
+  :global(html.js) .stage {
+    position: sticky;
+    top: 0;
+    min-height: 100svh;
+    padding-block: 0;
+    overflow: clip; /* clip, not hidden: hidden would make the stage a scroll container */
+    contain: layout paint;
+  }
+
+  /* The statement sits a little above the middle of the held screen. */
+  :global(html.js) .inner {
+    justify-content: center;
+    min-height: 100svh;
+    padding-bottom: 4vh;
+  }
+}

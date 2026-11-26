@@ -1,43 +1,42 @@
-import { Button, Column } from "@carbon/react";
-import { Grid } from "@/components/ui/grid";
-import { Heading, Kicker } from "@/components/ui/text";
-import { MobiusFigure } from "./mobius-figure";
+import type React from "react";
 import { hero } from "@/data/angeronia";
+import { cx } from "@/lib/cx";
+import typeStyles from "@/styles/type.module.css";
+import { Band } from "./band";
+import { Button } from "./button";
+import { Mine, Pair, Yours } from "./pair";
+import { Statement } from "./statement";
+import styles from "./hero.module.css";
 
 /**
- * The page opening.
- *
- * Two columns from `md` up — copy at 5/8 then 9/16, the Möbius at 3/8 then
- * 7/16 — and one stacked column below it, where the figure drops out entirely.
- * The heading stays held to the heading measure so the display line breaks
- * where it should rather than where its column happens to end.
- *
- * The figure is the page's one illustration (design rule 9) and the only thing
- * on the site that moves by itself; ADR-012 and ADR-013 carry the reasoning.
+ * The first screen: the owner's headline stepping across the spine ("One
+ * engineer," hanging, "screen | to server" crossing), then the supporting
+ * sentence on the studio's side and the button on yours. The headline arrives
+ * on load; the sentence and the button rise in after it (CSS only, so it plays
+ * from the first paint and rests finished without script or motion).
  */
 export function Hero() {
   return (
-    <section className="site-section site-hero" aria-labelledby="hero-heading">
-      <Grid className="site-container">
-        <Column sm={4} md={5} lg={9} className="site-hero__copy">
-          <Kicker>{hero.kicker}</Kicker>
-          <Heading
-            level={1}
-            size="display"
-            id="hero-heading"
-            className="site-measure_heading site-hero__heading"
+    <Band as="section" band="paper" id="top" aria-labelledby="hero-title" className={styles.hero}>
+      <div>
+        <Statement as="h1" id="hero-title" size="display" lines={hero.lines} motion="arrive" />
+        {/* The sentence before the button in the DOM, as on a phone (ADR-032). */}
+        <Pair as="div" narrowOrder="mine-first" className={styles.foot}>
+          <Mine
+            as="p"
+            className={cx(typeStyles.lead, styles.load)}
+            // Its delay, in staggers, travels as data (DESIGN-RULES.md §1).
+            style={{ "--d": 5.5 } as React.CSSProperties}
           >
-            {hero.h1}
-          </Heading>
-          <Button kind="primary" href={hero.ctaPrimary.href}>
-            {hero.ctaPrimary.label}
-          </Button>
-        </Column>
-
-        <Column sm={4} md={3} lg={7} className="site-hero__figcol">
-          <MobiusFigure />
-        </Column>
-      </Grid>
-    </section>
+            {hero.lead}
+          </Mine>
+          <Yours as="div" className={cx(styles.action, styles.load)} style={{ "--d": 7 } as React.CSSProperties}>
+            <Button href={hero.action.href} size="body">
+              {hero.action.label}
+            </Button>
+          </Yours>
+        </Pair>
+      </div>
+    </Band>
   );
 }

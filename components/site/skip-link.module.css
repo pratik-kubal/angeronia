@@ -1,0 +1,25 @@
+/* Off the top of the screen until focused (translate, not display or
+   visibility, so it stays in the tab order and the accessibility tree). Its ink
+   is the inverse of the page's: the ground on the foreground, a declared pair. */
+.skip {
+  position: absolute;
+  top: var(--space-3);
+  left: var(--margin);
+  z-index: 10; /* above every band; nothing else on the page is stacked */
+  padding: var(--space-3) var(--space-4);
+  background: var(--band-ink);
+  color: var(--band-ground);
+  font-family: var(--font-sans);
+  font-size: var(--step-body);
+  font-weight: var(--weight-medium);
+  line-height: var(--leading-body);
+  letter-spacing: var(--tracking-ui);
+  text-decoration: none;
+  transform: translateY(-160%);
+}
+
+.skip:focus-visible {
+  transform: none;
+  outline: var(--focus-width) solid var(--band-ink);
+  outline-offset: var(--focus-offset);
+}

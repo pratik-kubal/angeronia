@@ -1,0 +1,48 @@
+.masthead {
+  height: var(--mast-height);
+  padding-inline: var(--margin);
+}
+
+/* The wordmark ends before the axis; the links start after it. */
+.mast {
+  display: grid;
+  grid-template-columns: calc(var(--axis-inset) - var(--spine-gap)) calc(var(--spine-gap) * 2) minmax(0, 1fr) auto;
+  align-items: center;
+  height: 100%;
+}
+
+.wordmark {
+  grid-column: 1;
+  justify-self: start;
+  font-weight: var(--weight-display);
+  letter-spacing: var(--tracking-ui);
+  text-decoration: none;
+}
+
+.nav {
+  grid-column: 3;
+}
+
+.links {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-1) var(--space-6);
+}
+
+.action {
+  grid-column: 4;
+}
+
+/* Narrow: the wordmark hangs from the axis, the email link at the margin. */
+@media (max-width: 899px) {
+  .mast {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding-left: var(--hang);
+  }
+
+  .nav {
+    display: none;
+  }
+}

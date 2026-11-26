@@ -1,0 +1,136 @@
+.footer {
+  padding: var(--section-space) var(--margin) var(--space-2xl);
+}
+
+/* The name: the statue on your side, ending at the axis; the note and the
+   calendar on the studio's. Its own grid, not a Pair: under 900px the statue
+   stays at the margin rather than hanging. */
+.name {
+  display: grid;
+  grid-template-columns: calc(var(--axis-inset) - var(--spine-gap)) calc(var(--spine-gap) * 2) minmax(0, 1fr);
+  align-items: start;
+  margin-top: var(--space-xl);
+}
+
+/* 22rem and 36rem are the photographs' widths on the page; 44rem and 20em
+   the text column's and the note's measures, as the draft. */
+.statue {
+  grid-column: 1;
+  justify-self: end;
+  width: min(100%, 22rem);
+}
+
+.text {
+  grid-column: 3;
+  max-width: 44rem;
+}
+
+.note {
+  max-width: 20em;
+}
+
+.calendar {
+  max-width: 36rem;
+  margin-top: var(--space-l);
+}
+
+.frame {
+  overflow: clip;
+  background: var(--band-frame);
+}
+
+.portrait {
+  aspect-ratio: 4 / 5;
+}
+
+.wide {
+  aspect-ratio: 3 / 2;
+}
+
+.photo {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+/* The statue's face, not its plinth. */
+.portrait .photo {
+  object-position: 50% 16%;
+}
+
+/* On paper the photographs rest unmoved, wherever the drift had them.
+   !important: it has to outrank the transform Spine writes on the element
+   (ADR-035). */
+@media print {
+  .photo {
+    transform: none !important;
+  }
+}
+
+.caption {
+  margin-top: var(--space-3);
+  color: var(--band-soft);
+}
+
+.statue .caption {
+  text-align: right;
+}
+
+.legal {
+  --pair-mine: 40em;
+  margin-top: var(--space-4xl);
+}
+
+.city {
+  font-weight: var(--weight-medium);
+}
+
+.rest > * + * {
+  margin-top: var(--space-2);
+}
+
+.links {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-1) var(--space-6);
+}
+
+.credits {
+  color: var(--band-soft);
+}
+
+@media (max-width: 899px) {
+  .name {
+    display: block;
+  }
+
+  /* justify-self applies in block layout too now: put the statue back at the margin. */
+  .statue {
+    justify-self: start;
+    width: min(76vw, 22rem);
+  }
+
+  .statue .caption,
+  .calendar .caption {
+    margin-left: var(--hang);
+    text-align: left;
+  }
+
+  .text {
+    max-width: none;
+    margin-top: var(--space-8);
+  }
+
+  .note {
+    margin-left: var(--hang);
+  }
+
+  .calendar {
+    max-width: none;
+  }
+
+  /* Outranks Pair's own gap between the stacked sides. */
+  .legal > .city + .rest {
+    margin-top: var(--space-5);
+  }
+}

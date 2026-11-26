@@ -1,6 +1,6 @@
 import type { Metadata, Viewport } from "next";
 import { games } from "@/data/angeronia";
-// The browser defaults the games were built on, in place of Carbon's reset (ADR-019).
+// The browser defaults the games were built on, in place of the studio's reset (ADR-019, ADR-029).
 import "@/components/games/base.css";
 import "@/components/games/launcher.css";
 
