@@ -1,60 +1,88 @@
-import { Column } from "@carbon/react";
-import { Grid } from "@/components/ui/grid";
-import { Heading, Body } from "@/components/ui/text";
-import { SiteHeader } from "@/components/site/site-header";
-import { SiteFooter } from "@/components/site/site-footer";
-import type { LegalDocument } from "@/data/angeronia";
+import type React from "react";
+import { copy, LINKS, type LegalDocument, type StatementLine } from "@/data/angeronia";
+import { cx } from "@/lib/cx";
+import typeStyles from "@/styles/type.module.css";
+import { Band } from "./band";
+import { Mine, Pair, Yours } from "./pair";
+import { SiteFooter } from "./site-footer";
+import { SiteHeader } from "./site-header";
+import { Spine } from "./spine";
+import { Statement } from "./statement";
+import styles from "./legal-page.module.css";
+
+/** The title crosses the axis at its last word space: "Privacy | Policy". */
+function titleLines(title: string): StatementLine[] {
+  const at = title.lastIndexOf(" ");
+  return at > 0 ? [{ cross: [title.slice(0, at), title.slice(at + 1)] }] : [{ hang: title }];
+}
 
 /**
- * A legal document as a page: the privacy policy and the terms both render
- * through here, so the two cannot drift apart in layout or in type.
- *
- * The measure is 60ch rather than the page's full width — these are the only
- * pages on the site that are read as continuous prose, and a 1200px line is
- * unreadable at that length.
+ * The text as written, with the email address kept on one line: narrow, it
+ * would otherwise break at its hyphen and read (and copy) as two pieces.
+ */
+function keepAddressWhole(text: string): React.ReactNode {
+  const pieces = text.split(LINKS.email);
+  if (pieces.length === 1) return text;
+  return pieces.flatMap((piece, i) =>
+    i === 0
+      ? [piece]
+      : [
+          <span key={i} className={styles.nowrap}>
+            {LINKS.email}
+          </span>,
+          piece,
+        ],
+  );
+}
+
+/**
+ * A legal document as a page, in the spine's language (ADR-031): the
+ * masthead, the title crossing the axis, the date and the lede hanging from
+ * it, then each section as a pair, its heading on your side and its text on
+ * the studio's, and the site's footer. The privacy policy and the terms both
+ * render through here, so the two cannot drift apart. Their text is the
+ * company's legal voice and is left as written (ADR-028).
  *
  * The updated date is a `<time>` with a machine-readable `dateTime`, because a
- * legal document's date is the notice: it should be as legible to a crawler or
- * a reader-mode as it is on the page.
+ * legal document's date is its notice.
  */
 export function LegalPage({ document: doc }: { document: LegalDocument }) {
   return (
     <>
-      <SiteHeader />
+      <SiteHeader page="other" />
       <main id="main">
-        <section className="site-section" aria-labelledby="legal-heading">
-          <Grid className="site-container">
-            <Column sm={4} md={8} lg={16}>
-              <Heading level={1} size="display" id="legal-heading" className="site-measure_heading">
-                {doc.title}
-              </Heading>
-              <p className="site-legal__updated">
-                Last updated <time dateTime={doc.updatedIso}>{doc.updated}</time>
-              </p>
-              <Body className="site-legal__lede">{doc.lede}</Body>
+        <Band as="article" band="paper" aria-labelledby="legal-title" className={styles.document}>
+          <Statement as="h1" id="legal-title" size="display" lines={titleLines(doc.title)} motion="pull" />
+          <p className={cx(typeStyles.small, styles.updated)}>
+            {copy.lastUpdated} <time dateTime={doc.updatedIso}>{doc.updated}</time>
+          </p>
+          <p className={cx(typeStyles.lead, styles.lede)}>{doc.lede}</p>
 
-              <div className="site-legal">
-                {doc.sections.map((section) => (
-                  <section key={section.heading}>
-                    <h2 className="site-legal__heading">{section.heading}</h2>
-                    {section.paragraphs.map((paragraph) => (
-                      <p key={paragraph}>{paragraph}</p>
-                    ))}
-                    {section.bullets ? (
-                      <ul className="site-legal__list">
-                        {section.bullets.map((bullet) => (
-                          <li key={bullet}>{bullet}</li>
-                        ))}
-                      </ul>
-                    ) : null}
-                  </section>
-                ))}
-              </div>
-            </Column>
-          </Grid>
-        </section>
+          <div className={styles.sections}>
+            {doc.sections.map((section) => (
+              <Pair key={section.heading} as="section" narrowOrder="yours-first" className={styles.section}>
+                <Yours as="h2" className={cx(typeStyles.lead, styles.heading)}>
+                  {section.heading}
+                </Yours>
+                <Mine as="div" className={styles.body}>
+                  {section.paragraphs.map((paragraph) => (
+                    <p key={paragraph}>{keepAddressWhole(paragraph)}</p>
+                  ))}
+                  {section.bullets ? (
+                    <ul className={styles.list}>
+                      {section.bullets.map((bullet) => (
+                        <li key={bullet}>{keepAddressWhole(bullet)}</li>
+                      ))}
+                    </ul>
+                  ) : null}
+                </Mine>
+              </Pair>
+            ))}
+          </div>
+        </Band>
       </main>
       <SiteFooter />
+      <Spine />
     </>
   );
 }

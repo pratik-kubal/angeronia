@@ -1,53 +1,46 @@
-import { Button, Column, Link } from "@carbon/react";
-import { Grid } from "@/components/ui/grid";
-import { BrandMark } from "@/components/site/brand-mark";
-import { ColorSchemeSwitcher } from "@/components/site/color-scheme-switcher";
-import { nav } from "@/data/angeronia";
+import { BRAND, nav } from "@/data/angeronia";
+import { Band } from "./band";
+import { TextLink } from "./text-link";
+import styles from "./site-header.module.css";
+
+type SiteHeaderProps = {
+  /**
+   * Where the header sits. On the home page its links are the page's own
+   * hashes and the wordmark goes to the top; elsewhere (the legal pages) they
+   * lead back to the home page's sections.
+   */
+  page: "home" | "other";
+};
 
 /**
- * The site header.
- *
- * Built from the grid and Tier-1 parts rather than Carbon's `UIShell`
- * `Header` — the UI Shell is application chrome for a product with a global
- * nav, and this is a five-link marketing bar that has to sit inside the page's
- * own container rather than pin itself to the viewport.
- *
- * The nav links collapse out of view below `lg`, where the in-page anchors they
- * point at are only a scroll away; the CTA and the scheme switcher stay,
- * because neither has an alternative route.
+ * The masthead on paper (DESIGN-RULES.md §7): the wordmark on your side of the
+ * axis, the section links starting after it, and "Email the studio" at the right
+ * margin. Under 900px the links hide and the wordmark hangs from the axis.
+ * The games are not in it (ADR-020).
  */
-export function SiteHeader() {
+export function SiteHeader({ page }: SiteHeaderProps) {
+  const base = page === "home" ? "" : "/";
   return (
-    <header className="site-header">
-      <Grid className="site-container">
-        <Column sm={4} md={8} lg={16}>
-          <div className="site-header__bar">
-            {/* No `aria-label`: the lockup renders the studio name as text, so
-                an added label would replace the visible words with different
-                ones — WCAG 2.5.3 Label in Name. */}
-            <a href="/" className="site-header__brand">
-              <BrandMark />
-            </a>
-
-            <nav aria-label={nav.label} className="site-header__nav">
-              <ul className="site-header__nav-list">
-                {nav.items.map((item) => (
-                  <li key={item.href}>
-                    <Link href={item.href}>{item.label}</Link>
-                  </li>
-                ))}
-              </ul>
-            </nav>
-
-            <div className="site-header__actions">
-              <ColorSchemeSwitcher />
-              <Button kind="tertiary" size="sm" href={nav.cta.href}>
-                {nav.cta.label}
-              </Button>
-            </div>
-          </div>
-        </Column>
-      </Grid>
-    </header>
+    <Band as="header" band="paper" className={styles.masthead}>
+      <div className={styles.mast}>
+        <a className={styles.wordmark} href={page === "home" ? "#top" : "/"}>
+          {BRAND.name}
+        </a>
+        <nav className={styles.nav} aria-label={nav.label}>
+          <ul className={styles.links} role="list">
+            {nav.items.map((item) => (
+              <li key={item.hash}>
+                <TextLink href={`${base}${item.hash}`} emphasis="quiet" external={false}>
+                  {item.label}
+                </TextLink>
+              </li>
+            ))}
+          </ul>
+        </nav>
+        <TextLink href={nav.action.href} emphasis="quiet" external={false} className={styles.action}>
+          {nav.action.label}
+        </TextLink>
+      </div>
+    </Band>
   );
 }

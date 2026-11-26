@@ -1,0 +1,9 @@
+/* Storybook-only frames for the building blocks' stories: the padding a
+   section would give them. Never imported by a page. */
+.padded {
+  padding: var(--space-3xl) var(--margin);
+}
+
+.stack > * + * {
+  margin-top: var(--space-2xl);
+}

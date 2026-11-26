@@ -1,0 +1,194 @@
+/* The Tokens board. Storybook documentation, built from the tokens it shows. */
+
+.board {
+  padding: var(--space-l) var(--margin) var(--section-space);
+  background: var(--band-ground);
+  color: var(--band-ink);
+}
+
+.intro {
+  max-width: var(--measure);
+  margin-top: var(--space-4);
+  color: var(--band-soft);
+}
+
+.title {
+  margin-top: var(--space-2xl);
+  margin-bottom: var(--space-m);
+  font-size: var(--step-lead);
+  font-weight: var(--weight-medium);
+  line-height: var(--leading-lead);
+  letter-spacing: var(--tracking-lead);
+}
+
+.code {
+  font-family: var(--font-code);
+  font-size: var(--step-small);
+}
+
+/* ── Colour ───────────────────────────────────────────────────────────── */
+.bands {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 30rem), 1fr)); /* a board's own column width */
+}
+
+.band {
+  padding: var(--space-m) var(--margin);
+  background: var(--band-ground);
+  color: var(--band-ink);
+}
+
+.bandTitle {
+  margin-bottom: var(--space-5);
+  font-weight: var(--weight-medium);
+}
+
+.pairs {
+  display: grid;
+  gap: var(--space-2);
+}
+
+.pair {
+  display: grid;
+  grid-template-columns: 3.5rem 1fr; /* the sample's own column */
+  column-gap: var(--space-4);
+  align-items: center;
+  padding: var(--space-3) var(--space-4);
+  background: var(--pair-bg);
+  color: var(--pair-fg);
+}
+
+.sample {
+  grid-row: span 3;
+  font-size: var(--step-head);
+  font-weight: var(--weight-display);
+  line-height: var(--leading-head);
+  letter-spacing: var(--tracking-head);
+}
+
+/* A ui pair is a line, not text: drawn in the foreground at the spine's width. */
+.rule {
+  display: block;
+  width: 100%;
+  height: var(--spine-width);
+  background: currentColor;
+}
+
+.ratio {
+  font-size: var(--step-small);
+  line-height: var(--leading-small);
+}
+
+/* A ui swatch's own words are text on the band, so they take the band's ink. */
+.pair[data-kind="ui"] {
+  color: var(--band-ink);
+  background: var(--band-ground);
+}
+
+.pair[data-kind="ui"] .rule {
+  background: var(--pair-fg);
+}
+
+.frame {
+  margin-top: var(--space-5);
+  padding: var(--space-6) var(--space-4);
+  background: var(--band-frame);
+  color: var(--band-ink);
+}
+
+/* ── Type ─────────────────────────────────────────────────────────────── */
+.steps {
+  display: grid;
+  gap: var(--space-l);
+}
+
+.step {
+  display: grid;
+  gap: var(--space-2);
+}
+
+.step .code {
+  color: var(--band-soft);
+}
+
+.mono {
+  margin: 0;
+  font-family: var(--font-code);
+  font-size: var(--step-body);
+}
+
+/* ── Space ────────────────────────────────────────────────────────────── */
+.space {
+  display: grid;
+  gap: var(--space-2);
+}
+
+.spaceRow {
+  display: grid;
+  grid-template-columns: 10rem 1fr; /* the token names' column */
+  align-items: center;
+  gap: var(--space-4);
+}
+
+.spaceBar {
+  display: block;
+  width: var(--bar);
+  height: var(--space-3);
+  background: var(--band-ink);
+}
+
+/* ── The spine ────────────────────────────────────────────────────────── */
+/* The board is padded by --margin, like a band, so the axis sits at
+   --axis-inset from its content edge: the same place it sits on the page. */
+.spine {
+  position: relative;
+  display: grid;
+  gap: var(--space-m);
+  margin-inline: calc(var(--margin) * -1);
+  padding: var(--space-xl) var(--margin);
+  isolation: isolate;
+  font-size: var(--step-lead);
+  font-weight: var(--weight-display);
+  line-height: var(--leading-lead);
+  letter-spacing: var(--tracking-lead);
+}
+
+.spine::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: calc(var(--axis) - var(--spine-width) / 2);
+  z-index: -1;
+  width: var(--spine-width);
+  background: var(--band-spine);
+}
+
+/* A crossing line: the left part ends on the axis, the right starts past it.
+   Each part paints the ground behind itself, so the line breaks there. */
+.crossing {
+  display: grid;
+  grid-template-columns: var(--axis-inset) minmax(0, 1fr);
+}
+
+.left,
+.right {
+  background: var(--band-ground);
+}
+
+.left {
+  justify-self: end;
+}
+
+.right {
+  justify-self: start;
+  padding-left: var(--spine-gap);
+}
+
+.hanging {
+  margin-left: var(--hang);
+}
+
+.pushed {
+  margin-left: calc(var(--axis-inset) + var(--push));
+}

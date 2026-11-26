@@ -158,7 +158,7 @@ site builds; a picture already listed keeps its earlier puzzles, current and ret
   pan (Shift for more), + − 0 zoom, M is the magnifier, Escape stops auto-paint from anywhere. One polite live region
   says what happened (auto-paint only when it starts and stops). Focus goes to the picture when a painting starts.
 - **iOS:** `viewport-fit=cover` and safe-area padding, `100dvh` with no page scroll, `touch-action: none` on the stage,
-  Safari's `gesture*` events held off, `color-scheme: dark !important` (next-themes writes it inline), canvases capped
+  Safari's `gesture*` events held off, `color-scheme: dark !important` (once because next-themes wrote it inline; gone since ADR-024, the rule stays), canvases capped
   at 2 device px per CSS px and sized to nothing on unmount. Web Audio is ambient: Silent Mode mutes it (Settings says so).
   Haptics are Sudoku's (`navigator.vibrate`, or the iOS 18 switch tick inside the tap).
 

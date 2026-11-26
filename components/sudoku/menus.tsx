@@ -510,7 +510,7 @@ export function ThemePanel({
               </span>
             </div>
           ) : (
-            // data-locked, not data-hidden: Carbon's stylesheet hides every [data-hidden] on the page.
+            // data-locked, not data-hidden: Carbon's stylesheet hid every [data-hidden] on the page.
             <div key={secret.id} className="sdk-row sdk-secret" data-locked="">
               <Tile>
                 <LockSimpleIcon size={16} weight="fill" />

@@ -1,0 +1,160 @@
+/* ══════════════════════════════════════════════════════════════════════════
+   tokens.css — every design value of the studio site (DESIGN-RULES.md).
+
+   Ported from the spine draft's css/page.css :root (ADR-023). Tokens are
+   assigned here and nowhere else; components read them in their CSS Modules.
+   The --palette-* values are read only inside this file: components read the
+   band roles (--band-*) and the button's (--button*).
+
+   Global, and imported once, first, by app/layout.tsx, so it reaches the games
+   too. Custom properties render nothing until something reads them, and the
+   games read only their own. Two rules keep it that way (ADR-029):
+   * no token takes a name a game defines. The games set --ink, --accent,
+     --ground, --muted and more on <html> with html:has(), which outranks
+     :root, so a shared name would quietly change meaning on a game page;
+   * the games never read a token.
+   ══════════════════════════════════════════════════════════════════════════ */
+
+/* Contrast pairs, checked by `npm run check:contrast` (ADR-030). One per line:
+     @contrast <foreground> on <background> <text|large|ui> <use>
+   A pair is checked in every band: in :root and in each [data-band] set below.
+   text = 4.5:1; large and ui = 3:1 (WCAG 2.2 AA).
+
+   @contrast --band-ink    on --band-ground  text  running text and statements
+   @contrast --band-soft   on --band-ground  text  secondary text, captions, credits
+   @contrast --band-ground on --band-ink     text  selection; the skip link
+   @contrast --band-spine  on --band-ground  ui    the spine line
+   @contrast --band-focus  on --band-ground  ui    the focus ring
+   @contrast --button-ink  on --button       text  the button label
+   @contrast --button-ink  on --button-hover text  the button label on hover
+*/
+
+:root {
+  /* ── The palette: raw values, read only in this file ─────────────────── */
+  --palette-paper: #f1f1ef;
+  --palette-ink: #1c1c1c;
+  --palette-ink-soft: #5c5d58; /* the dealt muted grey, darkened to hold ~6:1 on paper */
+  --palette-charcoal: #1c1c1c;
+  --palette-muted: #9a9b96;
+  --palette-frame-paper: #e3e2dd;
+  --palette-frame-charcoal: #262626;
+
+  /* The button, and nothing else: sage, its label, its hover. */
+  --button: #8fa68e;
+  --button-ink: #1c1c1c;
+  --button-hover: #a6b9a5;
+
+  /* ── Type ────────────────────────────────────────────────────────────── */
+  /* next/font puts --font-hanken and --font-plex-mono on <html> (app/fonts.ts).
+     The fallbacks inside var() keep a story or a test legible without them. */
+  --font-sans: var(--font-hanken, "Hanken Grotesk"), "Helvetica Neue", Arial, sans-serif;
+  --font-code: var(--font-plex-mono, "IBM Plex Mono"), ui-monospace, Menlo, monospace;
+
+  --weight-text: 400;
+  --weight-medium: 500;
+  --weight-display: 600; /* statements; 500 read soft against the line (draft notes) */
+
+  /* Five steps: small, body, lead, head, display. */
+  --step-small: clamp(0.8125rem, 0.79rem + 0.1vw, 0.875rem);
+  --step-body: clamp(1.0625rem, 1rem + 0.25vw, 1.1875rem);
+  --step-lead: clamp(1.25rem, 0.95rem + 1.2vw, 1.875rem);
+  --step-head: clamp(1.75rem, 0.35rem + 3.55vw, 3.5rem);
+  --step-display: clamp(2.375rem, 0.2rem + 7.1vw, 8.5rem);
+
+  --leading-small: 1.45;
+  --leading-body: 1.5;
+  --leading-lead: 1.2;
+  --leading-head: 0.95;
+  --leading-display: 0.9;
+
+  --tracking-body: -0.005em;
+  --tracking-ui: -0.01em; /* buttons, the wordmark, navigation */
+  --tracking-lead: -0.018em;
+  --tracking-head: -0.04em;
+  --tracking-display: -0.05em;
+
+  /* ── Space ───────────────────────────────────────────────────────────── */
+  /* Fixed steps, for the inside of a component. */
+  --space-1: 4px;
+  --space-2: 8px;
+  --space-3: 10px;
+  --space-4: 14px;
+  --space-5: 20px;
+  --space-6: 28px;
+  --space-7: 32px;
+  --space-8: 44px;
+
+  /* Fluid steps, for the rhythm between blocks. */
+  --space-xs: clamp(12px, 1.2vw, 18px);
+  --space-s: clamp(18px, 1.8vw, 26px);
+  --space-m: clamp(28px, 3vw, 44px);
+  --space-l: clamp(32px, 3.4vw, 52px);
+  --space-xl: clamp(44px, 4vw, 64px);
+  --space-2xl: clamp(56px, 5.6vw, 88px);
+  --space-3xl: clamp(64px, 6vw, 96px);
+  --space-4xl: clamp(72px, 7vw, 112px);
+
+  --margin: clamp(16px, 2.2vw, 32px); /* the page's side margin */
+  --section-space: clamp(56px, 6.2vw, 96px); /* above and below a section */
+  --measure: 34em; /* running text */
+
+  /* ── The spine ───────────────────────────────────────────────────────── */
+  --axis: 38vw; /* the line's distance from the left edge of the page */
+  --axis-inset: calc(var(--axis) - var(--margin)); /* … from the content edge */
+  --spine-width: 2px; /* the owner's ruling */
+  --spine-gap: clamp(10px, 1.15vw, 18px); /* from the line to the words that hang from it */
+  --hang: calc(var(--axis-inset) + var(--spine-gap)); /* where a hanging line starts */
+  --push: 12vw; /* a pushed line starts this far past the axis */
+  --mast-height: 72px;
+
+  /* ── Focus ───────────────────────────────────────────────────────────── */
+  --focus-width: 2px;
+  --focus-offset: 4px;
+
+  /* ── Motion ──────────────────────────────────────────────────────────── */
+  --ease-out: cubic-bezier(0.22, 1, 0.36, 1);
+  --ease-expo: cubic-bezier(0.16, 1, 0.3, 1);
+  --dur-press: 140ms;
+  --dur-hover: 180ms;
+  --dur-ui: 240ms;
+  --dur-enter: 600ms; /* a block fades and rises in */
+  --dur-settle: 820ms; /* … and settles */
+  --dur-arrive-lead: 1050ms; /* the hero's first line arrives */
+  --dur-arrive: 1150ms; /* the hero's crossing line closes; the line is drawn down */
+  --dur-script-wait: 2500ms; /* the no-script line waits this long for the script to draw it (ADR-031) */
+  --stagger: 80ms;
+
+  color-scheme: light;
+}
+
+/* The narrow layout (DESIGN-RULES.md §6): the axis moves left. */
+@media (max-width: 899px) {
+  :root {
+    --axis: 22vw;
+    --push: 14vw;
+    --mast-height: 60px;
+  }
+}
+
+/* ── The band roles: what components read ──────────────────────────────── */
+/* Every studio band carries data-band (DESIGN-RULES.md §4). :root is the paper
+   set, so the page's own ground and anything outside a band read paper too. */
+:root,
+[data-band="paper"] {
+  --band-ground: var(--palette-paper);
+  --band-ink: var(--palette-ink);
+  --band-soft: var(--palette-ink-soft);
+  --band-spine: var(--palette-ink);
+  --band-focus: var(--palette-ink);
+  --band-frame: var(--palette-frame-paper);
+}
+
+/* The one charcoal band: the belief. */
+[data-band="dark"] {
+  --band-ground: var(--palette-charcoal);
+  --band-ink: var(--palette-paper);
+  --band-soft: var(--palette-muted);
+  --band-spine: var(--palette-paper);
+  --band-focus: var(--button);
+  --band-frame: var(--palette-frame-charcoal);
+}

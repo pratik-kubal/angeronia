@@ -1,16 +1,14 @@
 /*
- * Storybook-only font wiring.
+ * Storybook-only chrome: the frame a story sits in. It assigns no token and
+ * styles no component; tokens.css and base.css (imported before this file) are
+ * the site's own.
  *
- * Stories do not render `app/layout.tsx`, so nothing sets the `--font-plex-*`
- * variables that `next/font` provides in production and that Carbon's
- * `$font-families` map consumes (`styles/_config.scss`). Defining them here
- * from the self-hosted `@fontsource` faces means a story renders in the same
- * IBM Plex the site does — never silently in the system fallback.
- *
- * This file is Storybook chrome, not site CSS: it assigns no design-system
- * token.
+ * Stories are full-bleed (`layout: "fullscreen"`), so the band fills the canvas
+ * edge to edge, the way a band fills the page; the page margin is its padding.
  */
-:root {
-  --font-plex-sans: "IBM Plex Sans";
-  --font-plex-mono: "IBM Plex Mono";
+.sb-band {
+  min-height: 100vh;
+  padding: var(--space-l) var(--margin);
+  background: var(--band-ground);
+  color: var(--band-ink);
 }

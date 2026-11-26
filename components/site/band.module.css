@@ -1,0 +1,63 @@
+/* A band: its ground, its ink, and the spine through it (DESIGN-RULES.md §7).
+   Isolated, so the line and the ground patches behind crossing words (z-index
+   -1) sit above the band's background and below its content. */
+.band {
+  position: relative;
+  isolation: isolate;
+  overflow-x: clip;
+  background: var(--band-ground);
+  color: var(--band-ink);
+}
+
+/* Without script: the line as one rule down the band. */
+.band::before {
+  content: "";
+  position: absolute;
+  inset-block: 0;
+  left: calc(var(--axis) - var(--spine-width) / 2);
+  z-index: -1;
+  width: var(--spine-width);
+  background: var(--band-spine);
+  pointer-events: none;
+}
+
+/* With script, Spine draws the line in pieces into the track instead. */
+:global(html.spine-live) .band::before {
+  display: none;
+}
+
+/* Scripted, with motion allowed: hold the whole line back until the script
+   draws it, so the server's first paint does not flash a finished line that is
+   then drawn again. If the script never comes, the line appears whole after
+   --dur-script-wait (ADR-031). */
+@media (prefers-reduced-motion: no-preference) {
+  :global(html.js:not(.spine-live)) .band::before {
+    animation: wait 0s var(--dur-script-wait) backwards;
+  }
+}
+
+@keyframes wait {
+  from {
+    opacity: 0;
+  }
+}
+
+.track {
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  pointer-events: none;
+}
+
+/* One piece of the line. 100px tall, scaled to its length by the script (a
+   unit piece, not a measure), so the 2px width is never scaled. */
+.track > i {
+  position: absolute;
+  top: 0;
+  left: calc(var(--axis) - var(--spine-width) / 2);
+  width: var(--spine-width);
+  height: 100px;
+  background: var(--band-spine);
+  transform: scaleY(0);
+  transform-origin: 0 0;
+}

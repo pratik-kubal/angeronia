@@ -1,0 +1,64 @@
+.showcase {
+  padding: var(--section-space) var(--margin);
+}
+
+.pair {
+  margin-top: var(--space-l);
+}
+
+.session {
+  max-width: var(--measure);
+  margin-top: var(--space-s);
+  margin-left: var(--hang);
+}
+
+.figure {
+  margin-top: var(--space-3xl);
+}
+
+/* The caption's measure, as the draft. */
+.caption {
+  max-width: 40em;
+  margin-top: var(--space-4);
+  margin-left: var(--hang);
+  color: var(--band-soft);
+}
+
+.try {
+  margin-top: var(--space-s);
+  margin-left: var(--hang);
+  font-size: var(--step-lead);
+  letter-spacing: var(--tracking-lead);
+}
+
+.layersLead {
+  margin-top: var(--space-4xl);
+  margin-left: var(--hang);
+}
+
+.layers {
+  margin-top: var(--space-m);
+}
+
+.layer {
+  --pair-mine: 36em;
+}
+
+.layer + .layer {
+  margin-top: var(--space-s);
+}
+
+/* Scoped under .layer so it outranks the lead step's weight on the same element. */
+.layer .layerName {
+  font-weight: var(--weight-medium);
+}
+
+.soft {
+  color: var(--band-soft);
+}
+
+@media (max-width: 899px) {
+  .layer + .layer {
+    margin-top: var(--space-6);
+  }
+}

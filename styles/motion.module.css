@@ -1,0 +1,32 @@
+/* The reveal: a block fades and rises in once, as it comes into view
+   (DESIGN-RULES.md §8, ADR-025). Shared like the type steps: a component imports
+   this module as `motionStyles` and puts `motionStyles.reveal` on the block, with
+   a stagger index as data (`style={{ "--i": 1 }}`).
+
+   The finished page is the default. A block hides only once the spine's script
+   is running (`html.spine-live`, added by components/site/spine.tsx), which
+   first marks everything already on screen as revealed; then it waits, hidden,
+   until the script sets `data-in` on it. No script, a failed script, a story, or
+   reduced motion: nothing here applies (ADR-031). */
+
+@media (prefers-reduced-motion: no-preference) {
+  :global(html.js.spine-live) .reveal:not([data-in]) {
+    opacity: 0;
+    transform: translateY(var(--space-5));
+  }
+
+  :global(html.js.spine-live) .reveal[data-in] {
+    transition:
+      opacity var(--dur-enter) var(--ease-out),
+      transform var(--dur-settle) var(--ease-expo);
+    transition-delay: calc(var(--i, 0) * var(--stagger));
+  }
+
+  /* A block that holds focus shows at once, so a focus ring is never drawn on
+     something still invisible; the script also marks it revealed (ADR-032). */
+  :global(html.js.spine-live) .reveal:focus-within {
+    opacity: 1;
+    transform: none;
+    transition: none;
+  }
+}

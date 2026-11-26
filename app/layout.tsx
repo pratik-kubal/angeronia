@@ -1,67 +1,47 @@
 import type React from "react";
 import type { Metadata } from "next";
-import { IBM_Plex_Sans, IBM_Plex_Mono } from "next/font/google";
-import { ThemeProvider } from "@/components/site/theme-provider";
+import { fontVariables } from "@/app/fonts";
 import { SkipLink } from "@/components/site/skip-link";
-import { BRAND, LINKS, SITE_URL } from "@/data/angeronia";
-import "@/styles/globals.scss";
+import { BRAND, LINKS, SITE_URL, site } from "@/data/angeronia";
+// The only two global stylesheets (DESIGN-RULES.md §1): tokens, then base.
+import "@/styles/tokens.css";
+import "@/styles/base.css";
+import styles from "./layout.module.css";
 
 const siteUrl = SITE_URL;
 
-// IBM Plex, self-hosted by next/font — no request reaches Google at runtime,
-// and the generated size-adjusted fallback keeps the swap from shifting layout.
-// The two CSS variables are consumed by Carbon's `$font-families` map in
-// `styles/_config.scss` and nowhere else (D11, design rule 5).
-const plexSans = IBM_Plex_Sans({
-  subsets: ["latin"],
-  weight: ["300", "400", "600", "700"],
-  variable: "--font-plex-sans",
-  display: "swap",
-});
+/**
+ * Marks the page as scripted before it paints, so motion styles can key off
+ * `html.js` and the page without script stays the finished page (ADR-025).
+ */
+const SCRIPTED = 'document.documentElement.classList.add("js")';
 
-const plexMono = IBM_Plex_Mono({
-  subsets: ["latin"],
-  weight: ["400"],
-  variable: "--font-plex-mono",
-  display: "swap",
-});
-
-const description =
-  "Angeronia Labs is a boutique software engineering studio in Philadelphia. We turn ambiguous problems into shipped, tested, owned software — AI/LLM product engineering, cloud microservices, and full-stack builds. Makers of Code Socratic.";
-
+/**
+ * The words come from data/angeronia.ts (`site`), in the third person
+ * (ADR-028). The social image is app/opengraph-image.tsx (and
+ * twitter-image.tsx), which Next adds to this metadata itself (ADR-026).
+ */
 export const metadata: Metadata = {
   metadataBase: new URL(siteUrl),
   title: {
-    default: "Angeronia Labs",
-    template: "%s | Angeronia Labs",
+    default: site.title,
+    template: site.titleTemplate,
   },
-  description,
-  keywords: [
-    "Angeronia Labs",
-    "software engineering consultancy",
-    "Philadelphia software studio",
-    "AI engineering",
-    "LLM product engineering",
-    "AWS microservices",
-    "Next.js consultancy",
-    "Code Socratic",
-    "FinTech engineering",
-  ],
+  description: site.description,
+  keywords: [...site.keywords],
   authors: [{ name: BRAND.legal, url: siteUrl }],
   creator: BRAND.legal,
   openGraph: {
     type: "website",
     url: siteUrl,
-    title: "Angeronia Labs",
-    description,
+    title: site.shareTitle,
+    description: site.description,
     siteName: BRAND.name,
-    images: [{ url: "/angeronia-logo-light.png", width: 500, height: 500, alt: BRAND.name }],
   },
   twitter: {
     card: "summary_large_image",
-    title: "Angeronia Labs",
-    description,
-    images: ["/angeronia-logo-light.png"],
+    title: site.shareTitle,
+    description: site.description,
   },
   robots: {
     index: true,
@@ -78,33 +58,26 @@ const jsonLd = {
   alternateName: BRAND.name,
   url: siteUrl,
   email: LINKS.email,
-  description,
-  areaServed: "Worldwide",
+  description: site.structuredDescription,
+  areaServed: site.structured.areaServed,
   address: {
     "@type": "PostalAddress",
-    addressLocality: "Philadelphia",
-    addressRegion: "PA",
-    addressCountry: "US",
+    addressLocality: site.structured.address.locality,
+    addressRegion: site.structured.address.region,
+    addressCountry: site.structured.address.country,
   },
   founder: {
     "@type": "Person",
-    name: "Pratik Kubal",
+    name: site.founder,
     url: LINKS.linkedin,
   },
-  knowsAbout: [
-    "AI/LLM product engineering",
-    "AWS microservices",
-    "Next.js",
-    "FinTech",
-    "DevOps",
-    "Cloud architecture",
-  ],
+  knowsAbout: [...site.structured.knowsAbout],
   makesOffer: {
     "@type": "Offer",
     itemOffered: {
       "@type": "SoftwareApplication",
-      name: "Code Socratic",
-      applicationCategory: "EducationalApplication",
+      name: site.product,
+      applicationCategory: site.structured.productCategory,
       url: LINKS.codeSocratic,
     },
   },
@@ -117,22 +90,19 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html
-      lang="en"
-      suppressHydrationWarning
-      className={`${plexSans.variable} ${plexMono.variable}`}
-    >
+    // suppressHydrationWarning: SCRIPTED adds a class to <html> before React
+    // hydrates it. It covers this element's attributes only.
+    <html lang="en" className={fontVariables} suppressHydrationWarning>
       <head>
+        <script dangerouslySetInnerHTML={{ __html: SCRIPTED }} />
         <script
           type="application/ld+json"
           dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
         />
       </head>
       <body>
-        <ThemeProvider>
-          <SkipLink />
-          <div className="site-root">{children}</div>
-        </ThemeProvider>
+        <SkipLink />
+        <div className={styles.page}>{children}</div>
       </body>
     </html>
   );

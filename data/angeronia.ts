@@ -1,24 +1,22 @@
-// Single source of truth for angeronia.com — the Angeronia Labs consultancy
-// landing page. Every string the site renders lives here (design rule 13);
-// components take content as props and never inline copy of their own.
+// Single source of truth for angeronia.com, the Angeronia Labs studio site.
+// Every string the site renders lives here (DESIGN-RULES.md §13); components
+// take content from here or as props and never inline copy of their own.
+//
+// The voice is the third person (ADR-028): no "I", "me", "my", "we", "our" or
+// "us" in what the studio says about itself, and no pronoun for Pratik at all.
+// "You" is the reader. Product UI inside the Code.Socratic replica
+// (`productDemo`) and the legal documents' "we" are outside that rule.
+// The words come from the copy deck the owner approved for the spine
+// (`.taste-skill/round2/copy-v2.md`, kept outside git).
 
-import type { ColorScheme } from "@/lib/theme";
-
-/** Chrome and control labels — the strings that are not page content. */
+/** Chrome and control labels: the strings that are not page content. */
 export const copy = {
   skipLink: "Skip to main content",
-  colorScheme: {
-    label: "Colour scheme",
-    light: "Light",
-    dark: "Dark",
-  },
-  externalLink: "opens in a new tab",
+  /** After the name of a link that opens in a new tab, for assistive tech only. */
+  externalLink: "(opens in a new tab)",
+  /** Before a legal document's date. */
+  lastUpdated: "Last updated",
 } as const;
-
-export const COLOR_SCHEME_OPTIONS: { value: ColorScheme; label: string }[] = [
-  { value: "light", label: copy.colorScheme.light },
-  { value: "dark", label: copy.colorScheme.dark },
-];
 
 /** The canonical origin. Used by metadata, robots.txt and the sitemap. */
 export const SITE_URL = "https://angeronia.com";
@@ -26,149 +24,234 @@ export const SITE_URL = "https://angeronia.com";
 export const BRAND = {
   name: "Angeronia Labs",
   legal: "Angeronia Labs LLC",
-  domain: "angeronia.com",
   city: "Philadelphia, PA",
-  tagline: "A software engineering studio in Philadelphia.",
 } as const;
+
+/**
+ * The email the buttons prepare: the subject already written, and three
+ * prompts that are the first step of Discover. The prompts carry no "I": they
+ * sit in the page's markup.
+ */
+const PROJECT_EMAIL =
+  "mailto:pratik-kubal@outlook.com?subject=A%20project%20for%20Angeronia%20Labs&body=The%20project%3A%0A%0A%0AWhere%20it%20stands%20now%3A%0A%0A%0AWhen%20it%E2%80%99s%20needed%3A%0A";
 
 export const LINKS = {
   email: "pratik-kubal@outlook.com",
-  codeSocratic: "https://code-socratic.angeronia.com/",
+  emailHref: "mailto:pratik-kubal@outlook.com",
+  /** The product's own address. code-socratic.angeronia.com returns 404. */
+  codeSocratic: "https://www.code-socratic.com",
   linkedin: "https://www.linkedin.com/company/angeronia",
   github: "https://github.com/pratik-kubal",
-  calendar: "mailto:pratik-kubal@outlook.com?subject=Project%20inquiry%20%E2%80%94%20Angeronia%20Labs",
 } as const;
 
-// ── Site header ──────────────────────────────────────────────────────────────
+// ── The page, as search engines and link previews see it ─────────────────────
+export const site = {
+  /** `<title>` on the home page; Privacy and Terms use "%s | Angeronia Labs". */
+  title: "Angeronia Labs, a software engineering studio in Philadelphia",
+  titleTemplate: "%s | Angeronia Labs",
+  /** The meta description, also the Open Graph and Twitter description. */
+  description:
+    "Angeronia Labs is Pratik Kubal’s software engineering studio in Philadelphia: AI features, cloud backends and full-stack products, built by one engineer.",
+  /** The JSON-LD `ProfessionalService` description. */
+  structuredDescription:
+    "Angeronia Labs is Pratik Kubal’s software engineering studio in Philadelphia: AI features, cloud backends and full-stack products, built by one engineer from the screen to the server. The studio also makes Code.Socratic, a tutor for coding interviews.",
+  /** Open Graph and Twitter title. */
+  shareTitle: "Angeronia Labs",
+  keywords: [
+    "Angeronia Labs",
+    "software engineering studio",
+    "Philadelphia software studio",
+    "AI engineering",
+    "LLM product engineering",
+    "AWS microservices",
+    "Next.js",
+    "Code.Socratic",
+    "FinTech engineering",
+  ],
+  founder: "Pratik Kubal",
+  product: "Code.Socratic",
+  /** The rest of the JSON-LD that app/layout.tsx renders into every page. */
+  structured: {
+    areaServed: "Worldwide",
+    address: { locality: "Philadelphia", region: "PA", country: "US" },
+    knowsAbout: [
+      "AI/LLM product engineering",
+      "AWS microservices",
+      "Next.js",
+      "FinTech",
+      "DevOps",
+      "Cloud architecture",
+    ],
+    productCategory: "EducationalApplication",
+  },
+} as const;
+
+/** The social card (app/opengraph-image.tsx): its text, and nothing else. */
+export const shareImage = {
+  wordmark: "Angeronia Labs",
+  foot: "Philadelphia, PA",
+  alt: "Angeronia Labs. One engineer, screen to server. Philadelphia, PA.",
+} as const;
+
+// ── Statements on the spine ──────────────────────────────────────────────────
+/**
+ * One line of a statement set on the spine (DESIGN-RULES.md §7):
+ * * `cross` — split at the axis: the left part ends on it, the right starts
+ *   after it. At rest the two meet with a word space and hide the line.
+ * * `hang` — starts just right of the axis.
+ * * `push` — starts further past the axis.
+ * * `centre` — centred on the axis (the process steps' names).
+ *
+ * The words are the copy; the split is where the deck breaks them
+ * (copy-v2.md §3). Read in order, a statement's lines are one sentence.
+ */
+export type StatementLine =
+  | { readonly cross: readonly [string, string] }
+  | { readonly hang: string }
+  | { readonly push: string }
+  | { readonly centre: string };
+
+/** A statement's lines, joined back into the sentence they read as. */
+export function statementText(lines: readonly StatementLine[]): string {
+  return lines
+    .map((line) =>
+      "cross" in line ? line.cross.join(" ") : "hang" in line ? line.hang : "push" in line ? line.push : line.centre,
+    )
+    .join(" ");
+}
+
+// ── Masthead ─────────────────────────────────────────────────────────────────
 export const nav = {
-  label: "Primary",
+  label: "Sections",
   items: [
-    { label: "Services", href: "#services" },
-    { label: "Process", href: "#process" },
-    { label: "About", href: "#about" },
+    { label: "Services", hash: "#services" },
+    { label: "Code.Socratic", hash: "#code-socratic" },
+    { label: "Process", hash: "#process" },
+    { label: "About", hash: "#about" },
   ],
-  cta: { label: "Start a project", href: LINKS.calendar },
+  action: { label: "Email the studio", href: PROJECT_EMAIL },
 } as const;
 
-// ── Hero ──────────────────────────────────────────────────────────────────────
+// ── Hero ─────────────────────────────────────────────────────────────────────
 export const hero = {
-  kicker: "Angeronia Labs · Philadelphia",
-  h1: "We turn ambiguous problems into solutions that ship.",
-  subhead: "Product engineering studio",
-  ctaPrimary: { label: "Start a project", href: LINKS.calendar },
-  /** Label for the hero Möbius (ADR-012). It is decorative, but a labelled
-   *  figure beats an unexplained one for anyone reading with a screen reader. */
-  figureAlt: "A Möbius band, hand-drawn and slowly turning — one continuous surface with no seam.",
-} as const;
+  /** The owner's headline (ADR-023). */
+  headline: "One engineer, screen to server",
+  lines: [{ hang: "One engineer," }, { cross: ["screen", "to server"] }],
+  lead: "Angeronia Labs is Pratik Kubal’s software engineering studio in Philadelphia. It builds AI features, cloud backends and full-stack products.",
+  action: { label: "Email the studio", href: PROJECT_EMAIL },
+} as const satisfies { lines: readonly StatementLine[] } & Record<string, unknown>;
 
-// ── Philosophy ───────────────────────────────────────────────────────────────
-export const philosophy = {
-  screenLabel: "Philosophy",
-  kicker: "The through-line",
-  heading: "Our Principles",
-  beats: [
-    { tag: "Strategy is engineering", text: "The people who scope it write it. No seam to drop." },
-    { tag: "One decision, two views", text: "Business goals and code are the same call, not two teams." },
-    {
-      tag: "You keep all of it",
-      text: "Tests, docs, runbook, you own it after handover. We end by making ourselves optional, and providing training on how to maintain it.",
-    },
-  ],
-} as const;
+// ── Belief: the one charcoal band, held ──────────────────────────────────────
+export const belief = {
+  lines: [{ cross: ["The only", "hand-off"] }, { push: "is to you" }],
+  yours: "You bring the problem and the business goal.",
+  mine: "The person who scopes it writes it, so nothing is lost between the plan and the code.",
+} as const satisfies { lines: readonly StatementLine[] } & Record<string, unknown>;
 
 // ── Services ─────────────────────────────────────────────────────────────────
-export interface Service {
-  title: string;
-  blurb: string;
-  tags: string[];
+export interface ServiceArea {
+  /** The area's name, set on the spine at heading size. */
+  lines: readonly StatementLine[];
+  /** Your side: what the reader needs. */
+  yours: string;
+  /** The studio's side: what gets built. */
+  mine: string;
+  /** Its four parts, each a list item. */
+  parts: readonly string[];
 }
 
-export const servicesHeading = "What we take on";
-export const servicesLabel = "Other Services";
-export const services: Service[] = [
-  {
-    title: "AI & LLM product engineering",
-    blurb: "Agentic features that real users use in your domain.",
-    tags: ["Agent loops", "Tool use & guardrails", "Server-verified evals", "Token economics"],
-  },
-  {
-    title: "Cloud & microservices",
-    blurb: "FinTech-grade backends that hold up under load and audit.",
-    tags: ["AWS", "Step Functions", "Zero-downtime migrations", "IaC"],
-  },
-  {
-    title: "Full-stack product build",
-    blurb: "Zero-to-one, multi-tenant from day one.",
-    tags: ["Next.js / React", "Auth & billing", "Postgres", "Vercel"],
-  },
-  {
-    title: "Platform reliability",
-    blurb: "Releases that land predictably, and stay up after they do.",
-    tags: ["CI/CD", "Test coverage", "Rate limits & moderation", "Load tests"],
-  },
-];
-
-// ── Process ──────────────────────────────────────────────────────────────────
-export interface ProcessStep {
-  title: string;
-  body: string;
-}
-
-export const processLabel = "Process";
-export const processHeading = "How we work";
-export const processSteps: ProcessStep[] = [
-  { title: "Discover", body: "We write the ambiguity down until it's testable." },
-  { title: "Architect", body: "A roadmap you approve before solution is written." },
-  { title: "Build", body: "Staged, feature-flagged, tested - Iterative Development weekly for you to evaluate." },
-  { title: "Hand off", body: "Docs, runbook, walkthrough, and training. Then we step back." },
-];
-
-// ── Product spotlight — Code Socratic ─────────────────────────────────────────
-export interface ProductBenefit {
-  /** The claim, as the visitor would put it to themselves. */
-  title: string;
-  body: string;
-}
-
-export const product = {
-  screenLabel: "Code Socratic",
-  label: "Built by the studio",
-  kicker: "Flagship product",
-  name: "Code Socratic",
-  headline: "You may know coding, but can you talk about it?",
-  body: "Interviews are a conversation, not a submit button. Code Socratic reads the code you actually wrote and asks you to explain it out loud — then pushes back on the answer.",
-  loop: ["Approach", "Complexity", "Code"],
-  /** Why a visitor would use it, in their terms — not the stack it runs on. */
-  benefits: [
+export const services = {
+  /** A short left half, so the pull opens wide on both sides (ADR-033). */
+  lines: [{ cross: ["What", "the studio"] }, { hang: "takes on" }],
+  intro:
+    "One engineer covers the backend, the frontend, the cloud and the model, so your project never changes hands as it crosses them.",
+  partsLabel: "Parts",
+  areas: [
     {
-      title: "Coding was never single-player",
-      body: "Every turn goes both ways: you explain, it pushes back, you answer. Nothing here is graded by a submit button.",
+      lines: [{ cross: ["AI & LLM", "product engineering"] }],
+      yours: "An agent your users can trust with real work.",
+      mine: "The studio builds the loop, its tools and guardrails, and the evals that check it on the server.",
+      parts: ["Agent loops", "Tool use and guardrails", "Server-verified evals", "Token economics"],
     },
     {
-      title: "It remembers your code, then asks why",
-      body: "The tutor carries your actual solution through the session, so the question is never generic. It asks about the line you wrote, and why you chose it.",
+      lines: [{ hang: "Cloud & microservices" }],
+      yours: "A backend that holds up under load and under audit.",
+      mine: "It runs on AWS as infrastructure as code, and its migrations run without downtime.",
+      parts: ["AWS", "Step Functions", "Zero-downtime migrations", "Infrastructure as code"],
     },
     {
-      title: "You don't have to be a coder yet",
-      body: "Ask what a line does and it will walk you through it. Learn how working code works, and why it was written that way, before you can write it.",
+      lines: [{ cross: ["Full-stack", "product builds"] }],
+      yours: "A whole product, from the first commit to the first customer.",
+      mine: "It is built in Next.js and React on Postgres, multi-tenant from day one.",
+      parts: ["Next.js and React", "Auth and billing", "Postgres", "Multi-tenant from day one"],
     },
-  ] satisfies ProductBenefit[],
-  /** The three things a sceptic checks before believing the rest. */
-  facts: [
-    "Hidden tests run server-side",
-    "Difficulty-weighted score",
-    "Your code carried through the session",
-  ],
-  tags: ["Next.js", "Claude Agent SDK", "Drizzle / Neon", "Stripe", "E2B", "Turborepo"],
-  tagsLabel: "Built with",
-  cta: { label: "Try Code Socratic", href: LINKS.codeSocratic },
+    {
+      lines: [{ push: "Platform reliability" }],
+      yours: "Releases that land when planned and stay up after they do.",
+      mine: "The studio sets up CI/CD and test coverage, rate limits and moderation, and load tests.",
+      parts: ["CI/CD", "Test coverage", "Rate limits and moderation", "Load tests"],
+    },
+  ] satisfies ServiceArea[],
 } as const;
 
-// ── Code Socratic demo ────────────────────────────────────────────────────────
+// ── Showcase: Code.Socratic ──────────────────────────────────────────────────
+export interface ProductLayer {
+  /** Your side: the layer's name. */
+  name: string;
+  /** The studio's side: what it does… */
+  does: string;
+  /** …and one real detail, in the secondary ink. */
+  detail: string;
+}
+
+export const showcase = {
+  /** The owner's heading (ADR-033), set like the hero's: the name hangs, "built | alone" crosses. */
+  lines: [{ hang: "Code.Socratic," }, { cross: ["built", "alone"] }],
+  yours: "Code.Socratic is a tutor for coding interviews.",
+  mine: "It reads the code you actually wrote, asks you to explain it out loud, then pushes back.",
+  session:
+    "A session runs in three phases, Approach, Complexity and Code, with one hint at a time and a score weighted by difficulty.",
+  /** Under the replica. Says what it is; states no test result (the owner's ruling). */
+  caption:
+    "A replica of a Code.Socratic session: “Widest Water Between Posts”, in Python. The tabs work; nothing else here runs.",
+  cta: { label: "Try Code.Socratic", href: LINKS.codeSocratic },
+  layersLead: "Every layer, from the screen down to the server, is one engineer’s work.",
+  layers: [
+    {
+      name: "Interface",
+      does: "Your editor, with tabs for the tutor, the instructions, the tests and the results.",
+      detail: "Next.js. Run Tests is ⌘⏎; Submit is ⇧⌘⏎.",
+    },
+    {
+      name: "Tutor",
+      does: "Reads your code, asks you to explain it, and gives one hint at a time.",
+      detail: "Built on the Claude Agent SDK. From a session: “Why the shorter one? Say what you throw away when you move it.”",
+    },
+    {
+      name: "Sandboxed runner",
+      does: "Runs your code against hidden tests, on the server, inside a sandbox.",
+      detail: "E2B. Reference solutions and hidden outputs never leave the server.",
+    },
+    {
+      name: "Data and payments",
+      does: "Keeps your score, weighted by difficulty, and takes payment.",
+      detail: "Drizzle on Neon Postgres, and Stripe.",
+    },
+    {
+      name: "Deploy",
+      does: "Builds every part from one repository and puts it on the web.",
+      detail: "Turborepo. Live at www.code-socratic.com.",
+    },
+  ] satisfies ProductLayer[],
+} as const;
+
+// ── Code.Socratic replica ─────────────────────────────────────────────────────
 // The session workspace from `../code-socratic`
-// (`apps/web/components/SessionPreview.tsx`), carried over as content. The
-// product renders it in Carbon; here it is the same session — same problem,
-// same exchange, same run — rebuilt from this site's own CSS (ADR-014).
+// (`apps/web/components/SessionPreview.tsx`), carried over as content: the same
+// problem, the same exchange, the same run, rebuilt from this site's own CSS in
+// the product's own light theme (ADR-014, ADR-023). Product UI: its words stay
+// as the product shows them, the user's "I" and the Results tab included. One
+// turn is the owner's: "Done. The tests pass." states no figures (ADR-033).
 
 export interface DemoTurn {
   who: "You" | "Tutor";
@@ -182,8 +265,13 @@ export interface DemoPhase {
 }
 
 export const productDemo = {
-  label: "A session, with the problem solved",
   tabsLabel: "Session panels",
+  /** Names for assistive tech, from the draft. */
+  editorLabel: "The editor, with the solution",
+  chatLabel: "The exchange",
+  /** After a phase's name, for assistive tech only. */
+  phaseDone: " (complete)",
+  phaseNow: " (in progress)",
   bar: {
     language: "Python",
     title: "Widest Water Between Posts",
@@ -238,7 +326,7 @@ export const productDemo = {
       said: "Every pair that used that post. The width only shrinks from here, and that post already caps the height.",
     },
     { who: "Tutor", said: "Good. So the loop is O(n), one pass, no extra space — agreed. Write it." },
-    { who: "You", said: "Done. Both samples and all seven hidden tests pass." },
+    { who: "You", said: "Done. The tests pass." },
     {
       who: "Tutor",
       said: "They do. Harder question, and it is the one an interviewer asks next: what happens on the step where the two posts are exactly equal, and why is it safe to move either?",
@@ -291,24 +379,63 @@ def test_sample_2():
   results: {
     heading: "All green",
     rows: [
-      { label: "Sample tests", value: "2 / 2" },
-      { label: "Hidden tests", value: "7 / 7" },
-      { label: "Elapsed", value: "84 ms" },
+      { label: "Sample tests", value: "2\u00a0/\u00a02" },
+      { label: "Hidden tests", value: "7\u00a0/\u00a07" },
+      { label: "Elapsed", value: "84\u00a0ms" },
     ],
     note: "Hidden probes cover the wide container, a monotonic run, and the empty and single-post edges. Reference solutions and hidden outputs never leave the server.",
   },
-
-  /** Nothing in the replica acts — say so rather than let a visitor discover it. */
-  staticNote: "A replica of the real workspace. The tabs work; nothing else here runs.",
 } as const;
 
-// ── About (condensed + coverage strip) ────────────────────────────────────────
-export const aboutLabel = "Who you work with";
-export const aboutHeading = "Right Now, One Person Team";
-export const aboutLead =
-  "Angeronia Labs is Pratik Kubal — five years of FinTech document-AI on AWS, a Master's in Machine Learning, and a habit of shipping under incomplete requirements.";
-export const aboutRange = ["Backend", "Frontend", "Cloud / DevOps", "AI / LLM", "Product & funding"];
-export const aboutCoda = "When quality slips, we revive it. When the spec is fuzzy, we make it concrete.";
+// ── Process ──────────────────────────────────────────────────────────────────
+export interface ProcessStep {
+  /** Centred on the spine. */
+  name: string;
+  /** Your side: what you do. */
+  yours: string;
+  /** The studio's side: what the studio does. */
+  mine: string;
+}
+
+export const projectProcess = {
+  lines: [{ cross: ["How a", "project runs"] }],
+  intro:
+    "Each step ends in something you can check: the problem in writing, a roadmap, a demo every week, and the runbook.",
+  steps: [
+    {
+      name: "Discover",
+      yours: "You describe the problem in your own words.",
+      mine: "The studio writes the ambiguity down until it’s testable.",
+    },
+    {
+      name: "Architect",
+      yours: "You read the roadmap and approve it.",
+      mine: "No code is written until you do.",
+    },
+    {
+      name: "Build",
+      yours: "You see a demo every week.",
+      mine: "The code lands in stages, behind feature flags, with tests.",
+    },
+    {
+      name: "Hand off",
+      yours: "You keep the tests, the docs and the runbook.",
+      mine: "The studio walks you through it, trains whoever runs it next, then steps back.",
+    },
+  ] satisfies ProcessStep[],
+} as const;
+
+// ── About ────────────────────────────────────────────────────────────────────
+export const about = {
+  lines: [{ cross: ["Who", "you’d work with"] }],
+  yours: "Pratik Kubal is a full-stack software engineer.",
+  mine: "Behind the studio: five years of document AI for FinTech, on AWS, and an M.S. in Machine Learning from the University at Buffalo.",
+  /** A statement paragraph on the spine from 1100px up; a lead paragraph below. */
+  statement: [
+    { cross: ["Right now", "Angeronia Labs is one person,"] },
+    { cross: ["so every line of your", "project is Pratik’s to answer for."] },
+  ],
+} as const satisfies { lines: readonly StatementLine[]; statement: readonly StatementLine[] } & Record<string, unknown>;
 
 // ── Games ─────────────────────────────────────────────────────────────────────
 /**
@@ -328,8 +455,6 @@ export interface Game {
   icon: string;
 }
 
-export const gamesLabel = "Off the clock";
-export const gamesHeading = "Games for a break";
 export const games: Game[] = [
   {
     name: "Sudoku",
@@ -351,13 +476,94 @@ export const games: Game[] = [
   },
 ];
 
-// ── Contact CTA ───────────────────────────────────────────────────────────────
+/** The home page's Games section (ADR-020), on the spine. */
+export const gamesSection = {
+  lines: [{ cross: ["Games", "for a break"] }],
+  intro: "Made by the studio, off the clock. Save any of them to a phone’s home screen.",
+} as const satisfies { lines: readonly StatementLine[] } & Record<string, unknown>;
+
+// ── Contact ──────────────────────────────────────────────────────────────────
 export const contact = {
-  label: "First conversation",
-  heading: "A problem that's easier to describe than to build?",
-  body: "That's the kind we like. Tell us what “done” looks like — we'll tell you the shape of the work.",
-  cta: { label: "Email the studio", href: LINKS.calendar },
-  emailText: LINKS.email,
+  /** A short left half, so the pull opens wide on both sides (ADR-033). */
+  lines: [{ cross: ["Tell", "Pratik what"] }, { hang: "you’re building" }],
+  yours: "Write a few lines: what you’re building, where it stands, and when you need it.",
+  mine: "It comes straight to the person who would write it.",
+  action: { label: "Email the studio", href: PROJECT_EMAIL },
+  address: { label: LINKS.email, href: LINKS.emailHref },
+  links: [
+    { label: "LinkedIn", href: LINKS.linkedin },
+    { label: "GitHub", href: LINKS.github },
+  ],
+} as const satisfies { lines: readonly StatementLine[] } & Record<string, unknown>;
+
+// ── Footer: the name, and the company ────────────────────────────────────────
+export interface Photograph {
+  /** Served from `public/`. */
+  src: string;
+  width: number;
+  height: number;
+  alt: string;
+  caption: string;
+}
+
+/** One picture's credit, as its licence asks: title, author, licence, source. */
+export interface PictureCredit {
+  title: string;
+  href: string;
+  /** Who made it, with the word before the name. */
+  by: string;
+  licence: string;
+  licenceHref: string;
+}
+
+export const footer = {
+  lines: [{ hang: "Angeronia Labs LLC" }],
+  statue: {
+    src: "/name/angerona-schonbrunn.jpg",
+    width: 800,
+    height: 1308,
+    alt: "A marble statue of Angerona, a draped woman raising one finger to her lips, against autumn trees",
+    caption: "Angerona, marble, Wilhelm Beyer or his workshop, 1773–1780. Schönbrunn Palace Park, Vienna.",
+  } satisfies Photograph,
+  note: "Angeronia is the Roman goddess shown with a finger to her sealed lips. Her festival, the Divalia, fell on 21 December.",
+  calendar: {
+    src: "/name/fasti-antiates.jpg",
+    width: 1200,
+    height: 800,
+    alt: "Fragments of a Roman calendar painted on plaster, with the names of festivals in red and black capitals between ruled columns",
+    caption: "Fasti Antiates, a Roman calendar painted on plaster, 84–55 BC. Palazzo Massimo alle Terme, Rome.",
+  } satisfies Photograph,
+  city: BRAND.city,
+  linksLabel: "Elsewhere",
+  links: [
+    { label: "Code.Socratic", href: LINKS.codeSocratic, external: true },
+    { label: "LinkedIn", href: LINKS.linkedin, external: true },
+    { label: "GitHub", href: LINKS.github, external: true },
+    { label: "Privacy", href: "/privacy", external: false },
+    { label: "Terms", href: "/terms", external: false },
+  ],
+  email: { label: LINKS.email, href: LINKS.emailHref },
+  copyright: "© 2026 Angeronia Labs LLC",
+  credits: {
+    lead: "Pictures:",
+    items: [
+      {
+        title: "“N06 Angerona, Schönbrunn (03)”",
+        href: "https://commons.wikimedia.org/wiki/File:N06_Angerona,_Sch%C3%B6nbrunn_(03).jpg",
+        by: "by Herzi Pinki",
+        licence: "CC BY-SA 4.0",
+        licenceHref: "https://creativecommons.org/licenses/by-sa/4.0",
+      },
+      {
+        title: "“Fasti annales, calendario numano, pannello maggiore dei Fasti Antiates”",
+        href: "https://commons.wikimedia.org/w/index.php?curid=190319693",
+        by: "by Fabrizio Garrisi",
+        licence: "CC0",
+        licenceHref: "https://creativecommons.org/publicdomain/zero/1.0/",
+      },
+    ] satisfies PictureCredit[],
+    tail: "both via Wikimedia Commons.",
+  },
 } as const;
 
 // ── Legal pages ───────────────────────────────────────────────────────────────
@@ -389,8 +595,8 @@ const LEGAL_CONTACT = `Angeronia Labs LLC, Philadelphia, Pennsylvania. Questions
 export const privacyPolicy: LegalDocument = {
   slug: "privacy",
   title: "Privacy Policy",
-  updated: "8 September 2026",
-  updatedIso: "2026-09-08",
+  updated: "25 November 2026",
+  updatedIso: "2026-11-25",
   lede: "This site collects nothing about you. The detail below explains what that means in practice, and the two places where information exists anyway.",
   sections: [
     {
@@ -406,7 +612,7 @@ export const privacyPolicy: LegalDocument = {
     {
       heading: "What your browser stores",
       paragraphs: [
-        "One value, and only if you use the light/dark switch: an entry named “theme” in your browser’s local storage, recording which scheme you picked. It stays on your device, is never transmitted to us, and clearing your site data removes it. The site works without it.",
+        "The studio’s pages store nothing in your browser. The games under /games keep your progress and settings in your browser’s local storage, so a game can pick up where you left off. That stays on your device, is never transmitted to us, and clearing your site data removes it.",
       ],
     },
     {
@@ -418,7 +624,7 @@ export const privacyPolicy: LegalDocument = {
     {
       heading: "Fonts and third-party requests",
       paragraphs: [
-        "The IBM Plex typefaces are served from this domain rather than from a font CDN, so loading a page makes no request to Google or any other third party. Following a link off the site is the only way your browser contacts someone else.",
+        "The typefaces, Hanken Grotesk and IBM Plex Mono, are served from this domain rather than from a font CDN, so loading a page makes no request to Google or any other third party. Following a link off the site is the only way your browser contacts someone else.",
       ],
     },
     {
@@ -430,7 +636,7 @@ export const privacyPolicy: LegalDocument = {
     {
       heading: "Links to other sites",
       paragraphs: [
-        "We link to LinkedIn, GitHub, Code Socratic and to client sites. Once you follow one of those links you are on someone else's site under someone else's policy, and this one no longer applies.",
+        "We link to LinkedIn, GitHub and Code.Socratic, and, in the photographs’ credits, to Wikimedia Commons and Creative Commons. Once you follow one of those links you are on someone else's site under someone else's policy, and this one no longer applies.",
       ],
     },
     {
@@ -524,36 +730,3 @@ export const termsOfService: LegalDocument = {
 };
 
 export const legalDocuments: LegalDocument[] = [privacyPolicy, termsOfService];
-
-// ── Footer ────────────────────────────────────────────────────────────────────
-export const footer = {
-  tagline: "A software engineering studio in Philadelphia.",
-  columns: [
-    {
-      title: "Studio",
-      links: [
-        { label: "Services", href: "#services" },
-        { label: "Process", href: "#process" },
-        { label: "About", href: "#about" },
-      ],
-    },
-    {
-      title: "Products",
-      links: [{ label: "Code Socratic", href: LINKS.codeSocratic, external: true }],
-    },
-    {
-      title: "Elsewhere",
-      links: [
-        { label: "Email", href: LINKS.calendar },
-        { label: "LinkedIn", href: LINKS.linkedin, external: true },
-        { label: "GitHub", href: LINKS.github, external: true },
-      ],
-    },
-  ],
-  legal: [
-    { label: privacyPolicy.title, href: `/${privacyPolicy.slug}` },
-    { label: termsOfService.title, href: `/${termsOfService.slug}` },
-  ],
-  copyrightLeft: "© 2026 Angeronia Labs LLC. All rights reserved.",
-  copyrightRight: "Built with responsible AI practices.",
-} as const;

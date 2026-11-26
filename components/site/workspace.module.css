@@ -1,0 +1,661 @@
+/* ══════════════════════════════════════════════════════════════════════════
+   The Code.Socratic replica, as the product looks in its light theme.
+   The one exception to "never a literal" (DESIGN-RULES.md §3): the --ui-*
+   palette, its radii and its 12–16px type are the product's own, declared here,
+   scoped to the replica's fragments, and used nowhere else. Durations and
+   easings still come from the tokens.
+   ══════════════════════════════════════════════════════════════════════════ */
+
+.fragment {
+  --ui-ground: #f6eeea;
+  --ui-surface: #fffdfc;
+  --ui-raised: #faf3f0;
+  --ui-active: #ecdfd9;
+  --ui-border: #e6d9d3;
+  --ui-rule: #f0e6e1;
+  --ui-control: #cdbdb6;
+  --ui-text: #351a2b;
+  --ui-muted: #68525d;
+  --ui-faint: #74606a;
+  --ui-primary: #351a2b;
+  --ui-on-primary: #f6eeea;
+  --ui-data: #7b2d5f;
+  --ui-positive: #247b50;
+  --ui-pos-bg: #dcfae5;
+  --ui-pos-ink: #04250e;
+  --ui-k: #7b2d5f;
+  --ui-c: #74606a;
+  --ui-n: #92400e;
+  --ui-f: #c4242a;
+
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  min-height: 0;
+  overflow: hidden;
+  border: 1px solid var(--ui-border);
+  border-radius: 6px;
+  background: var(--ui-surface);
+  color: var(--ui-text);
+  font-family: var(--font-sans);
+  font-size: 14px;
+  line-height: 1.45;
+  letter-spacing: 0;
+}
+
+/* ── Across the spine, at full width ─────────────────────────────────────── */
+/* The panes' heights are this picture's own proportions. */
+.workspace {
+  display: grid;
+  grid-template-columns: minmax(0, 46fr) minmax(0, 54fr);
+  gap: var(--space-4);
+  height: clamp(560px, 43vw, 680px);
+}
+
+/* ── Editor ──────────────────────────────────────────────────────────────── */
+.bar {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 10px 14px;
+  border-bottom: 1px solid var(--ui-border);
+  background: var(--ui-ground);
+  white-space: nowrap;
+}
+
+.lang {
+  padding: 2px 8px;
+  border: 1px solid var(--ui-control);
+  border-radius: 4px;
+  color: var(--ui-muted);
+  font-size: 13px;
+}
+
+.title {
+  overflow: hidden;
+  font-weight: 500;
+  text-overflow: ellipsis;
+}
+
+.tag {
+  padding: 1px 8px;
+  border-radius: 999px;
+  background: var(--ui-active);
+  color: var(--ui-text);
+  font-size: 12px;
+  font-weight: 500;
+}
+
+.credits {
+  margin-left: auto;
+  color: var(--ui-muted);
+  font-size: 13px;
+}
+
+.credits strong,
+.stat strong {
+  color: var(--ui-text);
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+}
+
+.fileTab {
+  display: flex;
+  border-bottom: 1px solid var(--ui-border);
+  background: var(--ui-raised);
+}
+
+.fileTab span {
+  margin-bottom: -1px;
+  padding: 8px 14px;
+  border-right: 1px solid var(--ui-border);
+  background: var(--ui-surface);
+  font-size: 13px;
+}
+
+.code {
+  flex: 1;
+  min-height: 0;
+  margin: 0;
+  overflow: auto;
+  padding: 12px 14px 12px 0;
+  background: var(--ui-surface);
+  color: var(--ui-text);
+  font-family: var(--font-code);
+  font-size: 13px;
+  line-height: 1.5;
+  white-space: normal;
+  tab-size: 4;
+  counter-reset: line;
+}
+
+.code code {
+  font: inherit;
+}
+
+.codeLine {
+  position: relative;
+  display: block;
+  padding-left: 3.1em;
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+}
+
+.codeLine::before {
+  content: counter(line);
+  counter-increment: line;
+  position: absolute;
+  left: 0;
+  width: 2.1em;
+  color: var(--ui-faint);
+  text-align: right;
+}
+
+.codeLocked {
+  background: var(--ui-raised);
+  color: var(--ui-muted);
+}
+
+.k {
+  color: var(--ui-k);
+}
+
+.f {
+  color: var(--ui-f);
+}
+
+.n {
+  color: var(--ui-n);
+}
+
+.c {
+  color: var(--ui-c);
+}
+
+.actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 8px;
+  padding: 10px 12px;
+  border-top: 1px solid var(--ui-border);
+  background: var(--ui-raised);
+}
+
+.btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  min-height: 34px;
+  padding: 0 12px;
+  border: 1px solid var(--ui-control);
+  border-radius: 6px;
+  background: var(--ui-surface);
+  color: var(--ui-text);
+  font-size: 13px;
+  font-weight: 500;
+  cursor: default;
+}
+
+.btnPrimary {
+  border-color: var(--ui-primary);
+  background: var(--ui-primary);
+  color: var(--ui-on-primary);
+}
+
+.btn kbd {
+  font-family: inherit;
+  font-size: 12px;
+  opacity: 0.8;
+}
+
+/* ── Side pane and its tabs ──────────────────────────────────────────────── */
+.tabs {
+  display: flex;
+  overflow-x: auto;
+  border-bottom: 1px solid var(--ui-border);
+  background: var(--ui-raised);
+  scrollbar-width: none;
+}
+
+.tab {
+  position: relative;
+  padding: 11px 16px;
+  border: 0;
+  background: transparent;
+  color: var(--ui-muted);
+  font-size: 14px;
+  font-weight: 500;
+  white-space: nowrap;
+  cursor: pointer;
+  transition:
+    color var(--dur-hover) var(--ease-out),
+    background-color var(--dur-hover) var(--ease-out);
+}
+
+.tab::after {
+  content: "";
+  position: absolute;
+  right: 12px;
+  bottom: -1px;
+  left: 12px;
+  height: 2px;
+  background: var(--ui-primary);
+  transform: scaleX(0);
+}
+
+.tab[aria-selected="true"] {
+  background: var(--ui-surface);
+  color: var(--ui-text);
+}
+
+.tab[aria-selected="true"]::after {
+  transform: scaleX(1);
+}
+
+/* The press and the underline's sweep are motion: only with motion allowed. */
+@media (prefers-reduced-motion: no-preference) {
+  .tab::after {
+    transition: transform var(--dur-ui) var(--ease-out);
+  }
+
+  .tab:active {
+    transform: scale(0.97);
+  }
+}
+
+.tab:focus-visible {
+  outline: 2px solid var(--ui-data);
+  outline-offset: -3px;
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .tab:hover {
+    background: var(--ui-active);
+    color: var(--ui-text);
+  }
+}
+
+.panel {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  min-height: 0;
+}
+
+.panel[hidden] {
+  display: none;
+}
+
+/* The panels' focus ring, inside the fragment (the band's ring sits outside). */
+.panel:focus-visible,
+.code:focus-visible,
+.scroll:focus-visible {
+  outline: 2px solid var(--ui-data);
+  outline-offset: -2px;
+}
+
+.nojsLabel {
+  display: none;
+}
+
+/* With script, until the tabs are live, show what they will show: the tabs and
+   the first panel only. The other panels and every panel's name are taken out
+   of the flow and made invisible (clipped by the pane) rather than given
+   display: none, because the fallback below has to run an animation on them,
+   and an element that is not displayed runs none. */
+:global(html.js) .workspace:not([data-ready]) .pane {
+  position: relative;
+}
+
+:global(html.js) .workspace:not([data-ready]) .panel + .panel,
+:global(html.js) .workspace:not([data-ready]) .nojsLabel {
+  position: absolute;
+  visibility: hidden;
+}
+
+:global(html.js) .workspace:not([data-ready]) .nojsLabel {
+  display: block;
+  padding: 10px 16px 0;
+  font-weight: 600;
+}
+
+/* If the tabs are still not live after --dur-script-wait (the script failed or
+   stalled), take the no-script layout below instead, so no panel stays out of
+   reach behind a tab that does nothing (ADR-032). Zero-length animations,
+   delayed, that hold their end state: a timer, not motion, so this applies
+   under reduced motion too. Once the tabs go live, none of it matches. */
+:global(html.js) .workspace:not([data-ready]) {
+  animation: stalledWorkspace 0s var(--dur-script-wait) forwards;
+}
+
+:global(html.js) .workspace:not([data-ready]) .pane {
+  animation: stalledPane 0s var(--dur-script-wait) forwards;
+}
+
+:global(html.js) .workspace:not([data-ready]) .tabs {
+  animation: stalledTabs 0s var(--dur-script-wait) forwards;
+}
+
+:global(html.js) .workspace:not([data-ready]) .panel {
+  animation: stalledPanel 0s var(--dur-script-wait) forwards;
+}
+
+:global(html.js) .workspace:not([data-ready]) .nojsLabel {
+  animation: stalledLabel 0s var(--dur-script-wait) forwards;
+}
+
+@keyframes stalledWorkspace {
+  to {
+    align-items: start;
+    height: auto;
+  }
+}
+
+@keyframes stalledPane {
+  to {
+    height: auto;
+  }
+}
+
+@keyframes stalledTabs {
+  to {
+    display: none;
+  }
+}
+
+@keyframes stalledPanel {
+  to {
+    position: static;
+    flex: none;
+    visibility: visible;
+  }
+}
+
+@keyframes stalledLabel {
+  to {
+    position: static;
+    visibility: visible;
+  }
+}
+
+/* Without script: no tabs; every panel, under its name, at its natural height. */
+:global(html:not(.js)) .tabs {
+  display: none;
+}
+
+:global(html:not(.js)) .nojsLabel {
+  display: block;
+  padding: 10px 16px 0;
+  font-weight: 600;
+}
+
+:global(html:not(.js)) .workspace {
+  align-items: start;
+  height: auto;
+}
+
+:global(html:not(.js)) .pane {
+  height: auto;
+}
+
+:global(html:not(.js)) .panel {
+  flex: none;
+}
+
+/* ── Tutor ───────────────────────────────────────────────────────────────── */
+.status {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 6px 18px;
+  padding: 10px 16px;
+  border-bottom: 1px solid var(--ui-rule);
+  color: var(--ui-muted);
+  font-size: 13px;
+}
+
+.phases {
+  display: flex;
+  gap: 14px;
+  margin-right: auto;
+}
+
+.phases li {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  color: var(--ui-text);
+}
+
+.phases li.now {
+  color: var(--ui-muted);
+}
+
+.glyph {
+  flex: none;
+  width: 15px;
+  height: 15px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.5;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.done .glyph,
+.resultsHead .glyph {
+  color: var(--ui-positive);
+}
+
+.stat {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.scroll {
+  flex: 1;
+  min-height: 0;
+  overflow-y: auto;
+  padding: 14px 16px;
+}
+
+.chat {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.chat li {
+  max-width: 86%;
+  padding: 9px 12px;
+  border-radius: 8px;
+}
+
+.chat .you {
+  align-self: flex-end;
+  background: var(--ui-active);
+}
+
+.chat .tutor {
+  align-self: flex-start;
+  border: 1px solid var(--ui-rule);
+  background: var(--ui-raised);
+}
+
+.who {
+  margin-bottom: 2px;
+  color: var(--ui-muted);
+  font-size: 12px;
+  font-weight: 600;
+}
+
+.said {
+  font-size: 14px;
+}
+
+.composer {
+  display: flex;
+  gap: 8px;
+  padding: 10px 12px;
+  border-top: 1px solid var(--ui-border);
+  background: var(--ui-raised);
+}
+
+.field {
+  display: flex;
+  flex: 1;
+  align-items: center;
+  min-height: 34px;
+  overflow: hidden;
+  padding: 0 12px;
+  border: 1px solid var(--ui-control);
+  border-radius: 6px;
+  background: var(--ui-surface);
+  color: var(--ui-faint);
+  font-size: 13px;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* ── Instructions and results ────────────────────────────────────────────── */
+.prose {
+  gap: 10px;
+  overflow-y: auto;
+  padding: 16px 18px;
+}
+
+.prose p {
+  max-width: 62ch;
+}
+
+.prose code,
+.constraints code {
+  padding: 1px 5px;
+  border-radius: 4px;
+  background: var(--ui-active);
+  font-family: var(--font-code);
+  font-size: 12.5px;
+}
+
+.proseHead {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.proseTitle {
+  font-size: 16px;
+  font-weight: 600;
+}
+
+.sub {
+  margin-top: 6px;
+  font-weight: 600;
+}
+
+.block {
+  margin: 0;
+  padding: 10px 12px;
+  border: 1px solid var(--ui-border);
+  border-radius: 6px;
+  background: var(--ui-raised);
+  font-family: var(--font-code);
+  font-size: 12.5px;
+  line-height: 1.6;
+  white-space: pre-wrap;
+}
+
+.prose .block code {
+  padding: 0;
+  background: none;
+  font-size: inherit;
+}
+
+.constraints {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.filePane .code {
+  flex: 1;
+}
+
+.resultsHead {
+  display: inline-flex;
+  align-items: center;
+  align-self: flex-start;
+  gap: 8px;
+  padding: 4px 10px;
+  border-radius: 999px;
+  background: var(--ui-pos-bg);
+  color: var(--ui-pos-ink);
+  font-weight: 600;
+}
+
+.results {
+  display: flex;
+  flex-direction: column;
+  margin-top: 4px;
+  overflow: hidden;
+  border: 1px solid var(--ui-border);
+  border-radius: 6px;
+}
+
+.results div {
+  display: flex;
+  justify-content: space-between;
+  padding: 10px 14px;
+}
+
+.results div + div {
+  border-top: 1px solid var(--ui-rule);
+}
+
+.results dt {
+  color: var(--ui-muted);
+}
+
+.results dd {
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+}
+
+.note {
+  color: var(--ui-muted);
+  font-size: 13px;
+}
+
+/* ── 900–1099: the panes stack ───────────────────────────────────────────── */
+@media (min-width: 900px) and (max-width: 1099px) {
+  .workspace {
+    grid-template-columns: minmax(0, 1fr);
+    height: auto;
+  }
+
+  .editor {
+    height: 520px;
+  }
+
+  .pane {
+    height: 560px;
+  }
+}
+
+/* ── The narrow layout ───────────────────────────────────────────────────── */
+@media (max-width: 899px) {
+  .workspace {
+    display: block;
+    height: auto;
+  }
+
+  .editor {
+    height: auto;
+  }
+
+  .pane {
+    height: 560px;
+    margin-top: var(--space-4);
+  }
+}

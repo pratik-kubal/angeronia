@@ -1,36 +1,29 @@
-import { Tag } from "@carbon/react";
-import { Avatar } from "@/components/ui/avatar";
-import { Cluster } from "@/components/ui/cluster";
-import { MediaObject } from "@/components/ui/media-object";
-import { Section } from "@/components/ui/section";
-import { Body } from "@/components/ui/text";
-import { aboutCoda, aboutHeading, aboutLabel, aboutRange, aboutLead } from "@/data/angeronia";
+import { about } from "@/data/angeronia";
+import { cx } from "@/lib/cx";
+import typeStyles from "@/styles/type.module.css";
+import { Band } from "./band";
+import { Mine, Pair, Yours } from "./pair";
+import { Statement } from "./statement";
+import styles from "./about.module.css";
 
 /**
- * Who you work with.
- *
- * The old coverage strip was a row of pill segments that implied a scale
- * nobody had measured. It is a list of tags now: the same five areas, with no
- * invented gradient.
+ * Who you'd work with: Pratik Kubal, named, and the background behind the
+ * studio, as a pair; then the belief the page is built on, set on the spine as
+ * two crossing lines at heading size (a lead paragraph below 1100px).
  */
 export function About() {
   return (
-    <Section id="about" kicker={aboutLabel} heading={aboutHeading}>
-      <MediaObject figure={<Avatar initials="PK" label="Pratik Kubal" size="large" />}>
-        <Body>{aboutLead}</Body>
-
-        <Cluster className="site-about__range">
-          {aboutRange.map((area) => (
-            <Tag key={area} type="outline" size="sm">
-              {area}
-            </Tag>
-          ))}
-        </Cluster>
-
-        <blockquote className="site-coda">
-          <p>{aboutCoda}</p>
-        </blockquote>
-      </MediaObject>
-    </Section>
+    <Band as="section" band="paper" id="about" aria-labelledby="about-title" className={styles.about}>
+      <Statement as="h2" id="about-title" size="display" lines={about.lines} motion="pull" />
+      <Pair as="p" narrowOrder="yours-first" className={cx(typeStyles.lead, styles.pair)}>
+        <Yours as="span" reveal={0}>
+          {about.yours}
+        </Yours>{" "}
+        <Mine as="span" reveal={1}>
+          {about.mine}
+        </Mine>
+      </Pair>
+      <Statement as="p" size="head" lines={about.statement} motion="pull" collapse className={styles.statement} />
+    </Band>
   );
 }

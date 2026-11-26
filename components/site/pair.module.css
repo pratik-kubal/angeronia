@@ -1,0 +1,57 @@
+/* A pair: your side ends at the axis, the studio's starts after it.
+   The middle column is the air either side of the line. */
+.pair {
+  display: grid;
+  grid-template-columns: calc(var(--axis-inset) - var(--spine-gap)) calc(var(--spine-gap) * 2) minmax(0, 1fr);
+  align-items: start;
+}
+
+/* --pair-yours and --pair-mine are this component's measures (in em, as the
+   draft): a caller may set them on the className it passes. */
+.yours {
+  grid-column: 1;
+  justify-self: end;
+  max-width: var(--pair-yours, 16em);
+  text-align: right;
+}
+
+.mine {
+  grid-column: 3;
+  justify-self: start;
+  max-width: var(--pair-mine, 24em);
+}
+
+/* Mine first in the DOM (the narrow order, so focus and reading follow what is
+   seen, ADR-032): wide, both sides still share the pair's one row, yours in
+   the first column. */
+.mineFirst > .yours,
+.mineFirst > .mine {
+  grid-row: 1;
+}
+
+/* The narrow layout: the sides stack, hanging from the axis. */
+@media (max-width: 899px) {
+  .pair {
+    display: block;
+    padding-left: var(--hang);
+  }
+
+  .yours,
+  .mine {
+    justify-self: auto;
+    max-width: var(--measure);
+    text-align: left;
+  }
+
+  /* A paragraph's gap, in the type's own em, as the draft. */
+  .yours + .mine {
+    margin-top: 0.55em;
+  }
+
+  .mineFirst {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-6);
+    align-items: flex-start;
+  }
+}

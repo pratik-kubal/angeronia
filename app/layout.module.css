@@ -1,0 +1,9 @@
+/* The page frame: one flex column at least a screen tall, so a short page (a
+   legal page) keeps its footer at the foot of the screen. The games' shells sit
+   in it too, and were measured as flex items of exactly this frame; removing it
+   changes their resolved min-width and min-height (ADR-029, the parity gate). */
+.page {
+  display: flex;
+  flex-direction: column;
+  min-block-size: 100dvh;
+}

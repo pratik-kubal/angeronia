@@ -1,44 +1,33 @@
-import * as React from "react";
 import type { Decorator, Preview } from "@storybook/nextjs-vite";
 
-// The same faces `next/font` self-hosts in production, wired up for stories.
-import "@fontsource/ibm-plex-sans/latin-300.css";
-import "@fontsource/ibm-plex-sans/latin-400.css";
-import "@fontsource/ibm-plex-sans/latin-600.css";
-import "@fontsource/ibm-plex-sans/latin-700.css";
-import "@fontsource/ibm-plex-mono/latin-400.css";
+// The production stylesheets, unmodified and in the layout's order: tokens,
+// then base (DESIGN-RULES.md §1). Never a Storybook-only variant.
+import "../styles/tokens.css";
+import "../styles/base.css";
 import "./preview.css";
-import "./foundations.css";
 
-// The production stylesheet, unmodified: Carbon, then the Angeronia theme,
-// then site composition. Never a Storybook-only variant (design rule 11).
-import "../styles/globals.scss";
+// The same next/font faces app/layout.tsx loads. Their variables go on <html>,
+// as in production: tokens.css reads them in :root, so a wrapper would be too
+// low for --font-sans to see them.
+import { fontVariables } from "../app/fonts";
 
-import { COLOR_SCHEME_ATTRIBUTE, type SelectableColorScheme } from "../lib/theme";
+document.documentElement.classList.add(...fontVariables.split(" "));
+
+/** Which band a story renders on (DESIGN-RULES.md §11). */
+type Band = "paper" | "dark" | false;
 
 /**
- * Puts the chosen theme on `<html>`, which is the only thing Carbon needs to
- * switch schemes — `styles/_themes.scss` emits the White token set under
- * `:root` and the Gray 100 set under `:root[data-theme="dark"]`.
- *
- * `colorScheme` is also set so the browser's own chrome (form controls,
- * scrollbars) follows, which is what `next-themes` does in production.
+ * Every story renders on a band, as every component does on the page: the
+ * band sets the roles (`--band-*`), and the studio's focus ring and selection
+ * are scoped to `[data-band]`. `parameters.band` picks it: "paper" (the
+ * default), "dark" for the charcoal band, or `false` for a story that brings its
+ * own bands (a page).
  */
-const withColorScheme: Decorator = (Story, context) => {
-  const scheme = (context.globals.colorScheme ?? "light") as SelectableColorScheme;
-
-  React.useEffect(() => {
-    const root = document.documentElement;
-    root.setAttribute(COLOR_SCHEME_ATTRIBUTE, scheme);
-    root.style.colorScheme = scheme;
-    return () => {
-      root.removeAttribute(COLOR_SCHEME_ATTRIBUTE);
-      root.style.colorScheme = "";
-    };
-  }, [scheme]);
-
+const withBand: Decorator = (Story, context) => {
+  const band = (context.parameters.band ?? "paper") as Band;
+  if (band === false) return <Story />;
   return (
-    <div className="site-root sb-surface">
+    <div data-band={band} className="sb-band">
       <Story />
     </div>
   );
@@ -46,42 +35,30 @@ const withColorScheme: Decorator = (Story, context) => {
 
 const preview: Preview = {
   parameters: {
+    layout: "fullscreen",
     controls: { matchers: { color: /(background|color)$/i, date: /Date$/i } },
-    // Surfaces come from the theme's tokens, so a backgrounds addon would only
-    // let a reviewer put a component on a ground the design system never uses.
+    // One colour scheme (ADR-024), and grounds come from the band roles, so a
+    // backgrounds addon would only put a component on a ground the site never uses.
     backgrounds: { disable: true },
     a11y: { test: "error" },
     docs: { toc: true },
+    band: "paper",
+    // The draft's three screenshot widths. A story picks one with
+    // `globals: { viewport: { value: "phone", isRotated: false } }`.
+    viewport: {
+      options: {
+        phone: { name: "Phone, 390", styles: { width: "390px", height: "844px" }, type: "mobile" },
+        tablet: { name: "Tablet, 768", styles: { width: "768px", height: "1024px" }, type: "tablet" },
+        desktop: { name: "Desktop, 1440", styles: { width: "1440px", height: "900px" }, type: "desktop" },
+      },
+    },
     options: {
       storySort: {
-        order: [
-          "Foundations",
-          ["Introduction", "Brand", "Color", "Typography"],
-          "Components",
-          "Sections",
-          "Pages",
-        ],
+        order: ["Foundations", "Components", "Sections", "Pages"],
       },
     },
   },
-  initialGlobals: {
-    colorScheme: "light",
-  },
-  globalTypes: {
-    colorScheme: {
-      description: "Carbon theme",
-      toolbar: {
-        title: "Scheme",
-        icon: "sun",
-        items: [
-          { value: "light", title: "Light · White", icon: "sun" },
-          { value: "dark", title: "Dark · Gray 100", icon: "moon" },
-        ],
-        dynamicTitle: true,
-      },
-    },
-  },
-  decorators: [withColorScheme],
+  decorators: [withBand],
 };
 
 export default preview;

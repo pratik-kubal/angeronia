@@ -1,0 +1,29 @@
+.process {
+  padding: var(--section-space) var(--margin);
+}
+
+/* The intro's measure, as the draft. */
+.intro {
+  max-width: 28em;
+  margin-top: var(--space-m);
+  margin-left: var(--hang);
+}
+
+.steps {
+  margin-top: var(--space-3xl);
+}
+
+.step + .step {
+  margin-top: var(--space-xl);
+}
+
+.pair {
+  --pair-yours: 19em;
+  margin-top: var(--space-xs);
+}
+
+@media (max-width: 899px) {
+  .intro {
+    max-width: var(--measure);
+  }
+}

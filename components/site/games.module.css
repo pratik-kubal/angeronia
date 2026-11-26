@@ -1,0 +1,70 @@
+.games {
+  padding: var(--section-space) var(--margin);
+}
+
+/* The intro's measure, as the other sections' intros. */
+.intro {
+  max-width: 28em;
+  margin-top: var(--space-m);
+  margin-left: var(--hang);
+}
+
+/* The tiles hang from the axis and wrap: a new game is one more entry in the
+   data and nothing else (ADR-020). 15rem is a tile's narrowest. */
+.tiles {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(15rem, 1fr));
+  gap: var(--space-l) var(--space-m);
+  margin-top: var(--space-2xl);
+  margin-left: var(--hang);
+}
+
+.tile {
+  position: relative;
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr);
+  gap: var(--space-4);
+  align-items: start;
+}
+
+/* The game's own icon, square as everything here is (iOS rounds it only on a
+   home screen). 4rem is the icon's size on the page. */
+.icon {
+  width: 4rem;
+  height: 4rem;
+  background: var(--band-frame);
+}
+
+.text {
+  padding-top: var(--space-1);
+}
+
+.link {
+  font-size: var(--step-lead);
+  font-weight: var(--weight-medium);
+  line-height: var(--leading-lead);
+  letter-spacing: var(--tracking-lead);
+  text-decoration-line: underline;
+  text-decoration-color: transparent;
+  text-decoration-thickness: 0.07em;
+  text-underline-offset: 0.2em;
+  transition: text-decoration-color var(--dur-hover) var(--ease-out);
+}
+
+/* One link per tile, stretched over it: the icon opens the game too. */
+.link::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .tile:hover .link {
+    text-decoration-color: currentColor;
+  }
+}
+
+.line {
+  margin-top: var(--space-1);
+  color: var(--band-soft);
+}

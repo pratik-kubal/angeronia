@@ -1,6 +1,6 @@
 import type { Metadata, Viewport } from "next";
 import { SolitaireGame } from "@/components/solitaire/solitaire-game";
-// The browser defaults the game was built on, in place of Carbon's reset (ADR-019).
+// The browser defaults the game was built on, in place of the studio's reset (ADR-019, ADR-029).
 import "@/components/games/base.css";
 import "@/components/solitaire/solitaire.css";
 

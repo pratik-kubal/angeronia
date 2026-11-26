@@ -1,0 +1,44 @@
+.services {
+  padding: var(--section-space) var(--margin);
+}
+
+/* The intro's measure, as the draft. */
+.intro {
+  max-width: 28em;
+  margin-top: var(--space-m);
+  margin-left: var(--hang);
+}
+
+.areas {
+  margin-top: var(--space-3xl);
+}
+
+.area + .area {
+  margin-top: var(--space-xl);
+}
+
+.pair {
+  --pair-yours: 19em;
+  --pair-mine: 38em;
+  margin-top: var(--space-xs);
+}
+
+/* The four parts, read as one line in the secondary ink. */
+.parts {
+  margin-top: var(--space-1);
+  color: var(--band-soft);
+}
+
+.parts li {
+  display: inline;
+}
+
+.parts li + li::before {
+  content: ", ";
+}
+
+@media (max-width: 899px) {
+  .intro {
+    max-width: var(--measure);
+  }
+}

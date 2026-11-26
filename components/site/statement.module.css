@@ -1,0 +1,160 @@
+/* A statement on the spine (DESIGN-RULES.md §7). The type step comes from
+   styles/type.module.css; this module places the lines. */
+
+.statement {
+  /* The arrival's travel (hero only; see .arrive). A distance this component
+     moves, not a measure of the system. */
+  --pull: 16vw;
+}
+
+.line {
+  display: block;
+  width: fit-content;
+}
+
+.part {
+  position: relative;
+  display: inline-block;
+}
+
+.hang {
+  margin-left: var(--hang);
+}
+
+.push {
+  margin-left: calc(var(--axis-inset) + var(--push));
+}
+
+/* A step's name, centred on the axis (the draft's .vertebra). */
+.centre {
+  position: relative;
+  margin-left: var(--axis-inset);
+  translate: -50% 0;
+}
+
+/* Without script the line runs whole down the band: a crossing part (and a
+   centred name) paints the band's ground behind itself, so the line breaks
+   where the words are. 0.12em of air, as the draft. */
+.part::before,
+.centre::before {
+  content: "";
+  position: absolute;
+  inset: -0.12em -0.04em;
+  z-index: -1;
+  background: var(--band-ground);
+}
+
+/* With script the line is drawn in pieces between the words instead. */
+:global(html.spine-live) .part::before,
+:global(html.spine-live) .centre::before {
+  display: none;
+}
+
+@media (min-width: 900px) {
+  .line,
+  .part {
+    white-space: nowrap;
+  }
+
+  /* A crossing line: its first part ends on the axis, its second starts after it. */
+  .cross {
+    display: grid;
+    width: auto;
+    grid-template-columns: var(--axis-inset) minmax(0, 1fr);
+  }
+
+  .cross > .left {
+    justify-self: end;
+    padding-right: 0.05em; /* the word space's optical half, as the draft */
+  }
+
+  .cross > .right {
+    justify-self: start;
+    padding-left: var(--spine-gap);
+  }
+}
+
+/* The narrow layout: the axis at 22%; a crossing line starts at the margin
+   and may wrap; a step's name starts there too. */
+@media (max-width: 899px) {
+  .statement {
+    --pull: 9vw;
+  }
+
+  .line,
+  .part {
+    white-space: normal;
+  }
+
+  .centre {
+    margin-left: 0;
+    translate: none;
+  }
+}
+
+/* Below 1100px About's closing statement becomes a lead paragraph hanging
+   from the axis (the draft's .oneperson). 30em is this statement's measure. */
+@media (max-width: 1099px) {
+  /* .statement.collapse outranks the type step's class on the same element. */
+  .statement.collapse {
+    max-width: 30em;
+    margin-left: var(--hang);
+    font-size: var(--step-lead);
+    font-weight: var(--weight-text);
+    line-height: var(--leading-lead);
+    letter-spacing: var(--tracking-lead);
+  }
+
+  .collapse .line,
+  .collapse .part {
+    display: inline;
+    padding: 0;
+    white-space: normal;
+  }
+}
+
+/* One heading regroups on a phone: its words run on, the first line hanging
+   from the axis, the rest crossing from the margin (the draft's .flow-n). */
+@media (max-width: 599px) {
+  .regroup {
+    text-indent: var(--hang);
+  }
+
+  .regroup .line {
+    display: inline;
+    margin: 0;
+  }
+
+  .regroup .part {
+    text-indent: 0;
+  }
+}
+
+/* The hero's arrival on load: the hanging line from the right, the crossing
+   line closing over the axis from both sides. CSS only, so it plays from the
+   first paint; the finished statement without script or with reduced motion. */
+@media (prefers-reduced-motion: no-preference) {
+  :global(html.js) .arrive .hang {
+    animation: from-right var(--dur-arrive-lead) var(--ease-expo) calc(var(--stagger) / 2) backwards;
+  }
+
+  :global(html.js) .arrive .left {
+    animation: from-left var(--dur-arrive) var(--ease-expo) calc(var(--stagger) * 2.25) backwards;
+  }
+
+  :global(html.js) .arrive .right {
+    animation: from-right var(--dur-arrive) var(--ease-expo) calc(var(--stagger) * 2.25) backwards;
+  }
+}
+
+@keyframes from-left {
+  from {
+    transform: translateX(calc(var(--pull) * -1));
+  }
+}
+
+@keyframes from-right {
+  from {
+    transform: translateX(var(--pull));
+  }
+}

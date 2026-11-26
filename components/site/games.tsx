@@ -1,43 +1,50 @@
-import { Link } from "@carbon/react";
-import { Section } from "@/components/ui/section";
-import { gamesHeading, gamesLabel, type Game } from "@/data/angeronia";
+import type React from "react";
+import { gamesSection, type Game } from "@/data/angeronia";
+import { cx } from "@/lib/cx";
+import motionStyles from "@/styles/motion.module.css";
+import typeStyles from "@/styles/type.module.css";
+import { Band } from "./band";
+import { Statement } from "./statement";
+import styles from "./games.module.css";
 
 /**
- * The games launcher on the home page (ADR-020): one tile per game, each its
- * own icon, its name and one line, in a grid that wraps to fit however many
- * games there are.
+ * The games launcher on the home page (ADR-020), in the spine's language: a
+ * crossing heading, one line hanging from the axis, and one tile per game in a
+ * grid that starts at the hang and wraps to fit however many there are.
  *
- * The icon is the game's own Add to Home Screen icon, by URL. The games keep
- * their own look outside the design system (ADR-019), and an `href` is not an
- * import, so the tile shows the game's artwork without any game code crossing
- * into the site. It repeats the name beside it, so it is decorative (`alt=""`).
+ * Each tile is the game's own Add to Home Screen icon, by URL (an `href` is not
+ * an import, so ADR-019's boundary holds both ways; `alt=""`, because the name
+ * beside it says the same), its name and its line. The name is the tile's one
+ * link, stretched over it, so the icon opens the game too and a keyboard meets
+ * one stop per game. A plain `<a>`: a game loads as its own page.
  *
- * A list of links, one per game. The link is the game's name, stretched over
- * the tile (`.site-game__link::after`), so a click on the icon opens the game
- * too without the icon becoming a second tab stop. A plain Carbon `Link`, not
- * `ExternalLink`: the games are on this site and open in the same tab.
- *
- * The list comes in as a prop, not straight from the data file as the other
- * sections' copy does, so Storybook can show the launcher with many games
- * before there are many.
+ * The list is a prop, so Storybook can show many games before there are many.
  */
 export function Games({ games }: { games: Game[] }) {
   return (
-    <Section id="games" kicker={gamesLabel} heading={gamesHeading}>
-      <ul className="site-games">
-        {games.map((game) => (
-          <li key={game.href} className="site-game">
-            {/* eslint-disable-next-line @next/next/no-img-element -- images are
-                unoptimized site-wide, so next/image would only add a wrapper;
-                the icons are already 180 × 180. */}
-            <img className="site-game__icon" src={game.icon} alt="" width={180} height={180} />
-            <Link href={game.href} size="lg" className="site-game__link">
-              {game.name}
-            </Link>
-            <p className="site-game__line">{game.line}</p>
+    <Band as="section" band="paper" id="games" aria-labelledby="games-title" className={styles.games}>
+      <Statement as="h2" id="games-title" size="display" lines={gamesSection.lines} motion="pull" />
+      <p className={cx(typeStyles.lead, styles.intro, motionStyles.reveal)}>{gamesSection.intro}</p>
+      <ul className={styles.tiles} role="list">
+        {games.map((game, i) => (
+          <li
+            key={game.href}
+            className={cx(styles.tile, motionStyles.reveal)}
+            // The stagger index travels as data (DESIGN-RULES.md §1's carve-out).
+            style={{ "--i": i } as React.CSSProperties}
+          >
+            {/* eslint-disable-next-line @next/next/no-img-element -- the icon is
+                already 180 × 180 and images are unoptimized site-wide. */}
+            <img className={styles.icon} src={game.icon} alt="" width={180} height={180} loading="lazy" />
+            <div className={styles.text}>
+              <a className={styles.link} href={game.href}>
+                {game.name}
+              </a>
+              <p className={styles.line}>{game.line}</p>
+            </div>
           </li>
         ))}
       </ul>
-    </Section>
+    </Band>
   );
 }
