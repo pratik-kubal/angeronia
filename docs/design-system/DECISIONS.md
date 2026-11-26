@@ -1630,7 +1630,8 @@ missing, games notes still naming Carbon).
    photographs), and clears them when it stops. Nothing in markup and no other
    script does. A per-frame, scroll-linked position is data, and the direct
    write is what keeps the pull cheap; moving it through custom properties
-   would rework the approved motion for no visible gain. So **Belief no longer
+   would rework the approved motion for no visible gain. **The owner kept this
+   exception (2026-11-25)** over that stricter rework. So **Belief no longer
    sets `will-change` on Statement's and Pair's elements** (rule 2): the engine
    sets it on the belief's sides while the scene is live and clears it after.
 6. **The legal pages share as themselves.** They inherited the home page's

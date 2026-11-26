@@ -120,6 +120,10 @@ Pratik what" cross early so they still open wide; the privacy
 policy's untrue lines (light/dark storage, IBM Plex, client sites) are corrected,
 legal "we" kept; "Right now Angeronia Labs is one person …" stays.
 
+After PR #11's code review (2026-11-25, ADR-035): the spine engine's runtime
+`transform`/`will-change` writes stay, as an approved exception to the
+inline-style rule, rather than being reworked into custom properties.
+
 ## Where things are
 
 ```
