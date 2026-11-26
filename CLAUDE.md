@@ -27,7 +27,8 @@ legal pages share its masthead, line and footer, and `Spine` moves the line.
   gate. ADR-031 is the port and where it departs from the draft; ADR-032 the
   fixes after its review (no layout change on hydration, the replica's
   fallback for a stalled script, `Pair`'s mine-first DOM order).
-  ADR-033 is the owner's review of the built site (the rulings below).
+  ADR-033 is the owner's review of the built site (the rulings below);
+  ADR-034 moves the fonts into the repo (`next/font/local`).
 
 Record any deviation in `DECISIONS.md` **before** writing the code that
 deviates.
@@ -119,7 +120,8 @@ legal "we" kept; "Right now Angeronia Labs is one person …" stays.
 
 ```
 app/layout.tsx         fonts, tokens + base, the js-class script, metadata, JSON-LD, skip link, page frame
-app/fonts.ts           next/font: Hanken Grotesk (--font-hanken), IBM Plex Mono (--font-plex-mono)
+app/fonts.ts           next/font/local: Hanken Grotesk (--font-hanken), IBM Plex Mono (--font-plex-mono)
+assets/fonts/          the two faces' latin woff2 files and their OFL (ADR-034; never next/font/google)
 app/page.tsx           the home page: the sections in order, then Spine
 app/icon.svg           the mark; app/opengraph-image.tsx + twitter-image.tsx draw the social card (social-card.tsx)
 components/site/spine-engine.ts  the line, its breaks, the pull and the held belief (one rAF loop, no GSAP)

@@ -142,9 +142,11 @@ them out of the games (ADR-029).
 * **Hanken Grotesk** for everything: 400 for text, 500 for buttons, labels and
   names, 600 for statements. Never 700.
 * **IBM Plex Mono 400** only for code, and only inside the Code.Socratic replica.
-* Both come from `next/font/google` in `app/fonts.ts`, applied to `<html>` by
-  `app/layout.tsx` as `--font-hanken` and `--font-plex-mono`. They are read only
-  by `--font-sans` and `--font-code` in `tokens.css`.
+* Both are files in the repo (`assets/fonts/`, latin subset, each with its
+  OFL), loaded by `next/font/local` in `app/fonts.ts` (ADR-034: never
+  `next/font/google`, whose build-time download breaks on CI), applied to
+  `<html>` by `app/layout.tsx` as `--font-hanken` and `--font-plex-mono`. They
+  are read only by `--font-sans` and `--font-code` in `tokens.css`.
 * **Five steps**, each a size, a line height and a tracking:
 
   | Step | Size | Leading | Tracking | Weight | Use |
@@ -329,4 +331,4 @@ There is no CSS linter.
 
 No `@salesforce-ux/*` package (ADR-015), no `@carbon/*` package and no
 `next-themes` (ADR-023, ADR-024), and no `@fontsource/*` (fonts come from
-`next/font`).
+`assets/fonts/` through `next/font/local`, ADR-034).

@@ -1546,6 +1546,46 @@ site, settled the points ADR-032 left open, and changed four words.
    The terms are unchanged; nothing in them became untrue.
 6. **"Right now Angeronia Labs is one person …" stays**, as written.
 
+### ADR-034 — The fonts are files in the repo, not fetched from Google at build time
+
+**Recorded 2026-11-25, before the code.** ADR-031 loaded both faces through
+`next/font/google`, which downloads them from Google Fonts during `next build`.
+On GitHub's runners Google answers with a font address that has no file
+extension, and Next 15.5's loader crashes reading it
+(`TypeError: Cannot read properties of null (reading '1')` at
+`google/loader.js:122`). PR #11's "Types, tests, contrast and build" job failed
+on it twice in a row. The same commit built locally and on Vercel, so the build
+depended on what Google chose to send each machine.
+
+* **`app/fonts.ts` loads the faces with `next/font/local`** from
+  `assets/fonts/`, so `next build` makes no network request for type.
+* **The files are the ones Google served and the site already used**,
+  byte-for-byte (checked against the build's `/_next/static/media`):
+  Hanken Grotesk's latin subset as one variable file (its `wght` axis runs
+  100–900; declared `400 600`, the weights the site uses, as Google's
+  stylesheet declared them), and IBM Plex Mono 400's latin subset. Each folder
+  carries the font's SIL Open Font License.
+* **Only the latin subset.** Every character the studio's pages render is in
+  it. The other subsets (latin-ext, Vietnamese, Cyrillic; Plex Mono's box
+  drawing) were declared but never used. A character outside latin falls back
+  per glyph, as it did when no subset covered it (the replica's ⌘ ⇧ ⏎ already
+  did).
+* **What does not change:** the faces, weights, `--font-hanken` and
+  `--font-plex-mono`, `display: swap`, Plex Mono's `preload: false`, the
+  served files' names under `/_next/static/media`, and the privacy policy's
+  sentence that the typefaces are served from this domain. Checked on the
+  production build: the home page, privacy and terms at 1440 and 390 wide
+  screenshot byte-for-byte the same, no text box moves, and the games' parity
+  gate finds no difference inside any game.
+* **What does change, invisibly:** the face's name in `font-family` is the
+  variable's (`hanken`, `plexMono`) instead of "Hanken Grotesk" (the parity
+  gate's only notes, on `<body>`, the page frame and the skip link); and the
+  Arial fallback's metrics are computed from the file rather than from
+  Google's metadata (Hanken's `size-adjust` 101.56% for 100.94%), which only
+  shows for the moment before the font loads.
+* **To update a face**, replace the file in `assets/fonts/` (and its licence if
+  it changed), then check the pages and the games' parity gate.
+
 ---
 
 ## 4. Plan closure
